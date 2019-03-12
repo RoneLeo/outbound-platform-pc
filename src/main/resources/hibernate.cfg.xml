@@ -4,8 +4,23 @@
     "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
   <session-factory>
-    <property name="connection.url"/>
-    <property name="connection.driver_class"/>
+    <property name="connection.url">jdbc:mysql://182.151.22.247:3306/ajjcxx</property>
+    <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+    <mapping class="com.chiyun.outboundplatform.entity.BasetypeEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.BatchEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.CardmessageEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.CasemanagementEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.CasepeoplemessageEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.ColltypeEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.DelaylvEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.EmpmessageEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.FieldcasebaseEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.LinkmanmessageEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.LoanmessageEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.LoantypeEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.OthermessageEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.OutboundmessageEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.UsermessageEntity"/>
     <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 

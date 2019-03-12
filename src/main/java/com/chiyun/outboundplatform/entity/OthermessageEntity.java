@@ -18,18 +18,18 @@ public class OthermessageEntity {
     private Date hkqx;
     @ApiModelProperty(value = "信用额度")
     private String xyed;
-    @ApiModelProperty(value = "信贷分类id")
-    private Integer xdflid;
     @ApiModelProperty(value = "信贷分类")
-    private String xdfl;
-    @ApiModelProperty(value = "催收分类id")
-    private Integer cslxid;
+    private Integer xdfl;
+    @ApiModelProperty(value = "信贷分类名称")
+    private String xdflmc;
     @ApiModelProperty(value = "催收分类")
-    private String cslx;
-    @ApiModelProperty(value = "拖欠级别id")
-    private Integer tqjbid;
+    private Integer cslx;
+    @ApiModelProperty(value = "催收分类名称")
+    private String cslxmc;
     @ApiModelProperty(value = "拖欠级别")
-    private String tqjb;
+    private Integer tqjb;
+    @ApiModelProperty(value = "拖欠级别名称")
+    private String tqjbmc;
     @ApiModelProperty(value = "保证金")
     private Double bzj;
     @ApiModelProperty(value = "开卡日")
@@ -127,64 +127,70 @@ public class OthermessageEntity {
     }
 
     @Basic
-    @Column(name = "loanType_id")
-    public Integer getXdflid() {
-        return xdflid;
-    }
-
-    public void setXdflid(Integer xdflid) {
-        this.xdflid = xdflid;
-    }
-
-    @Basic
     @Column(name = "loanType")
-    public String getXdfl() {
+    public Integer getXdfl() {
         return xdfl;
     }
 
-    public void setXdfl(String xdfl) {
+    public void setXdfl(Integer xdfl) {
         this.xdfl = xdfl;
     }
 
     @Basic
-    @Column(name = "collType_id")
-    public Integer getCslxid() {
-        return cslxid;
+    @Column(name = "loanTypeName")
+    public String getXdflmc() {
+        return xdflmc;
     }
 
-    public void setCslxid(Integer cslxid) {
-        this.cslxid = cslxid;
+    public void setXdflmc(String xdflmc) {
+        this.xdflmc = xdflmc;
     }
 
     @Basic
     @Column(name = "collType")
-    public String getCslx() {
+    public Integer getCslx() {
         return cslx;
     }
-
-    public void setCslx(String cslx) {
+    public void setCslx(Integer cslx) {
         this.cslx = cslx;
     }
 
     @Basic
-    @Column(name = "delayLv_id")
-    public Integer getTqjbid() {
-        return tqjbid;
+    @Column(name = "collTypeName")
+    public String getCslxmc() {
+        return cslxmc;
     }
 
-    public void setTqjbid(Integer tqjbid) {
-        this.tqjbid = tqjbid;
+    public void setCslxmc(String cslxmc) {
+        this.cslxmc = cslxmc;
     }
 
     @Basic
     @Column(name = "delayLv")
-    public String getTqjb() {
+    public Integer getTqjb() {
         return tqjb;
     }
 
-    public void setTqjb(String tqjb) {
+    public void setTqjb(Integer tqjb) {
         this.tqjb = tqjb;
     }
+
+    @Basic
+    @Column(name = "delayLvName")
+    public String getTqjbmc() {
+        return tqjbmc;
+    }
+
+    public void setTqjbmc(String tqjbmc) {
+        this.tqjbmc = tqjbmc;
+    }
+
+
+
+
+
+
+
 
     @Basic
     @Column(name = "guaM")
@@ -416,12 +422,12 @@ public class OthermessageEntity {
                 Objects.equals(yqzl, that.yqzl) &&
                 Objects.equals(hkqx, that.hkqx) &&
                 Objects.equals(xyed, that.xyed) &&
-                Objects.equals(xdflid, that.xdflid) &&
                 Objects.equals(xdfl, that.xdfl) &&
-                Objects.equals(cslxid, that.cslxid) &&
+                Objects.equals(xdflmc, that.xdflmc) &&
                 Objects.equals(cslx, that.cslx) &&
-                Objects.equals(tqjbid, that.tqjbid) &&
+                Objects.equals(cslxmc, that.cslxmc) &&
                 Objects.equals(tqjb, that.tqjb) &&
+                Objects.equals(tqjbmc, that.tqjbmc) &&
                 Objects.equals(bzj, that.bzj) &&
                 Objects.equals(kkr, that.kkr) &&
                 Objects.equals(zhhkr, that.zhhkr) &&
@@ -448,6 +454,6 @@ public class OthermessageEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, yqzl, hkqx, xyed, xdflid, xdfl, cslxid, cslx, tqjbid, tqjb, bzj, kkr, zhhkr, zhhke, zhxfr, zhtxr, tkr, zdr, rmb, usd, gb, waqs, yqts, sybj, yqqs, yhqs, sp, sh, dqrq, bz1, bz2, bz3);
+        return Objects.hash(id, ajid, yqzl, hkqx, xyed, xdfl, xdflmc, cslx, cslxmc, tqjb, tqjbmc, bzj, kkr, zhhkr, zhhke, zhxfr, zhtxr, tkr, zdr, rmb, usd, gb, waqs, yqts, sybj, yqqs, yhqs, sp, sh, dqrq, bz1, bz2, bz3);
     }
 }

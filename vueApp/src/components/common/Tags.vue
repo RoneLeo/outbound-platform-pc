@@ -10,7 +10,7 @@
         </ul>
         <div class="tags-close-box">
             <el-dropdown @command="handleTags">
-                <el-button size="mini" type="primary">
+                <el-button size="mini" type="info">
                     标签选项<i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu size="small" slot="dropdown">
@@ -48,7 +48,7 @@
             // 关闭全部标签
             closeAll(){
                 this.tagsList = [];
-                this.$router.push('/company');
+                this.$router.push('/HomePage');
             },
             // 关闭其他标签
             closeOther(){
@@ -101,7 +101,7 @@
 <style>
     .tags {
         position: relative;
-        height: 40px;
+        height: 30px;
         overflow: hidden;
         background: #fff;
         padding-right: 120px;
@@ -113,7 +113,7 @@
         box-sizing: border-box;
         width: 100%;
         height: 100%;
-        padding: 5px 0;
+        padding: 1px 0;
         padding-left: 8px;
     }
 
@@ -124,8 +124,8 @@
         font-size: 12px;
         overflow: hidden;
         cursor: pointer;
-        height: 23px;
-        line-height: 23px;
+        height: 20px;
+        line-height: 20px;
         border: 1px solid #e9eaec;
         background: #fff;
         padding: 0 5px 0 12px;
@@ -163,10 +163,10 @@
         right: 0;
         top: 0;
         box-sizing: border-box;
-        padding: 5px 0;
+        padding: 1px 0;
         text-align: center;
         width: 110px;
-        height: 40px;
+        height: 30px;
         background: #fff;
         box-shadow: -3px 0 15px 3px rgba(0, 0, 0, .1);
         z-index: 10;

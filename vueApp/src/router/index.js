@@ -7,7 +7,7 @@ export default new Router({
     routes: [
         {
             path: '/',
-            redirect: '/count'
+            redirect: '/homePage'
         },
         {
             path: '/login',
@@ -21,6 +21,12 @@ export default new Router({
             path: '/',
             component: resolve => require(['../components/common/Home.vue'], resolve),
             children:[
+                {
+                    path: '/homePage',
+                    name: 'homePage',
+                    component: resolve => require(['../components/page/HomePage.vue'], resolve),
+                    meta: { title: '系统首页', keepAlive: true }
+                },
                 {
                     path: '/dict',
                     name: 'dict',
@@ -49,17 +55,6 @@ export default new Router({
                     name: 'users',
                     component: resolve => require(['../components/page/Users.vue'], resolve),
                     meta: { title: '用户管理', keepAlive: true }
-                },
-
-                {
-                    path: '/count',
-                    component: resolve => require(['../components/page/Count.vue'], resolve),
-                    meta: { title: '系统首页', keepAlive: true }
-                },
-                {
-                    path: '/dashboard',
-                    component: resolve => require(['../components/page/Dashboard.vue'], resolve),
-                    meta: { title: '系统首页', keepAlive: true }
                 },
                 {
                     path: '/files',
@@ -109,9 +104,70 @@ export default new Router({
                     component: resolve => require(['../components/page/Company.vue'], resolve),
                     meta: { title: '公司信息', keepAlive: true }
                 },
+
+                /*
+                1.以下为模板测试路由,请勿删除
+                2.开发过程中将具有典型代表的组件收录进去
+                */
+                {
+                    path: '/icon',
+                    component: resolve => require(['../components/template/Icon.vue'], resolve),
+                    meta: { title: '自定义图标' }
+                },
+                {
+                    path: '/table',
+                    component: resolve => require(['../components/template/BaseTable.vue'], resolve),
+                    meta: { title: '基础表格' }
+                },
+                {
+                    path: '/tabs',
+                    component: resolve => require(['../components/template/Tabs.vue'], resolve),
+                    meta: { title: 'tab选项卡' }
+                },
+                {
+                    path: '/form',
+                    component: resolve => require(['../components/template/BaseForm.vue'], resolve),
+                    meta: { title: '基本表单' }
+                },
+                {
+                    // 富文本编辑器组件
+                    path: '/editor',
+                    component: resolve => require(['../components/template/VueEditor.vue'], resolve),
+                    meta: { title: '富文本编辑器' }
+                },
+                {
+                    // markdown组件
+                    path: '/markdown',
+                    component: resolve => require(['../components/template/Markdown.vue'], resolve),
+                    meta: { title: 'markdown编辑器' }
+                },
+                {
+                    // 图片上传组件
+                    path: '/upload',
+                    component: resolve => require(['../components/template/Upload.vue'], resolve),
+                    meta: { title: '文件上传' }
+                },
+                {
+                    // vue-schart组件
+                    path: '/charts',
+                    component: resolve => require(['../components/template/BaseCharts.vue'], resolve),
+                    meta: { title: 'schart图表' }
+                },
+                {
+                    // 拖拽列表组件
+                    path: '/drag',
+                    component: resolve => require(['../components/template/DragList.vue'], resolve),
+                    meta: { title: '拖拽列表' }
+                },
+                {
+                    // 权限页面
+                    path: '/permission',
+                    component: resolve => require(['../components/template/Permission.vue'], resolve),
+                    meta: { title: '权限测试', permission: true }
+                },
                 {
                     path: '/404',
-                    component: resolve => require(['../components/page/404.vue'], resolve),
+                    component: resolve => require(['../components/template/404.vue'], resolve),
                     meta: { title: '404' }
                 },
                 {

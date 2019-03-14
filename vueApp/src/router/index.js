@@ -22,6 +22,12 @@ export default new Router({
             component: resolve => require(['../components/common/Home.vue'], resolve),
             children:[
                 {
+                    path: '/dict',
+                    name: 'dict',
+                    component: resolve => require(['../components/page/Dict.vue'], resolve),
+                    meta: { title: '字典管理', keepAlive: true }
+                },
+                {
                     path: '/case',
                     component: resolve => require(['../components/page/Case.vue'], resolve),
                     meta: { title: '委托案件', keepAlive: true }

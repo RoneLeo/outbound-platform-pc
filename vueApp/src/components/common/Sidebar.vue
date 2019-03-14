@@ -45,13 +45,18 @@
                     },
                     {
                         icon: 'el-icon-lx-cascades',
-                        index: 'case',
-                        title: '委托案件'
-                    },
-                    {
-                        icon: 'el-icon-lx-calendar',
-                        index: 'orders',
-                        title: '派单信息'
+                        index: 'caseModule',
+                        title: '案件管理',
+                        subs: [
+                            {
+                                index: 'module',
+                                title: '模板信息'
+                            },
+                            {
+                                index: 'case',
+                                title: '案件信息'
+                            }
+                        ]
                     },
                     {
                         icon: 'el-icon-lx-mobile',
@@ -87,8 +92,12 @@
                                 title: '系统用户'
                             },
                             {
+                                index: 'users',
+                                title: '区域主管'
+                            },
+                            {
                                 index: 'orderUsers',
-                                title: '接单用户'
+                                title: '业务人员'
                             }
                         ]
                     },
@@ -98,7 +107,7 @@
                         title: '系统设置',
                         subs: [
                             {
-                                index: 'users',
+                                index: 'dict',
                                 title: '字典管理'
                             },
                             {

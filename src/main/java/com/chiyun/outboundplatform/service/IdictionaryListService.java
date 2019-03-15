@@ -13,38 +13,64 @@ public interface IdictionaryListService {
      * @param id
      * @return
      */
-    public DictionaryListEntity findById(Integer id);
+     DictionaryListEntity findById(Integer id);
 
     /**
      * 查询所有
      * @return
      */
-    public List<DictionaryListEntity> findAll();
+     List<DictionaryListEntity> findAll();
 
-    /**
-     * 通过对象信息查询
-     * @param entity
-     * @return
-     */
-    //public List<DictionaryListEntity> queryByEntity(DictionaryListEntity entity);
+
 
     /**
      * 新增
      * @param entity
      * @return
      */
-    public  DictionaryListEntity save(DictionaryListEntity entity);
+      DictionaryListEntity save(DictionaryListEntity entity);
     /**
      *  通过id删除
      */
 
-    public int deleteById(Integer id);
+     int deleteById(Integer id);
+
+    /**
+     * 通过did 外键 批量删除
+     * @param did
+     * @return
+     */
+     int deleteByDid(Integer did);
+
+
+    /**
+     * 根据字典英文名和字典项代号查询字典项的值
+     * @param zdywm
+     * @param key
+     * @return
+     */
+      String querDictListByZdywmAndKey(String zdywm, String key);
+
+    /**
+     * 根据字典中文名和字典项代号查询字典项的值
+     * @param zdzwm
+     * @param key
+     * @return
+     */
+      String  querDictListByZdzwmAndKey(String zdzwm, String key);
 
     /**
      *  单个对象信息修改
      * @param entity
      * @return
      */
-   // public int update(DictionaryListEntity entity);
+     int update(DictionaryListEntity entity);
+
+    /**
+     *  通过外键批量注销字典项
+     * @param did
+     * @return
+     */
+     int zhuXiaoByDid(Integer did);
 
 }

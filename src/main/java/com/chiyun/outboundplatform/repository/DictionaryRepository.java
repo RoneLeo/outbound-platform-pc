@@ -11,38 +11,59 @@ import java.util.List;
 
 public interface DictionaryRepository extends CrudRepository<DictionaryEntity, Long> {
 
-    /**
-     *   通过id查询
-     * @param id
-     * @return
-     */
+
      public DictionaryEntity findById(Integer id);
 
     /**
-     * 查询所有
+     *   通过字典中文名来查询字典
+     * @param name
      * @return
      */
+    @Query(value = "select * from dictionary where name like  concat('%',?1,'%') ", nativeQuery = true)
+    List<DictionaryEntity>  findByName(String name);
+
+    /**
+     *   通过字典英文名来查询字典
+     * @param eng_name
+     * @return
+     */
+    @Query(value = "select * from dictionary where eng_name like  concat('%',?1,'%') ", nativeQuery = true)
+    List<DictionaryEntity>  findByEng_Name(String eng_name);
+
+
     public List<DictionaryEntity> findAll();
 
-    /**
-     *  新增
-     * @param entity
-     * @return
-     */
+
     public  DictionaryEntity save(DictionaryEntity entity);
 
-    /**
-     * 通过对象信息查询 自定义类需要自己写实现SQL
-     * @param entity
-     * @return
-     */
-   // public  List<DictionaryEntity> queryByEntity(DictionaryEntity entity);
 
     /**
      *  通过id删除
      */
-    @Query(value = "delete from dictionary where id = ?", nativeQuery = true)
+    @Query(value = "delete from dictionary where id = ?1", nativeQuery = true)
     @Modifying
     @Transactional
     public int deleteById(Integer id);
+
+    /**
+     *  更新字典
+     * @param entity
+     * @return
+     */
+    @Query(value = "update dictionary  dic set dic.name=#{#entity.name},dic.eng_name=#{# entity.eng_name},dic.type=#{#entity.type} where dic.id=#{#entity.id} "
+            , nativeQuery = true)
+    @Modifying
+    @Transactional
+     public int updateOne(DictionaryEntity entity);
+
+    /**
+     *  注销字典
+     * @param id
+     * @return
+     */
+    @Query(value = "update dictionary  dic set dic.zxbz='1' where dic.id=?1 and dic.zxbz='0'" , nativeQuery = true)
+    @Modifying
+    @Transactional
+     public int   zhuXiaoOne(Integer id);
+
 }

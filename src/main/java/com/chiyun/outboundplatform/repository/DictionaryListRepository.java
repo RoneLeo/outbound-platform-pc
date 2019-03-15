@@ -1,5 +1,6 @@
 package com.chiyun.outboundplatform.repository;
 
+
 import com.chiyun.outboundplatform.entity.DictionaryListEntity;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,45 +12,90 @@ import java.util.List;
 
 public interface DictionaryListRepository extends CrudRepository<DictionaryListEntity , Long> {
 
-    /**
-     * 通过id查询单个
-     * @param id
-     * @return
-     */
-    public DictionaryListEntity findById(Integer id);
+
+     DictionaryListEntity findById(Integer id);
+
+
+     List<DictionaryListEntity> findAll();
 
     /**
-     * 查询所有
+     * 通过字典中文名来查询字典项
+     * @param zdzwm
      * @return
      */
-    public List<DictionaryListEntity> findAll();
+    @Query(value = "select * from dictionarylist where zdzwm like  concat('%',?1,'%') ", nativeQuery = true)
+    List<DictionaryListEntity>  findByZdzwm(String zdzwm);
 
     /**
-     * 通过对象信息查询 自定义类需要自己写实现SQL
-     * @param entity
+     *  通过字典英文名来查询字典项
+     * @param zdywm
      * @return
      */
-   // public List<DictionaryListEntity> queryByEntity(DictionaryListEntity entity);
+    @Query(value = "select * from dictionarylist where zdywm like  concat('%',?1,'%') ", nativeQuery = true)
+    List<DictionaryListEntity>  findByZdywm(String zdywm);
 
-    /**
-     * 新增
-     * @param entity
-     * @return
-     */
-    public  DictionaryListEntity save(DictionaryListEntity entity);
+
+
+      DictionaryListEntity save(DictionaryListEntity entity);
+
+
     /**
      *  通过id删除
      */
     @Query(value = "delete from dictionarylist where id = ?1", nativeQuery = true)
     @Modifying
     @Transactional
-    public int deleteById(Integer id);
+     int deleteById(Integer id);
+
 
     /**
-     *  单个对象信息修改
+     * 通过did 外键 批量删除
+     * @param did
+     * @return
+     */
+    @Query(value = "delete from dictionarylist where did = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
+    int deleteByDid(Integer did);
+
+
+    /**
+     * 根据字典英文名和字典项代号查询字典项的值
+     * @param zdywm
+     * @param key
+     * @return
+     */
+     @Query(value = "select c_name from dictionarylist where zdywm = ? and c_id= ? ", nativeQuery = true)
+       String querDictListByZdywmAndKey(String zdywm, String key);
+
+    /**
+     *  根据字典中文名和字典项代号查询字典项的值
+     * @param zdzwm
+     * @param key
+     * @return
+     */
+     @Query(value = "select c_name from dictionarylist where zdyzm = ? and c_id= ? ", nativeQuery = true)
+       String  querDictListByZdzwmAndKey(String zdzwm, String key);
+
+
+    /**
+     * 更新 字典项信息
      * @param entity
      * @return
      */
-   // @Transactional
-  //  public int update(DictionaryListEntity entity);
+      @Query(value = "update  dictionarylist dicList set  dicList.zdywm=#{# entity.zdywm},dicList.zdzwm=#{# entity.zdzwm},dicList.c_id=#{# entity.c_id} where dicList.id =#{# entity.id} ", nativeQuery = true)
+      @Modifying
+      @Transactional
+      int update(DictionaryListEntity entity);
+
+    /**
+     * 通过外键批量注销字典项
+     * @param did
+     * @return
+     */
+      @Query(value = "update  dictionarylist  set zxbz='1'  where did =?1 ", nativeQuery = true)
+      @Modifying
+      @Transactional
+      int zhuXiaoByDid(Integer did);
+
 }

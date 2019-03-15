@@ -20,27 +20,51 @@ public interface IdictionaryService {
     public DictionaryEntity findById(Integer id);
 
     /**
+     *  通过 字典中文名查询
+     * @param name
+     * @return
+     */
+     List<DictionaryEntity>  findByName(String name);
+
+    /**
+     *  通过 字典英文名查询
+     * @param eng_name
+     * @return
+     */
+    List<DictionaryEntity>  findByEng_Name(String eng_name);
+    /**
      * 查询所有
      * @return
      */
-    public List<DictionaryEntity> findAll();
+     List<DictionaryEntity> findAll();
+
+
 
     /**
      *  新增
      * @param entity
      * @return
      */
-    public  DictionaryEntity save(DictionaryEntity entity);
+      DictionaryEntity save(DictionaryEntity entity);
 
-    /**
-     * 通过对象信息查询
-     * @param entity
-     * @return
-     */
-   // public  List<DictionaryEntity> queryByEntity(DictionaryEntity entity);
+
 
     /**
      *  通过id删除
      */
-    public int deleteById(Integer id);
+     int deleteById(Integer id);
+
+    /**
+     *  更新字典
+     * @param entity
+     * @return
+     */
+    public int updateOne(DictionaryEntity entity);
+
+    /**
+     * 注销字典
+     * @param id
+     * @return
+     */
+    public int   zhuXiaoOne(Integer id);
 }

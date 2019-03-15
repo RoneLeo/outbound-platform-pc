@@ -119,6 +119,7 @@ public class DictionaryController {
             entity= EntityisHebing(entity); //信息补全
             int cn=idictionaryService.updateOne(entity);
        if(cn==1){
+
            return ApiResult.SUCCESS("更新成功");
        }else{
            return  ApiResult.FAILURE("更新失败");
@@ -133,7 +134,7 @@ public class DictionaryController {
             @ApiImplicitParam(paramType="delet", name = "id", value = "ID", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType ="delet",name = "flag",value = "是否同时注销关联的字典项: [0:否,1:是]",required = true,dataType = "Integer")
     })*/
-    public  ApiResult<Object>  zhuXiaoDict(Integer id, Integer flag){
+   /* public  ApiResult<Object>  zhuXiaoDict(Integer id, Integer flag){
         if(id==0 ){
             return  ApiResult.FAILURE("主键不能为空！！");
         }
@@ -152,6 +153,20 @@ public class DictionaryController {
             return  ApiResult.FAILURE("注销失败");
         }
 
+    }*/
+    public  ApiResult<Object>  zhuXiaoDict(Integer id){
+        if(id==0 ){
+            return  ApiResult.FAILURE("主键不能为空！！");
+        }
+
+        int cn=idictionaryService.zhuXiaoOne(id);
+
+        if(cn==1){
+                return ApiResult.SUCCESS("注销成功");
+        }else{
+            return  ApiResult.FAILURE("注销失败，可能已经注销了");
+        }
+
     }
 
 
@@ -161,34 +176,47 @@ public class DictionaryController {
              @ApiImplicitParam(paramType="delet", name = "id", value = "ID", required = true, dataType = "Integer"),
              @ApiImplicitParam(paramType ="delet",name = "flag",value = "是否同时删除关联的字典项: [0:否,1:是]",required = true,dataType = "Integer")
      })*/
-     public  ApiResult<Object>  deleteDictById( Integer id,  Integer flag){
-           System.out.println(id);
-          System.out.println(flag);
-
-         if(id==0 ){
-             return  ApiResult.FAILURE("主键不能为空！！");
-         }
-          int con=idictionaryService.deleteById(id);
-          if(con==1){
-              if(flag==1) {
-                  int con1= idictionaryListService.deleteByDid(id);
-                  return ApiResult.SUCCESS("删除成功！！"+"共删除了"+con+"个字典和其"+con1+"个字典项");
-              } else if(flag==0){
-                  return ApiResult.SUCCESS("删除字典成功");
-              }else {
-                  return ApiResult.FAILURE("删除失败");
-              }
-          }else if(con==0) {
-              return ApiResult.FAILURE("删除失败,可能对应的字典已经被删除了");
-          } else{
-              return ApiResult.FAILURE("删除失败");
-          }
-
-     }
+     /*    public  ApiResult<Object>  deleteDictById( Integer id,  Integer flag){
 
 
+             if(id==0 ){
+                 return  ApiResult.FAILURE("主键不能为空！！");
+             }
+             int con=idictionaryService.deleteById(id);
+             if(con==1){
+                 if(flag==1) {
+                     int con1= idictionaryListService.deleteByDid(id);
+                     return ApiResult.SUCCESS("删除成功！！"+"共删除了"+con+"个字典和其"+con1+"个字典项");
+                 } else if(flag==0){
+                     return ApiResult.SUCCESS("删除字典成功");
+                 }else {
+                     return ApiResult.FAILURE("删除失败");
+                 }
+             }else if(con==0) {
+                 return ApiResult.FAILURE("删除失败,可能对应的字典已经被删除了");
+             } else{
+                 return ApiResult.FAILURE("删除失败");
+             }
 
-     // 避免某些属性为空，导致sql报错
+     }*/
+
+    public  ApiResult<Object>  deleteDictById( Integer id) {
+
+        if (id == 0) {
+            return ApiResult.FAILURE("主键不能为空！！");
+        }
+        int con = idictionaryService.deleteById(id);
+        if (con == 1) {
+                return ApiResult.SUCCESS("删除字典成功");
+        }  else {
+            return ApiResult.FAILURE("删除失败，可能对应的字典已经被删除了");
+        }
+    }
+
+
+
+
+        // 避免某些属性为空，导致sql报错
      private  DictionaryEntity  EntityisHebing(DictionaryEntity fromEn){
          DictionaryEntity queEn= idictionaryService.findById(fromEn.getId());
            if(StringUtil.isNull(fromEn.getName())){

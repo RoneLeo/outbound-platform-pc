@@ -11,6 +11,10 @@ public class LinkmanmessageEntity {
     private Integer id;
     @ApiModelProperty(value = "案件id")
     private Integer ajid;
+    @ApiModelProperty(value = "批次id")
+    private String pcid;
+    @ApiModelProperty(value = "基础信息id")
+    private Integer jcxxid;
     @ApiModelProperty(value = " 联系人姓名")
     private String lxrxm;
     @ApiModelProperty(value = "联系人证件号")
@@ -47,6 +51,26 @@ public class LinkmanmessageEntity {
 
     public void setAjid(Integer ajid) {
         this.ajid = ajid;
+    }
+
+    @Basic
+    @Column(name = "batch_id")
+    public String getPcid() {
+        return pcid;
+    }
+
+    public void setPcid(String pcid) {
+        this.pcid = pcid;
+    }
+
+    @Basic
+    @Column(name = "casebase_id")
+    public Integer getJcxxid() {
+        return jcxxid;
+    }
+
+    public void setJcxxid(Integer jcxxid) {
+        this.jcxxid = jcxxid;
     }
 
     @Basic
@@ -132,10 +156,12 @@ public class LinkmanmessageEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof LinkmanmessageEntity)) return false;
         LinkmanmessageEntity that = (LinkmanmessageEntity) o;
-        return id == that.id &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(ajid, that.ajid) &&
+                Objects.equals(pcid, that.pcid) &&
+                Objects.equals(jcxxid, that.jcxxid) &&
                 Objects.equals(lxrxm, that.lxrxm) &&
                 Objects.equals(lxrzjh, that.lxrzjh) &&
                 Objects.equals(lxrgx, that.lxrgx) &&
@@ -148,6 +174,6 @@ public class LinkmanmessageEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, lxrxm, lxrzjh, lxrgx, lxrjtdh, lxrdwdh, lxrsj, lxrdz, lxrdw);
+        return Objects.hash(id, ajid, pcid, jcxxid, lxrxm, lxrzjh, lxrgx, lxrjtdh, lxrdwdh, lxrsj, lxrdz, lxrdw);
     }
 }

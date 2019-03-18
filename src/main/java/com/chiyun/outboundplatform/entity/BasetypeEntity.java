@@ -13,6 +13,8 @@ public class BasetypeEntity {
     private Integer type;
     @ApiModelProperty(value = "名称")
     private String name;
+    @ApiModelProperty(value = "实体类路径")
+    private String lj;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

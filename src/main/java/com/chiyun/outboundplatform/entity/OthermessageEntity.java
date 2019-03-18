@@ -12,6 +12,8 @@ public class OthermessageEntity {
     private Integer id;
     @ApiModelProperty(value = "案件id")
     private Integer ajid;
+    @ApiModelProperty(value = "批次id")
+    private String pcid;
     @ApiModelProperty(value = "逾期账龄")
     private String yqzl;
     @ApiModelProperty(value = "还款期限")
@@ -66,14 +68,6 @@ public class OthermessageEntity {
     private String sp;
     @ApiModelProperty(value = "商户")
     private String sh;
-    @ApiModelProperty(value = "当前日期")
-    private Date dqrq;
-    @ApiModelProperty(value = "备注1")
-    private String bz1;
-    @ApiModelProperty(value = "备注2")
-    private String bz2;
-    @ApiModelProperty(value = "备注3")
-    private String bz3;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -94,6 +88,16 @@ public class OthermessageEntity {
 
     public void setAjid(Integer ajid) {
         this.ajid = ajid;
+    }
+
+    @Basic
+    @Column(name = "batch_id")
+    public String getPcid() {
+        return pcid;
+    }
+
+    public void setPcid(String pcid) {
+        this.pcid = pcid;
     }
 
     @Basic
@@ -184,13 +188,6 @@ public class OthermessageEntity {
     public void setTqjbmc(String tqjbmc) {
         this.tqjbmc = tqjbmc;
     }
-
-
-
-
-
-
-
 
     @Basic
     @Column(name = "guaM")
@@ -372,53 +369,14 @@ public class OthermessageEntity {
         this.sh = sh;
     }
 
-    @Basic
-    @Column(name = "curDate")
-    public Date getDqrq() {
-        return dqrq;
-    }
-
-    public void setDqrq(Date dqrq) {
-        this.dqrq = dqrq;
-    }
-
-    @Basic
-    @Column(name = "remark1")
-    public String getBz1() {
-        return bz1;
-    }
-
-    public void setBz1(String bz1) {
-        this.bz1 = bz1;
-    }
-
-    @Basic
-    @Column(name = "remark2")
-    public String getBz2() {
-        return bz2;
-    }
-
-    public void setBz2(String bz2) {
-        this.bz2 = bz2;
-    }
-
-    @Basic
-    @Column(name = "remark3")
-    public String getBz3() {
-        return bz3;
-    }
-
-    public void setBz3(String bz3) {
-        this.bz3 = bz3;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof OthermessageEntity)) return false;
         OthermessageEntity that = (OthermessageEntity) o;
-        return id == that.id &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(ajid, that.ajid) &&
+                Objects.equals(pcid, that.pcid) &&
                 Objects.equals(yqzl, that.yqzl) &&
                 Objects.equals(hkqx, that.hkqx) &&
                 Objects.equals(xyed, that.xyed) &&
@@ -445,15 +403,11 @@ public class OthermessageEntity {
                 Objects.equals(yqqs, that.yqqs) &&
                 Objects.equals(yhqs, that.yhqs) &&
                 Objects.equals(sp, that.sp) &&
-                Objects.equals(sh, that.sh) &&
-                Objects.equals(dqrq, that.dqrq) &&
-                Objects.equals(bz1, that.bz1) &&
-                Objects.equals(bz2, that.bz2) &&
-                Objects.equals(bz3, that.bz3);
+                Objects.equals(sh, that.sh);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, yqzl, hkqx, xyed, xdfl, xdflmc, cslx, cslxmc, tqjb, tqjbmc, bzj, kkr, zhhkr, zhhke, zhxfr, zhtxr, tkr, zdr, rmb, usd, gb, waqs, yqts, sybj, yqqs, yhqs, sp, sh, dqrq, bz1, bz2, bz3);
+        return Objects.hash(id, ajid, pcid, yqzl, hkqx, xyed, xdfl, xdflmc, cslx, cslxmc, tqjb, tqjbmc, bzj, kkr, zhhkr, zhhke, zhxfr, zhtxr, tkr, zdr, rmb, usd, gb, waqs, yqts, sybj, yqqs, yhqs, sp, sh);
     }
 }

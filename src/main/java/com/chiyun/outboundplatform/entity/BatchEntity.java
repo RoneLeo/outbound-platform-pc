@@ -9,8 +9,10 @@ import java.util.Objects;
 @Table(name = "batch", schema = "ajjcxx", catalog = "")
 public class BatchEntity {
     private Integer id;
-    @ApiModelProperty(value = "案件id")
-    private Integer ajid;
+    @ApiModelProperty(value = "批次id")
+    private String pcid;
+    @ApiModelProperty(value = "基础字段id")
+    private String jczdid;
     @ApiModelProperty(value = "字段中文")
     private String zdzwmc;
     @ApiModelProperty(value = "字段英文")
@@ -30,13 +32,23 @@ public class BatchEntity {
     }
 
     @Basic
-    @Column(name = "case_id")
-    public Integer getAjid() {
-        return ajid;
+    @Column(name = "batch_id")
+    public String getPcid() {
+        return pcid;
     }
 
-    public void setAjid(Integer ajid) {
-        this.ajid = ajid;
+    public void setPcid(String pcid) {
+        this.pcid = pcid;
+    }
+
+    @Basic
+    @Column(name = "fieldcasebase_id")
+    public String getJczdid() {
+        return jczdid;
+    }
+
+    public void setJczdid(String jczdid) {
+        this.jczdid = jczdid;
     }
 
     @Basic
@@ -72,17 +84,18 @@ public class BatchEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BatchEntity that = (BatchEntity) o;
-        return id == that.id &&
-                Objects.equals(ajid, that.ajid) &&
-                Objects.equals(zdzwmc, that.zdzwmc) &&
-                Objects.equals(zdywmc, that.zdywmc) &&
-                Objects.equals(sort, that.sort);
+        if (!(o instanceof BatchEntity)) return false;
+        BatchEntity entity = (BatchEntity) o;
+        return Objects.equals(id, entity.id) &&
+                Objects.equals(pcid, entity.pcid) &&
+                Objects.equals(jczdid, entity.jczdid) &&
+                Objects.equals(zdzwmc, entity.zdzwmc) &&
+                Objects.equals(zdywmc, entity.zdywmc) &&
+                Objects.equals(sort, entity.sort);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, zdzwmc, zdywmc, sort);
+        return Objects.hash(id, pcid, jczdid, zdzwmc, zdywmc, sort);
     }
 }

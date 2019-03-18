@@ -50,11 +50,11 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
      * @param entity
      * @return
      */
-    @Query(value = "update dictionary  dic set dic.name=#{#entity.name},dic.eng_name=#{# entity.eng_name},dic.type=#{#entity.type} where dic.id=#{#entity.id} "
+    @Query(value = "update dictionary  dic set dic.name=?1,dic.eng_name=?2,dic.type=?3  where dic.id=?4 "
             , nativeQuery = true)
     @Modifying
     @Transactional
-     public int updateOne(DictionaryEntity entity);
+     public int updateOne(String name,String eng_name, String type, Integer id);
 
     /**
      *  注销字典

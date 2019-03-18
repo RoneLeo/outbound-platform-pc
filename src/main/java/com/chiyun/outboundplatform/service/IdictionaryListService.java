@@ -64,7 +64,7 @@ public interface IdictionaryListService {
      * @param entity
      * @return
      */
-     int update(DictionaryListEntity entity);
+     int updateOne(DictionaryListEntity entity);
 
     /**
      *  通过外键批量注销字典项
@@ -72,5 +72,15 @@ public interface IdictionaryListService {
      * @return
      */
      int zhuXiaoByDid(Integer did);
+
+     int   zhuXiaoOne(Integer id);
+
+    int updateZdywmAndZdzwnAndDid(String zdywm,String zdzwm ,Integer Ndid,Integer Odid);
+
+    List<DictionaryListEntity> findBydid(Integer did);
+
+    List<DictionaryListEntity>  findByZdzwm(String zdzwm);
+
+    List<DictionaryListEntity>  findByZdywm(String zdywm);
 
 }

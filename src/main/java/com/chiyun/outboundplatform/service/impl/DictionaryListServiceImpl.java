@@ -1,8 +1,10 @@
 package com.chiyun.outboundplatform.service.impl;
 
+import com.chiyun.outboundplatform.entity.DictionaryEntity;
 import com.chiyun.outboundplatform.entity.DictionaryListEntity;
 import com.chiyun.outboundplatform.repository.DictionaryListRepository;
 import com.chiyun.outboundplatform.service.IdictionaryListService;
+import com.chiyun.outboundplatform.utils.StringUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -76,14 +78,46 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
     /*****************************************更新操作*********************************************************/
 
     @Override
-    public int update(DictionaryListEntity entity) {
-        return dictionaryListRepository.update(entity);
+    public int updateOne(DictionaryListEntity entity) {
+        return  dictionaryListRepository.updateOne(entity.getZdywm(),entity.getZdzwm(),entity.getC_id(),entity.getC_name(),entity.getDid(),entity.getId());
+
     }
 
     @Override
     public int zhuXiaoByDid(Integer did) {
-        return dictionaryListRepository.deleteByDid(did);
+        return dictionaryListRepository.zhuXiaoByDid(did);
     }
+
+    @Override
+    public int zhuXiaoOne(Integer id) {
+        return dictionaryListRepository.zhuXiaoOne(id);
+    }
+
+    @Override
+    public int updateZdywmAndZdzwnAndDid(String zdywm, String zdzwm, Integer Ndid, Integer Odid) {
+        return dictionaryListRepository.updateZdywmAndZdzwnAndDid(zdywm,zdzwm,Ndid,Odid);
+    }
+
+    @Override
+    public List<DictionaryListEntity> findBydid(Integer did) {
+        return dictionaryListRepository.findBydid(did);
+    }
+
+    @Override
+    public List<DictionaryListEntity> findByZdzwm(String zdzwm) {
+        return dictionaryListRepository.findByZdzwm(zdzwm);
+    }
+
+    @Override
+    public List<DictionaryListEntity> findByZdywm(String zdywm) {
+        return dictionaryListRepository.findByZdywm(zdywm);
+    }
+
+
+
+
+
+
 
 
 }

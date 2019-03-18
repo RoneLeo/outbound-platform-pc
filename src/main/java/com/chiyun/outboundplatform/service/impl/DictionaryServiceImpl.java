@@ -53,7 +53,8 @@ public class DictionaryServiceImpl implements IdictionaryService {
 
     @Override
     public int updateOne(DictionaryEntity entity) {
-        return dictionaryRepository.updateOne(entity);
+
+        return dictionaryRepository.updateOne(entity.getName(),entity.getEng_name(),entity.getType(),entity.getId());
     }
 
     @Override

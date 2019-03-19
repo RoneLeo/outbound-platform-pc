@@ -12,6 +12,7 @@ import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,169 +25,196 @@ import java.util.Map;
 @RequestMapping(value = "/dict")
 public class DictionaryController {
 
-      @Resource
-      private IdictionaryService idictionaryService;  //字典名
+    @Resource
+    private IdictionaryService idictionaryService;  //字典名
 
+    @Resource
+    private IdictionaryListService idictionaryListService; //字典项
 
-
-
-     @ApiOperation("查询所有字典信息")
-     @RequestMapping(value ="/findDictAll" ,method = {RequestMethod.GET, RequestMethod.POST})
-     @ApiImplicitParam(paramType = "query", name = "state", value = "字典状态 [0 :未注销/1:注销],不填写后台默认查全部", required = false, dataType = "String")
-     public ApiResult<Object> findDictAll(String state){
-             List<DictionaryEntity> list= idictionaryService.findAll( state);
-             return ApiResult.SUCCESS(list);
-
-     }
-
-    @ApiOperation("根据字典Id查询字典信息")
-    @RequestMapping(value = "/findDictById",method = {RequestMethod.GET, RequestMethod.POST})
-    @ApiImplicitParam(paramType="query", name = "id", value = "ID", required = true, dataType = "Integer")
-    public  ApiResult<Object>  findDictById(@RequestParam @ApiParam(required = true,value = "ID") Integer  id){
-        if(id==0 ){
-            return   ApiResult.FAILURE("id不能为空！！");
-        }
-        DictionaryEntity  entity= idictionaryService.findById(id);
-        if(entity==null){
-            return  ApiResult.FAILURE("未查询到该字典！");
-        }
-        return  ApiResult.SUCCESS(entity);
-    }
-
-
-    @ApiOperation("根据字典中文名和字典状态模糊查询字典信息")
-    @RequestMapping(value = "/findDictByNameAndState",method = {RequestMethod.GET, RequestMethod.POST})
+    @ApiOperation("查询字典表信息：" +
+            "说明：传入参数都不填写表示查询所有的数据！！")
+    @RequestMapping(value = "/findDicts", method = {RequestMethod.GET, RequestMethod.POST})
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query", name = "name", value = "字典中文名", required = true, dataType = "String"),
-            @ApiImplicitParam(paramType = "query", name = "state", value = "字典状态 [0 :未注销/1:注销],不填写后台默认查全部满足条件的", required = false, dataType = "String")
+            @ApiImplicitParam(paramType = "query", name = "zdzwmc", value = "字典中文名称,不填写 表示这个不作为查询条件", required = false, dataType = "String"),
+            @ApiImplicitParam(paramType = "query", name = "zdywmc", value = "字典英文名称[字典代码]，不填写 表示这个不作为查询条件", required = false, dataType = "String"),
+            @ApiImplicitParam(paramType = "query", name = "zxbz", value = "注销标志 [0 :未注销/1:注销],不填写表示这个不作为查询条件", required = false, dataType = "String")
+
     })
-    public  ApiResult<Object>  findDictByNameAndState(@RequestParam  String  name ,String state){
-        if(StringUtil.isNull(name)){
-            return   ApiResult.FAILURE("字典中文名不能为空！！");
-        }
-          List<DictionaryEntity>  list= idictionaryService.findDictByNameAndState(name,state);
-        if(list==null||list.size()==0){
-            return  ApiResult.FAILURE("未查询到该字典！");
-        }else if(list.size()>0){
-            return  ApiResult.SUCCESS(list);
-        }
-        else{
-            return   ApiResult.FAILURE("查询失败");
-        }
-
-
-    }
-
-    @ApiOperation("根据字典英文名和字典状态模糊查询字典信息")
-    @RequestMapping(value = "/findDictByEng_NameAndState",method = {RequestMethod.GET, RequestMethod.POST})
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType="query", name = "eng_name", value = "字典英文名", required = true, dataType = "String"),
-            @ApiImplicitParam(paramType = "query", name = "State", value = "字典状态 [0 :未注销/1:注销],不填写后台默认查全部满足条件的", required = false, dataType = "String")
-    })
-    public  ApiResult<Object>  findDictByEng_NameAndState(@RequestParam  String  eng_name ,String state) {
-        if (StringUtil.isNull(eng_name)) {
-            return ApiResult.FAILURE("字典英文名不能为空！！");
-        }
-        List<DictionaryEntity> list = idictionaryService.findDictByEng_NameAndState(eng_name,state);
-        if (list == null || list.size() == 0) {
-            return ApiResult.FAILURE("未查询到该字典！");
-        } else if (list.size() > 0) {
-            return ApiResult.SUCCESS(list);
-        } else {
-            return ApiResult.FAILURE("查询失败");
-        }
-    }
-
-
-     @ApiOperation("新增字典")
-     @RequestMapping(value = "/addDict",method = RequestMethod.POST)
-     @ApiImplicitParam( name = "entity", value = "字典对象", required = true, dataType = "DictionaryEntity")
-     public  ApiResult<Object> addDict( @RequestBody  DictionaryEntity entity){
-
-         if(StringUtil.isNull(entity.getZdywmc()) ){
-             return  ApiResult.FAILURE("字典英文名不能为空！");
-         }else if(StringUtil.isNull(entity.getZdzwmc())){
-             return  ApiResult.FAILURE("字典中文名不能为空）！");
-         }
-
-         Map<String,Object>   msg=idictionaryService.save(entity);
-         if( msg.keySet().equals("failuer")){
-             return  ApiResult.FAILURE(msg.get("failuer").toString());
-         }
-         else if(msg.keySet().equals("success")){
-             entity=(DictionaryEntity)msg.get("success");
-              return ApiResult.SUCCESS(entity);
+    public ApiResult<Object> findDicts( @RequestParam(required = false) String zxbz,
+                                        @RequestParam(required = false) String zdywmc,
+                                        @RequestParam (required = false)String zdzwmc) {
+        List<DictionaryEntity> list ;
+          if( StringUtil.isNull(zdywmc)&&StringUtil.isNull(zdzwmc)){
+             list = idictionaryService.findAll(zxbz);
+          }else if(!StringUtil.isNull(zdywmc)&&StringUtil.isNull(zdzwmc)){
+              list =  idictionaryService.findDictByEng_NameAndState(zdywmc, zxbz);
+          }else if(StringUtil.isNull(zdywmc)&&!StringUtil.isNull(zdzwmc)){
+              list = idictionaryService.findDictByNameAndState(zdzwmc, zxbz);
+          }else {
+              list = idictionaryService.findDictByNameAndEng_NameAndState(zdzwmc,zdywmc,zxbz);
           }
-          else {
-             return  ApiResult.FAILURE("新增失败");
-         }
 
-     }
+        return ApiResult.SUCCESS(list);
+
+    }
+
+    @ApiOperation("根据字典Id查询单条字典信息")
+    @RequestMapping(value = "/findDictById", method = {RequestMethod.GET, RequestMethod.POST})
+    @ApiImplicitParam(paramType = "query", name = "id", value = "ID", required = true, dataType = "Integer")
+    public ApiResult<Object> findDictById(@RequestParam Integer id) {
+        if (id == 0) {
+            return ApiResult.FAILURE("id不能为空！！");
+        }
+        DictionaryEntity entity = idictionaryService.findById(id);
+        if (entity == null) {
+            return ApiResult.FAILURE("未查询到该字典！");
+        }
+        return ApiResult.SUCCESS(entity);
+    }
+
+
+
+
+    @ApiOperation("新增字典")
+    @RequestMapping(value = "/addDict", method = RequestMethod.POST)
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query",name = "zdzwmc", value = "字典中文名称", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "query",name = "zdywmc", value = "字典英文名称[字典代码]", required = true, dataType = "String")
+    })
+    public ApiResult<Object> addDict(@RequestParam String zdzwmc,
+                                     @RequestParam String zdywmc) {
+
+        if (StringUtil.isNull(zdzwmc)) {
+            return ApiResult.FAILURE("字典中文名不能为空！");
+        } else if (StringUtil.isNull(zdywmc)) {
+            return ApiResult.FAILURE("字典英文名不能为空）！");
+        }
+        DictionaryEntity entity = new DictionaryEntity();
+        entity.setZdywmc(zdywmc);
+        entity.setZdzwmc(zdzwmc);
+
+        Map<String, Object> msg = idictionaryService.save(entity);
+         String str=msg.keySet().toString().replace("["," ").replace("]"," ").trim();
+           System.out.println(str);
+        if ("failuer".equals(str)) {
+            return ApiResult.FAILURE(msg.get("failuer").toString());
+        }
+        else if ("success".equals(str)) {
+            entity = (DictionaryEntity) msg.get("success");
+            return ApiResult.SUCCESS(entity);
+        } else {
+            return ApiResult.FAILURE("新增失败");
+        }
+
+    }
 
     @ApiOperation("更新字典")
-    @RequestMapping(value = "/updateDict",method = RequestMethod.POST)
-    @ApiImplicitParam( name = "entity", value = "字典对象", required = true, dataType = "DictionaryEntity")
-      public  ApiResult<Object>  updateDict(  @RequestBody DictionaryEntity entity){
-         //判断对象是否存在  ，其次才去更新
-      if(entity.getId()==0){
-          return  ApiResult.FAILURE("主键不能为空！！");
-      }
-             boolean   flag= idictionaryService.existsById(entity.getId());
-        if(flag=true){
-            int cn=idictionaryService.update(entity);
-            if(cn==1){
+    @RequestMapping(value = "/updateDict", method = RequestMethod.POST)
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query",name = "id", value = "字典ID", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType = "query",name = "zxbz", value = "注销标志 [0 :未注销/1:注销],不填写后台自动获取当前数据库的值", required = false, dataType = "String"),
+            @ApiImplicitParam(paramType = "query",name = "zdzwmc", value = "字典中文名称", required = false, dataType = "String"),
+            @ApiImplicitParam(paramType = "query",name = "zdywmc", value = "字典英文名称[字典代码]", required = false, dataType = "String")
+    })
+    public ApiResult<Object> updateDict(@RequestParam Integer id,
+                                        @RequestParam(required = false) String zxbz,
+                                        @RequestParam (required = false)String zdzwmc,
+                                        @RequestParam(required = false) String zdywmc) {
+        //判断对象是否存在  ，其次才去更新
+        if (id == 0) {
+            return ApiResult.FAILURE("主键不能为空！！");
+        }
+        if (!(StringUtil.isNull(zxbz) || zxbz.equals("0") || zxbz.equals("1"))) {
+            return ApiResult.FAILURE("注销标志格式不对：注销标志 [0 :未注销/1:注销],不填写，后台自动获取当前数据库的值");
+        }
+        DictionaryEntity entity1 = idictionaryService.findById(id);
+        if (!(entity1 == null)) {
+            DictionaryEntity entity = new DictionaryEntity();
+            entity.setId(id);
+            if (StringUtil.isNull(zdzwmc)) {
+                entity.setZdzwmc(entity1.getZdzwmc());
+            } else {
+                entity.setZdzwmc(zdzwmc);
+            }
+            if (StringUtil.isNull(zdywmc)) {
+                entity.setZdywmc(entity1.getZdywmc());
+            } else {
+                entity.setZdywmc(zdywmc);
+            }
+            if (StringUtil.isNull(zxbz)) {
+                entity.setZxbz(entity1.getZxbz());
+            } else {
+                entity.setZxbz(zxbz);
+            }
+
+
+            int cn = idictionaryService.update(entity);
+            if (cn == 1) {
 
                 return ApiResult.SUCCESS("更新成功");
-            }else{
-                return  ApiResult.FAILURE("更新失败");
+            } else {
+                return ApiResult.FAILURE("更新失败");
             }
-        }else{
+        } else {
 
-           return  ApiResult.FAILURE("更新失败，没有找到要更新的记录");
-       }
-
-      }
-
-
-    @ApiOperation("根据id 注销字典，数据还保留在数据库中")
-    @RequestMapping(value = "/cancellationDictById",method = RequestMethod.POST)
-    @ApiImplicitParam(paramType="query", name = "id", value = "ID", required = true, dataType = "Integer")
-    public  ApiResult<Object>  cancellationDictById( @RequestParam  Integer id){
-        if(id==0 ){
-            return  ApiResult.FAILURE("主键不能为空！！");
-        }
-
-        int cn=idictionaryService.cancellationById(id);
-
-        if(cn==1){
-                return ApiResult.SUCCESS("注销成功");
-        }else{
-            return  ApiResult.FAILURE("注销失败，可能已经注销了");
+            return ApiResult.FAILURE("更新失败，没有找到要更新的记录");
         }
 
     }
 
 
-      //前期开发使用，上线时需要注销掉这个方法
-     @ApiOperation("根据id删除字典，数据不保留")
-     @RequestMapping(value = "/deleteDictById" ,method = RequestMethod.POST)
-    public  ApiResult<Object>  deleteDictById(@RequestParam @ApiParam(required = true,value = "ID") Integer id) {
+    @ApiOperation("根据id 注销字典")
+    @RequestMapping(value = "/cancellationDictById", method = RequestMethod.POST)
+    @ApiImplicitParam(paramType = "query", name = "id", value = "ID", required = true, dataType = "Integer")
+    public ApiResult<Object> cancellationDictById(@RequestParam Integer id) {
+        if (id == 0) {
+            return ApiResult.FAILURE("主键不能为空！！");
+        }
+
+        int cn = idictionaryService.cancellationById(id);
+
+        if (cn == 1) {
+            return ApiResult.SUCCESS("注销成功");
+        } else {
+            return ApiResult.FAILURE("注销失败，可能已经被注销了");
+        }
+
+    }
+
+    @ApiOperation("根据id 激活已注销字典")
+    @RequestMapping(value = "/unCancellationDictById", method = RequestMethod.POST)
+    @ApiImplicitParam(paramType = "query", name = "id", value = "ID", required = true, dataType = "Integer")
+    public ApiResult<Object>  unCancellationDictById(@RequestParam Integer id){
+        if (id == 0) {
+            return ApiResult.FAILURE("主键不能为空！！");
+        }
+
+        int cn = idictionaryService.unCancellationById(id);
+
+        if (cn == 1) {
+            return ApiResult.SUCCESS("激活成功");
+        } else {
+            return ApiResult.FAILURE("激活失败，可能已经被激活了");
+        }
+    }
+
+
+    //前期开发使用，上线时需要注销掉这个方法
+    @ApiOperation("根据id删除字典包括对应的字典项信息，数据不保留")
+    @RequestMapping(value = "/deleteDictById", method = RequestMethod.POST)
+    public ApiResult<Object> deleteDictById(@RequestParam @ApiParam(required = true, value = "ID") Integer id) {
 
         if (id == 0) {
             return ApiResult.FAILURE("主键不能为空！！");
         }
+            idictionaryListService.deleteByDid(id);//级联删除字典项的信息，方式由于外键关联原因，无法成功删除
         int con = idictionaryService.deleteById(id);
         if (con == 1) {
-                return ApiResult.SUCCESS("删除字典成功");
-        }  else {
+            return ApiResult.SUCCESS("删除字典成功");
+        } else {
             return ApiResult.FAILURE("删除失败，可能对应的字典已经被删除了");
         }
     }
-
-
-
-
-
 
 
 }

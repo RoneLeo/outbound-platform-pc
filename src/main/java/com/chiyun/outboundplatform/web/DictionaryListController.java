@@ -1,8 +1,8 @@
 package com.chiyun.outboundplatform.web;
 
 import com.chiyun.outboundplatform.common.ApiResult;
-import com.chiyun.outboundplatform.entity.DictionaryEntity;
-import com.chiyun.outboundplatform.entity.DictionaryListEntity;
+
+import com.chiyun.outboundplatform.entity.DictionarylistEntity;
 import com.chiyun.outboundplatform.service.IdictionaryListService;
 import com.chiyun.outboundplatform.service.IdictionaryService;
 import com.chiyun.outboundplatform.utils.StringUtil;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Linqi on 2019-03-15.
@@ -35,9 +36,10 @@ public class DictionaryListController {
 
     @ApiOperation("查询所有字典项信息")
     @RequestMapping(value = "/findDictListAll",method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResult<Object> findDictListAll(){
+    @ApiImplicitParam(paramType = "query", name = "state", value = "字典项状态 [0 :未注销/1:注销],不填写后台默认查全部", required = false, dataType = "String")
+    public ApiResult<Object> findDictListAll(String state){
 
-            List<DictionaryListEntity> list = idictionaryListService.findAll();
+            List<DictionarylistEntity> list = idictionaryListService.findAll(state);
             return ApiResult.SUCCESS(list);
 
     }
@@ -46,21 +48,20 @@ public class DictionaryListController {
 
     @ApiOperation("新增一个字典项")
     @RequestMapping(value ="/addDictList" ,method = RequestMethod.POST)
-    @ApiImplicitParam( name = "entity", value = "字典项对象", required = true, dataType = "DictionaryListEntity")
-    public ApiResult<Object> addDictList(@RequestBody DictionaryListEntity entity){
+    @ApiImplicitParam( name = "entity", value = "字典项对象", required = true, dataType = "DictionarylistEntity")
+    public ApiResult<Object> addDictList(@RequestBody DictionarylistEntity entity){
 
-        String msg= pramesvalud(entity);
-          if(msg.equals("ok")){
-              entity= EntityisHebing(entity);
-              entity.setZxbz("0"); //默认值为“0”，标志未注销
-              DictionaryListEntity entity1=idictionaryListService.save(entity);
-              if(entity1==null){
+        Map<String,Object> msg=idictionaryListService.save(entity);
+       //   if(msg.equals("ok")){
+
+
+      //        if(==null){
                   return  ApiResult.FAILURE("添加失败");
-              }
-              return ApiResult.SUCCESS("添加成功");
-          }else{
-              return  ApiResult.FAILURE(msg);
-          }
+     //         }
+   //           return ApiResult.SUCCESS("添加成功");
+    //      }else{
+   //           return  ApiResult.FAILURE(msg);
+   //       }
 
 
 
@@ -103,59 +104,19 @@ public class DictionaryListController {
 
 
 
-    @ApiOperation("根据[字典英文名和字典项代号]查询字典项的值")
-    @RequestMapping(value="/queryDictListByZdywmAndKey",method = {RequestMethod.GET, RequestMethod.POST})
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType="query", name = "zdywm", value = "字典英文名", required = true, dataType = "String"),
-          @ApiImplicitParam(paramType ="query",name = "key",value = "字典项代码",required = true,dataType = "String")
-    })
-    public  ApiResult<Object> queryDictListByZdywmAndKey(String zdywm, String key){
-        if(StringUtil.isNull(zdywm)){
-            return  ApiResult.FAILURE("(zdywm):字典英文名不能为空!!!");
-        }
-        if(StringUtil.isNull(key)){
-            return  ApiResult.FAILURE("(key):字典项代码不能为空!!!");
-        }
-        String  value= idictionaryListService.querDictListByZdywmAndKey(zdywm,key);
-        if(StringUtil.isNull(value)){
-            return  ApiResult.FAILURE("查询失败，未查询到对应的值");
-        }
-        return  ApiResult.SUCCESS(value);
-    }
 
-
-
-    @ApiOperation("根据[字典中文名和字典项代号]查询字典项的值")
-    @RequestMapping(value = "/queryDictListByZdzwmAndKey",method = {RequestMethod.GET, RequestMethod.POST})
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType="query", name = "zdzwm", value = "字典中文名", required = true, dataType = "String"),
-            @ApiImplicitParam(paramType ="query",name = "key",value = "字典项代码",required = true,dataType = "String")
-    })
-    public  ApiResult<Object> queryDictListByZdzwmAndKey(String zdzwm, String key){
-        if(StringUtil.isNull(zdzwm)){
-            return  ApiResult.FAILURE("(zdywm):字典中文名不能为空!!!");
-        }
-        if(StringUtil.isNull(key)){
-            return  ApiResult.FAILURE("(key):字典项代码不能为空!!!");
-        }
-        String  value= idictionaryListService.querDictListByZdzwmAndKey(zdzwm,key);
-        if(StringUtil.isNull(value)){
-            return  ApiResult.FAILURE("查询失败，未查询到对应的值");
-        }
-        return  ApiResult.SUCCESS(value);
-    }
 
 
 
     @ApiOperation("更新一个字典项")
     @RequestMapping(value = "/updateDictList",method = RequestMethod.POST)
-    @ApiImplicitParam( name = "entity", value = "字典项对象", required = true, dataType = "DictionaryListEntity")
-    public ApiResult<Object> updateDictList (@RequestBody DictionaryListEntity entity){
+    @ApiImplicitParam( name = "entity", value = "字典项对象", required = true, dataType = "DictionarylistEntity")
+    public ApiResult<Object> updateDictList (@RequestBody DictionarylistEntity entity){
 
            if(entity.getId()==0){
                return  ApiResult.FAILURE("主键不能为空");
            }
-        entity= DicListEntuty(entity) ;  //信息补全
+       // entity= DicListEntuty(entity) ;  //信息补全
         int  cn=idictionaryListService.updateOne(entity);
         if(cn==1){
             return ApiResult.SUCCESS("更新成功");
@@ -223,7 +184,7 @@ public class DictionaryListController {
             return   ApiResult.FAILURE("did 外键不能为空");
         }
 
-            DictionaryListEntity entity = idictionaryListService.findById(id);
+            DictionarylistEntity entity = idictionaryListService.findById(id);
         if(entity==null){
             return  ApiResult.FAILURE("未查询到该字典项！");
         }
@@ -239,11 +200,11 @@ public class DictionaryListController {
     @ApiOperation("根据[字典名表主键]查询关联的多个字典项")
     @RequestMapping(value = "/findDictListByDid",method = RequestMethod.POST)
     @ApiImplicitParam(paramType="query", name = "did", value = "外键", required = true, dataType = "Integer")
-    public  ApiResult<Object>  findDictListByDid(Integer did){
+    public  ApiResult<Object>  findDictListByDid(Integer did,String state){
         if(did==0){
             return   ApiResult.FAILURE("did 外键不能为空");
         }
-        List<DictionaryListEntity> entitys = idictionaryListService.findBydid(did);
+        List<DictionarylistEntity> entitys = idictionaryListService.findBydid(did);
         if(entitys==null||entitys.size()==0){
             return  ApiResult.FAILURE("未查询到该字典项！");
         }
@@ -259,7 +220,7 @@ public class DictionaryListController {
         if(StringUtil.isNull(zdzwm)){
             return  ApiResult.FAILURE("字典中文名不能为空！！");
         }
-         List<DictionaryListEntity>  entitys=idictionaryListService.findByZdzwm(zdzwm);
+         List<DictionarylistEntity>  entitys=idictionaryListService.findByZdzwm(zdzwm);
          if(entitys==null||entitys.size()==0){
              return  ApiResult.FAILURE("未查询到该字典项！");
          }
@@ -275,7 +236,7 @@ public class DictionaryListController {
         if(StringUtil.isNull(zdywm)){
             return  ApiResult.FAILURE("字典中文名不能为空！！");
         }
-        List<DictionaryListEntity>  entitys=idictionaryListService.findByZdywm(zdywm);
+        List<DictionarylistEntity>  entitys=idictionaryListService.findByZdywm(zdywm);
         if(entitys==null||entitys.size()==0){
             return  ApiResult.FAILURE("未查询到该字典项！");
         }
@@ -284,48 +245,9 @@ public class DictionaryListController {
 
 
 
-    //不能通过其他地方获取到的不为空的字段校验
-    private  String   pramesvalud(DictionaryListEntity entity){
-          String str=null;
-          if( entity.getDid()==null||entity.getDid()==0){
-              str=" 关联字典名表主键(did) 不能为空!!";
-          }else if(StringUtil.isNull(entity.getC_id())){
-              str="字典项词条代码（C_id）不能为空!!";
-          }else if(StringUtil.isNull(entity.getC_name())){
-              str="字典项词条值（C_name）不能为空！！";
-          } else {
-              str="ok";
-          }
-        return  str;
 
-    }
 
-    // 避免某些属性为空，导致sql报错   新增的时候用到
-    private DictionaryListEntity EntityisHebing(DictionaryListEntity fromEn){
 
-        if(!StringUtil.isNull(fromEn.getZdzwm())&&!StringUtil.isNull(fromEn.getZdywm())){
-            return  fromEn;
-        }else {
-            DictionaryEntity queEn= idictionaryService.findById(fromEn.getDid());
-            if (StringUtil.isNull(fromEn.getZdzwm())) {
-                fromEn.setZdzwm(queEn.getName());
-            } else if (StringUtil.isNull(fromEn.getZdywm())) {
-                fromEn.setZdywm(queEn.getEng_name());
-            }
-            return  fromEn;
-        }
-    }
-        //更新的时候用到 单个
-        private    DictionaryListEntity DicListEntuty(DictionaryListEntity fromEn) {
-            DictionaryListEntity  queEn=idictionaryListService.findById(fromEn.getId());
-             if(StringUtil.isNull(fromEn.getZdzwm())){ fromEn.setZdzwm(queEn.getZdzwm()); }
-             if(StringUtil.isNull(fromEn.getZdywm())){fromEn.setZdywm(queEn.getZdywm());}
-             if(StringUtil.isNull(fromEn.getC_id())){fromEn.setC_id(queEn.getC_id());}
-             if(StringUtil.isNull(fromEn.getC_name())){fromEn.setC_name(queEn.getC_name());}
-             if(StringUtil.isNull(fromEn.getZxbz())){fromEn.setZxbz(queEn.getZxbz());}
-             if(fromEn.getDid()==0){fromEn.setDid(queEn.getDid());}
-            return  fromEn;
-        }
 
 
 }

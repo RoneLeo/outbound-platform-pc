@@ -67,7 +67,7 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
     public Map<String,Object> save(DictionarylistEntity entity) {
         Map<String,Object> msg=new HashMap<String,Object>();
         //查询是否已存在
-            dictionaryListRepository.findByParms(entity.getCtdm(),entity.getCtdz(),entity.getZdid());
+            dictionaryListRepository.findByParms(entity.getCtdm(),entity.getCtz(),entity.getZdid());
 
          dictionaryListRepository.save(entity);
 

@@ -4,6 +4,7 @@ import com.chiyun.outboundplatform.entity.DictionaryEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *   字典服务接口
@@ -24,28 +25,28 @@ public interface IdictionaryService {
      * @param name
      * @return
      */
-     List<DictionaryEntity>  findByName(String name);
+     List<DictionaryEntity>  findDictByNameAndState(String name,String state);
 
     /**
      *  通过 字典英文名查询
      * @param eng_name
      * @return
      */
-    List<DictionaryEntity>  findByEng_Name(String eng_name);
+    List<DictionaryEntity>  findDictByEng_NameAndState(String eng_name ,String state);
     /**
      * 查询所有
      * @return
      */
-     List<DictionaryEntity> findAll();
+     List<DictionaryEntity> findAll(String state);
 
 
 
     /**
-     *  新增
+     *  新增//修改
      * @param entity
      * @return
      */
-      DictionaryEntity save(DictionaryEntity entity);
+      Map<String,Object> save(DictionaryEntity entity);
 
 
 
@@ -59,12 +60,18 @@ public interface IdictionaryService {
      * @param entity
      * @return
      */
-    public int updateOne(DictionaryEntity entity);
+    public int update(DictionaryEntity entity);
 
     /**
      * 注销字典
      * @param id
      * @return
      */
-    public int   zhuXiaoOne(Integer id);
+    public int   cancellationById(Integer id);
+
+    /**
+     * 通过id查询是否已存在
+     * @return
+     */
+    Boolean existsById(Integer id);
 }

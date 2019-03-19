@@ -1,6 +1,8 @@
 package com.chiyun.outboundplatform.entity;
 
 
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.*;
 
 
@@ -11,27 +13,23 @@ import javax.persistence.*;
 @Entity
 @Table(name = "dictionary", schema = "ajjcxx", catalog = "")
 public class DictionaryEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+
+
     private Integer id;
 
-    @Basic
-    @Column(name = "name")
-    private String name;
+    @ApiModelProperty(value = "字典中文名称")
+    private String zdzwmc;
 
-    @Basic
-    @Column(name = "eng_name")
-    private String eng_name;
+    @ApiModelProperty(value = "字典英文名称")
+    private String zdywmc;
 
-    @Basic
-    @Column(name = "type")
-    private String type;
+    @ApiModelProperty(value = "状态")
+    private String zt;
 
-    @Basic
-    @Column(name = "zxbz")
-    private String zxbz;
 
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer getId() {
         return id;
     }
@@ -41,38 +39,40 @@ public class DictionaryEntity {
     }
 
 
-    public String getName() {
-        return name;
+
+    @Basic
+    @Column(name = "name")
+    public String getZdzwmc() {
+        return zdzwmc;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setZdzwmc(String zdzwmc) {
+        this.zdzwmc= zdzwmc;
     }
 
-    public String getEng_name() {
-        return eng_name;
+
+
+    @Basic
+    @Column(name = "eng_name")
+    public String getZdywmc() {
+        return zdywmc;
     }
 
-    public void setEng_name(String eng_name) {
-        this.eng_name = eng_name;
+    public void setZdywmc(String zdywmc) {
+        this.zdywmc= zdywmc;
     }
 
-    public String getType() {
-        return type;
+
+
+    @Basic
+    @Column(name = "state")
+    public String getZt() {
+        return zt;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setZt(String zt) {
+        this.zt = zt;
     }
-
-    public String getZxbz() {
-        return zxbz;
-    }
-
-    public void setZxbz(String zxbz) {
-        this.zxbz = zxbz;
-    }
-
 
     @Override
     public boolean equals(Object o) {
@@ -82,30 +82,17 @@ public class DictionaryEntity {
         DictionaryEntity that = (DictionaryEntity) o;
 
         if (!id.equals(that.id)) return false;
-        if (!name.equals(that.name)) return false;
-        if (!eng_name.equals(that.eng_name)) return false;
-        if (!type.equals(that.type)) return false;
-        return zxbz.equals(that.zxbz);
+        if (!zdzwmc.equals(that.zdzwmc)) return false;
+        if (!zdywmc.equals(that.zdywmc)) return false;
+        return zt.equals(that.zt);
     }
 
     @Override
     public int hashCode() {
         int result = id.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + eng_name.hashCode();
-        result = 31 * result + type.hashCode();
-        result = 31 * result + zxbz.hashCode();
+        result = 31 * result + zdzwmc.hashCode();
+        result = 31 * result + zdywmc.hashCode();
+        result = 31 * result + zt.hashCode();
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "DictionaryEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", eng_name='" + eng_name + '\'' +
-                ", type='" + type + '\'' +
-                ", zxbz='" + zxbz + '\'' +
-                '}';
     }
 }

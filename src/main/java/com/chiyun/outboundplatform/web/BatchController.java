@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 @Api(description = "批次管理")
@@ -77,7 +79,7 @@ public class BatchController {
 
     @ApiOperation("导出模板")
     @RequestMapping("/exportExcel")
-    public ApiResult<Object> exportExcel(String pcid) {
+    public ApiResult<Object> exportExcel(String pcid, HttpServletResponse response) throws IOException {
         if (StringUtil.isNull(pcid)) {
             return ApiResult.FAILURE("批次id不能为空");
         }
@@ -87,30 +89,37 @@ public class BatchController {
         // 新建数组,保存第二列所有字段名称
         String title[] = new String[list.size() + mrlist.size()];
         int j = 0;
-        for (int i = 0; i < mrlist.size(); i++) {
-            title[i] = mrlist.get(i);
-            j++;
-        }
+//        for (int i = 0; i < mrlist.size(); i++) {
+//            title[i] = mrlist.get(i);
+//            j++;
+//        }
         for (int i = 0; i < list.size(); i++) {
             title[i + j] = list.get(i).getZdzwmc();
 
         }
         // 查询所有类型名称、个数
-        List<Map<String, Object>> firstList = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
-        List<Integer> jczdids = batchRepository.findAllJczdidsByPcid(pcid);
-        for (int i = 0; i < jczdids.size(); i++) {
-            // 查询字段类型
-            int jcxxlx = fieldCaseBaseRepository.findById(jczdids.get(i)).getJcxxlx();
-            map.put("name", basetypeRepository.findNameByType(jcxxlx));
-            map.put("num", fieldCaseBaseRepository.countFieldcasebaseEntitiesByJcxxlx(jcxxlx));
-            firstList.add(map);
-        }
+        List<Map<String, Object>> firstList = batchRepository.findAllByPcid(pcid);
+//        List<Integer> jczdids = batchRepository.findAllJczdidsByPcid(pcid);
+//        for (int i = 0; i < jczdids.size(); i++) {
+//            // 查询字段类型
+//            Map<String, Object> map = new HashMap<>();
+//            int jcxxlx = fieldCaseBaseRepository.findById(jczdids.get(i)).getJcxxlx();
+//            map.put("name", basetypeRepository.findNameByType(jcxxlx));
+//            map.put("num", fieldCaseBaseRepository.countFieldcasebaseEntitiesByJcxxlx(jcxxlx));
+//            firstList.add(map);
+//        }
         // 获取默认字段个数
         int num = fieldCaseBaseRepository.countFieldcasebaseEntitiesByJcxxlx(0);
         String sheetname = "sheet1";
         HSSFWorkbook workbook = ExcelUtil.getHSSFWorkbook(sheetname, title, firstList, num, null);
-        return ApiResult.SUCCESS(workbook);
+        String fileName = sheetname + ".xls";
+        response.addHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("UTF-8"), "ISO8859-1"));
+        response.setContentType("application/vnd.ms-excel");
+        OutputStream toClient = response.getOutputStream();
+        workbook.write(toClient);
+        toClient.flush();
+        toClient.close();
+        return ApiResult.SUCCESS();
     }
 
     @ApiOperation("导入模板")

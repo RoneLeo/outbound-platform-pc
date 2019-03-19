@@ -1,8 +1,9 @@
 package com.chiyun.outboundplatform.service;
 
-import com.chiyun.outboundplatform.entity.DictionaryListEntity;
+import com.chiyun.outboundplatform.entity.DictionarylistEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Linqi on 2019-03-14.
@@ -13,13 +14,13 @@ public interface IdictionaryListService {
      * @param id
      * @return
      */
-     DictionaryListEntity findById(Integer id);
+     DictionarylistEntity findById(Integer id);
 
     /**
      * 查询所有
      * @return
      */
-     List<DictionaryListEntity> findAll();
+     List<DictionarylistEntity> findAll(String state);
 
 
 
@@ -28,7 +29,7 @@ public interface IdictionaryListService {
      * @param entity
      * @return
      */
-      DictionaryListEntity save(DictionaryListEntity entity);
+      Map<String,Object> save(DictionarylistEntity entity);
     /**
      *  通过id删除
      */
@@ -64,7 +65,7 @@ public interface IdictionaryListService {
      * @param entity
      * @return
      */
-     int updateOne(DictionaryListEntity entity);
+     int updateOne(DictionarylistEntity entity);
 
     /**
      *  通过外键批量注销字典项
@@ -77,10 +78,10 @@ public interface IdictionaryListService {
 
     int updateZdywmAndZdzwnAndDid(String zdywm,String zdzwm ,Integer Ndid,Integer Odid);
 
-    List<DictionaryListEntity> findBydid(Integer did);
+    List<DictionarylistEntity> findBydid(Integer did);
 
-    List<DictionaryListEntity>  findByZdzwm(String zdzwm);
+    List<DictionarylistEntity>  findByZdzwm(String zdzwm);
 
-    List<DictionaryListEntity>  findByZdywm(String zdywm);
+    List<DictionarylistEntity>  findByZdywm(String zdywm);
 
 }

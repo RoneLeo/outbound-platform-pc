@@ -49,11 +49,9 @@ public class ExcelUtil {
         for (int i = 0; i < list.size(); i++) {
             Map<String, Object> map = list.get(i);
             cell = row.createCell(flag);
-            for (String key : map.keySet()) {
-                cell.setCellValue(key);
-                cell.setCellStyle(style);
-                flag += Integer.parseInt(map.get(key).toString());
-            }
+            cell.setCellValue(map.get("name").toString());
+            cell.setCellStyle(style);
+            flag += Integer.parseInt(map.get("num").toString());
             // 合并大字段
             sheet.addMergedRegion(new CellRangeAddress(0, (short) num, 0, (short) flag));
         }

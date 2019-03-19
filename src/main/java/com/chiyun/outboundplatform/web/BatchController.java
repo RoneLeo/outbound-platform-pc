@@ -23,10 +23,7 @@ import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Api(description = "批次管理")
 @RestController
@@ -42,15 +39,17 @@ public class BatchController {
 
     @ApiOperation("添加")
     @RequestMapping("/add")
-    public ApiResult<Object> add(List<Integer> zdids) {
+    public ApiResult<Object> add(String zdids) {
         long now = System.currentTimeMillis();
         // 循环字段ids，查询选取保存
-        if (zdids.size() < 1) {
+        String[] str = zdids.split(",");
+        List<String> zdidslist = Arrays.asList(str);
+        if (zdidslist.size() < 1) {
             return ApiResult.FAILURE("所选为空，添加失败");
         }
-        for (int i = 0; i < zdids.size(); i++) {
+        for (int i = 0; i < zdidslist.size(); i++) {
             //查询字段
-            FieldcasebaseEntity fieldcasebaseEntity = fieldCaseBaseRepository.findById(zdids.get(i));
+            FieldcasebaseEntity fieldcasebaseEntity = fieldCaseBaseRepository.findById(Integer.valueOf(zdidslist.get(i)));
             if (fieldcasebaseEntity == null) {
                 return ApiResult.FAILURE("该字段不存在");
             }
@@ -58,6 +57,7 @@ public class BatchController {
             BatchEntity entity = new BatchEntity();
             entity.setZdzwmc(fieldcasebaseEntity.getZdzwmc());
             entity.setZdywmc(fieldcasebaseEntity.getZdywmc());
+            entity.setJczdid(String.valueOf(fieldcasebaseEntity.getId()));
             entity.setSort(i + 1);
             entity.setPcid(String.valueOf(now));
             BatchEntity entity1 = batchRepository.save(entity);
@@ -86,11 +86,14 @@ public class BatchController {
         List<BatchEntity> list = batchRepository.findAllByPcidOrderBySort(pcid);
         // 新建数组,保存第二列所有字段名称
         String title[] = new String[list.size() + mrlist.size()];
+        int j = 0;
         for (int i = 0; i < mrlist.size(); i++) {
             title[i] = mrlist.get(i);
+            j++;
         }
         for (int i = 0; i < list.size(); i++) {
-            title[i] = list.get(i).getZdzwmc();
+            title[i + j] = list.get(i).getZdzwmc();
+
         }
         // 查询所有类型名称、个数
         List<Map<String, Object>> firstList = new ArrayList<>();
@@ -141,9 +144,6 @@ public class BatchController {
 
         return ApiResult.SUCCESS();
     }
-
-
-
 
 
 }

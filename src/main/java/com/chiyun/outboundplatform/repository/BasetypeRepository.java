@@ -17,7 +17,7 @@ public interface BasetypeRepository extends CrudRepository<BasetypeEntity, Long>
     /**
      *  通过类型查询名称
      */
-    @Query(value = "select name from batchtype where type = ?1", nativeQuery = true)
+    @Query(value = "select name from basetype where type = ?1", nativeQuery = true)
     String findNameByType(Integer type);
 
     /**

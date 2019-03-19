@@ -1,14 +1,15 @@
 package com.chiyun.outboundplatform.service.impl;
 
-import com.chiyun.outboundplatform.entity.DictionaryEntity;
-import com.chiyun.outboundplatform.entity.DictionaryListEntity;
+import com.chiyun.outboundplatform.entity.DictionarylistEntity;
 import com.chiyun.outboundplatform.repository.DictionaryListRepository;
 import com.chiyun.outboundplatform.service.IdictionaryListService;
 import com.chiyun.outboundplatform.utils.StringUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Linqi on 2019-03-14.
@@ -21,45 +22,56 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
 
     /*****************************************查询操作*********************************************************/
     @Override
-    public DictionaryListEntity findById(Integer id) {
+    public DictionarylistEntity findById(Integer id) {
         return dictionaryListRepository.findById(id);
     }
 
     @Override
-    public List<DictionaryListEntity> findAll() {
-        return dictionaryListRepository.findAll();
+    public List<DictionarylistEntity> findAll(String state) {
+         if(StringUtil.isNull(state)){
+             return dictionaryListRepository.findAll();
+         }else{
+             return  dictionaryListRepository.findAllByState(state);
+         }
+
     }
 
 
     /**
-     * 通过 字典英文名和字典项代号 查询字典项的值
+     * 通过 字典英文名和字典项词条代码 查询字典项词条值
      *
      * @param zdywm
-     * @param key
+     * @param ctdm
      * @return
      */
     @Override
-    public String querDictListByZdywmAndKey(String zdywm, String key) {
-        return dictionaryListRepository.querDictListByZdywmAndKey(zdywm, key);
+    public String querDictListByZdywmAndKey(String zdywm, String ctdm) {
+        return dictionaryListRepository.querDictListByZdywmAndKey(zdywm, ctdm);
     }
 
     /**
-     * 通过 字典中文名和字典项代号 查询字典项的值
+     * 通过 字典中文名和字典项词条代码 查询字典项词条值
      *
      * @param zdzwm
-     * @param key
+     * @param ctdm
      * @return
      */
     @Override
-    public String querDictListByZdzwmAndKey(String zdzwm, String key) {
-        return dictionaryListRepository.querDictListByZdzwmAndKey(zdzwm, key);
+    public String querDictListByZdzwmAndKey(String zdzwm, String ctdm) {
+        return dictionaryListRepository.querDictListByZdzwmAndKey(zdzwm, ctdm);
     }
 
     /*****************************************新增操作*********************************************************/
 
     @Override
-    public DictionaryListEntity save(DictionaryListEntity entity) {
-        return dictionaryListRepository.save(entity);
+    public Map<String,Object> save(DictionarylistEntity entity) {
+        Map<String,Object> msg=new HashMap<String,Object>();
+        //查询是否已存在
+            dictionaryListRepository.findByParms(entity.getCtdm(),entity.getCtdz(),entity.getZdid());
+
+         dictionaryListRepository.save(entity);
+
+         return msg;
     }
 
 
@@ -78,19 +90,19 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
     /*****************************************更新操作*********************************************************/
 
     @Override
-    public int updateOne(DictionaryListEntity entity) {
-        return  dictionaryListRepository.updateOne(entity.getZdywm(),entity.getZdzwm(),entity.getC_id(),entity.getC_name(),entity.getDid(),entity.getId());
-
+    public int updateOne(DictionarylistEntity entity) {
+        int cn=0;
+        return  cn;
     }
 
     @Override
     public int zhuXiaoByDid(Integer did) {
-        return dictionaryListRepository.zhuXiaoByDid(did);
+        return dictionaryListRepository.cancellationByDid(did);
     }
 
     @Override
     public int zhuXiaoOne(Integer id) {
-        return dictionaryListRepository.zhuXiaoOne(id);
+        return dictionaryListRepository.cancellationById(id);
     }
 
     @Override
@@ -99,17 +111,17 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
     }
 
     @Override
-    public List<DictionaryListEntity> findBydid(Integer did) {
+    public List<DictionarylistEntity> findBydid(Integer did) {
         return dictionaryListRepository.findBydid(did);
     }
 
     @Override
-    public List<DictionaryListEntity> findByZdzwm(String zdzwm) {
+    public List<DictionarylistEntity> findByZdzwm(String zdzwm) {
         return dictionaryListRepository.findByZdzwm(zdzwm);
     }
 
     @Override
-    public List<DictionaryListEntity> findByZdywm(String zdywm) {
+    public List<DictionarylistEntity> findByZdywm(String zdywm) {
         return dictionaryListRepository.findByZdywm(zdywm);
     }
 

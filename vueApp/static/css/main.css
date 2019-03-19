@@ -40,8 +40,15 @@ ul {
     color: #0095FF;
 }
 
+/*公共样式*/
 .clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}
 .text-center{text-align: center}
+.text-left{text-align: left}
+.text-right{text-align: right}
+.left{float:left}
+.right{float:right}
+.red{color:red}
+.green{color:green}
 
 .content-box {
     position: absolute;

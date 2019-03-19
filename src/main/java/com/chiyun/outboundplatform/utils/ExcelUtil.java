@@ -28,6 +28,7 @@ public class ExcelUtil {
         HSSFSheet sheet = wb.createSheet(sheetName);
         // 3、在sheet中添加表头第0行
         HSSFRow row = sheet.createRow(0);
+        sheet.setDefaultColumnWidth(11);
         HSSFRow row1 = sheet.createRow(1);
         // 4、创建单元格
         HSSFCellStyle style = wb.createCellStyle();
@@ -45,23 +46,28 @@ public class ExcelUtil {
             cell.setCellStyle(style);
         }
         // 创建第一列
-        int flag = num;
+        int flag = 0;
         for (int i = 0; i < list.size(); i++) {
             Map<String, Object> map = list.get(i);
-            cell = row.createCell(flag);
-            for (String key : map.keySet()) {
-                cell.setCellValue(key);
+            String mc = map.get("mc").toString(); //类型名称
+            int sl = Integer.valueOf(map.get("sl").toString());//类型个数
+            int lx = Integer.valueOf(map.get("lx").toString());//类型包含字段数
+            for (int j = 0; j < sl; j++) {
+                cell = row.createCell(flag);
+                cell.setCellValue(mc);
                 cell.setCellStyle(style);
-                flag += Integer.parseInt(map.get(key).toString());
+                sheet.addMergedRegion(new CellRangeAddress(0, 0, flag, flag + lx - 1));
+                flag += lx;
+                System.out.print("列--" + mc + "  flag=" + flag + "\n");
             }
+//            flag += Integer.parseInt(map.get("num").toString());
             // 合并大字段
-            sheet.addMergedRegion(new CellRangeAddress(0, (short) num, 0, (short) flag));
         }
-        // 合并单元格
-        // 合并默认字段，上下合并
-        for (int i = 0; i < num; i++) {
-            sheet.addMergedRegion(new CellRangeAddress(0, (short) i, 1, (short) (i + 1)));
-        }
+//        // 合并单元格
+//        // 合并默认字段，上下合并
+//        for (int i = 0; i < num; i++) {
+////            sheet.addMergedRegion(new CellRangeAddress(0, (short) i, 1, (short) (i + 1)));
+//        }
         return wb;
     }
 

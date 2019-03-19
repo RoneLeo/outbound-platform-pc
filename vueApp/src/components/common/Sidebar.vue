@@ -38,7 +38,26 @@
             return {
                 collapse: false,
                 items: [
-
+                    {
+                        icon: 'el-icon-lx-home',
+                        index: 'homePage',
+                        title: '系统首页'
+                    },
+                    {
+                        icon: 'el-icon-lx-copy',
+                        index: 'dictMange',
+                        title: '字典管理',
+                        subs: [
+                            {
+                                index: 'dict',
+                                title: '字典名管理'
+                            },
+                            {
+                                index: 'dictItem',
+                                title: '字典项管理'
+                            }
+                        ]
+                    },
                     {
                         icon: 'el-icon-lx-people',
                         index: 'users',
@@ -49,34 +68,25 @@
                                 title: '系统用户'
                             },
                             {
-                                index: 'users',
-                                title: '区域主管'
-                            },
-                            {
-                                index: 'orderUsers',
-                                title: '业务人员'
+                                index: 'wxUsers',
+                                title: '微信用户'
                             }
                         ]
                     },
                     {
-                        icon: 'el-icon-setting',
-                        index: 'system',
-                        title: '系统设置',
+                        icon: 'el-icon-lx-cascades',
+                        index: 'casesManage',
+                        title: '案件管理',
                         subs: [
                             {
-                                index: 'dict',
-                                title: '字典管理'
+                                index: 'cases',
+                                title: '案件信息'
                             },
                             {
-                                index: 'orderUsers',
-                                title: '规则管理'
+                                index: 'template',
+                                title: '模板管理'
                             }
                         ]
-                    },
-                    {
-                        icon: 'el-icon-lx-home',
-                        index: 'homePage',
-                        title: '系统首页'
                     },
                     {
                         icon: 'el-icon-lx-cascades',

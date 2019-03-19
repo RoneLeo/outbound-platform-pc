@@ -11,7 +11,7 @@ import 'element-ui/lib/theme-chalk/index.css';    // 默认主题
 import '../static/css/icon.css';
 import "babel-polyfill";
 
-console.log(process.env.NODE_ENV)
+axios.defaults.baseURL = 'https://localhost/';
 // if(process.env.NODE_ENV === 'development') {
 //     console.log(111);
 // }

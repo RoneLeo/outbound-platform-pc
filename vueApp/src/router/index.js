@@ -31,13 +31,45 @@ export default new Router({
                     path: '/dict',
                     name: 'dict',
                     component: resolve => require(['../components/page/Dict.vue'], resolve),
-                    meta: { title: '字典管理', keepAlive: true }
+                    meta: { title: '字典名管理', keepAlive: true }
                 },
                 {
-                    path: '/case',
-                    component: resolve => require(['../components/page/Case.vue'], resolve),
-                    meta: { title: '委托案件', keepAlive: true }
+                    path: '/dictItem',
+                    name: 'dictItem',
+                    component: resolve => require(['../components/page/DictItem.vue'], resolve),
+                    meta: { title: '字典项管理', keepAlive: true }
                 },
+                {
+                    path: '/users',
+                    name: 'users',
+                    component: resolve => require(['../components/page/Users.vue'], resolve),
+                    meta: { title: '系统用户管理', keepAlive: true }
+                },
+                {
+                    path: '/wxUsers',
+                    name: 'wxUsers',
+                    component: resolve => require(['../components/page/WxUsers.vue'], resolve),
+                    meta: { title: '系统用户管理', keepAlive: true }
+                },
+                {
+                    path: '/messages',
+                    name: 'messages',
+                    component: resolve => require(['../components/page/Messages.vue'], resolve),
+                    meta: { title: '消息通知', keepAlive: true }
+                },
+                {
+                    path: '/cases',
+                    name: 'cases',
+                    component: resolve => require(['../components/page/Cases.vue'], resolve),
+                    meta: { title: '案件管理'}
+                },
+                {
+                    path: '/template',
+                    name: 'template',
+                    component: resolve => require(['../components/page/Template.vue'], resolve),
+                    meta: { title: '模板管理'}
+                },
+                ///**/
                 {
                     path: '/order',
                     name: 'order',
@@ -50,12 +82,7 @@ export default new Router({
                     component: resolve => require(['../components/page/Orders.vue'], resolve),
                     meta: { title: '派单信息', keepAlive: true }
                 },
-                {
-                    path: '/users',
-                    name: 'users',
-                    component: resolve => require(['../components/page/Users.vue'], resolve),
-                    meta: { title: '用户管理', keepAlive: true }
-                },
+
                 {
                     path: '/files',
                     component: resolve => require(['../components/page/Files.vue'], resolve),
@@ -78,11 +105,6 @@ export default new Router({
                     name: 'productType',
                     component: resolve => require(['../components/page/ProductType.vue'], resolve),
                     meta: { title: '产品类型', keepAlive: true}
-                },
-                {
-                    path: '/news',
-                    component: resolve => require(['../components/page/News.vue'], resolve),
-                    meta: { title: '新闻管理', keepAlive: true }
                 },
                 {
                     path: '/projectCase',

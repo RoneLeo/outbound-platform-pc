@@ -48,14 +48,16 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
     @Query(value = "select * from dictionary where eng_name like  concat('%',?1,'%')  and static=?2", nativeQuery = true)
     List<DictionaryEntity>  findByEng_NameAndState(String zdywmc,String state);
 
-    /**
-     *  查询字典是否已存在 通过三个业务数据
-     * @param zdzwmc
-     * @param zdywmc
-     * @return
-     */
     @Query(value = "select * from dictionary where name =?1  and eng_name=?2 ", nativeQuery = true)
-    List<DictionaryEntity>  findByZdywmAndZdzwmAndState(String zdzwmc,String zdywmc);
+    List<DictionaryEntity>  findDictByZdzwmAndZdywm(String zdzwmc,String zdywmc);
+
+
+    @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  and eng_name  like  concat('%',?2,'%') ", nativeQuery = true)
+    List<DictionaryEntity>  findDictByNameAndEng_Name(String zdzwmc,String zdywmc);
+
+
+    @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  and eng_name like  concat('%',?2,'%')  and state=?3", nativeQuery = true)
+    List<DictionaryEntity> findDictByNameAndEng_NameAndState (String name,String eng_name ,String state);
 
 
     /**
@@ -99,6 +101,11 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
     @Modifying
     @Transactional
      int   cancellationById(Integer id);
+
+    @Query(value = "update dictionary  dic set dic.state='0' where dic.id=?1 and dic.state='1'" , nativeQuery = true)
+    @Modifying
+    @Transactional
+     int   unCancellationById(Integer id);
 
     Boolean existsById(Integer id);
 

@@ -12,6 +12,8 @@ public class OutboundmessageEntity {
     private Integer id;
     @ApiModelProperty(value = "案件id")
     private Integer ajid;
+    @ApiModelProperty(value = "批次id")
+    private String pcid;
     @ApiModelProperty(value = "外访省份")
     private String wfsf;
     @ApiModelProperty(value = "外访城市")
@@ -56,6 +58,16 @@ public class OutboundmessageEntity {
 
     public void setAjid(Integer ajid) {
         this.ajid = ajid;
+    }
+
+    @Basic
+    @Column(name = "batch_id")
+    public String getPcid() {
+        return pcid;
+    }
+
+    public void setPcid(String pcid) {
+        this.pcid = pcid;
     }
 
     @Basic
@@ -181,10 +193,11 @@ public class OutboundmessageEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof OutboundmessageEntity)) return false;
         OutboundmessageEntity that = (OutboundmessageEntity) o;
-        return id == that.id &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(ajid, that.ajid) &&
+                Objects.equals(pcid, that.pcid) &&
                 Objects.equals(wfsf, that.wfsf) &&
                 Objects.equals(wfcs, that.wfcs) &&
                 Objects.equals(wfqx, that.wfqx) &&
@@ -201,6 +214,6 @@ public class OutboundmessageEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, wfsf, wfcs, wfqx, wfy, wfyid, wfyy, wfyq, wfqc, sqrq, yjwfrq, wfbg, wfbz);
+        return Objects.hash(id, ajid, pcid, wfsf, wfcs, wfqx, wfy, wfyid, wfyy, wfyq, wfqc, sqrq, yjwfrq, wfbg, wfbz);
     }
 }

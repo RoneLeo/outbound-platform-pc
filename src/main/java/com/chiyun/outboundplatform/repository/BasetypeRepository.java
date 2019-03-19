@@ -15,6 +15,12 @@ public interface BasetypeRepository extends CrudRepository<BasetypeEntity, Long>
     BasetypeEntity findById(Integer id);
 
     /**
+     *  通过类型查询名称
+     */
+    @Query(value = "select name from batchtype where type = ?1", nativeQuery = true)
+    String findNameByType(Integer type);
+
+    /**
      *  查询所有
      */
     List<BasetypeEntity> findAll();

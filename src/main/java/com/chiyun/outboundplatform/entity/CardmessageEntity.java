@@ -11,8 +11,8 @@ public class CardmessageEntity {
     private Integer id;
     @ApiModelProperty(value = "案件id")
     private Integer ajid;
-    @ApiModelProperty(value = "卡号")
-    private String kh;
+    @ApiModelProperty(value = "批次id")
+    private String pcid;
     @ApiModelProperty(value = "卡号(隐藏后四位)")
     private String khychsw;
     @ApiModelProperty(value = "卡号(隐藏中四位)")
@@ -27,8 +27,6 @@ public class CardmessageEntity {
     private String dah;
     @ApiModelProperty(value = "卡类")
     private String kl;
-    @ApiModelProperty(value = "币种")
-    private String mCat;
 
 
     @Id
@@ -53,13 +51,13 @@ public class CardmessageEntity {
     }
 
     @Basic
-    @Column(name = "cardNo")
-    public String getKh() {
-        return kh;
+    @Column(name = "batch_id")
+    public String getPcid() {
+        return pcid;
     }
 
-    public void setKh(String kh) {
-        this.kh = kh;
+    public void setPcid(String pcid) {
+        this.pcid = pcid;
     }
 
     @Basic
@@ -132,36 +130,25 @@ public class CardmessageEntity {
         this.kl = kl;
     }
 
-    @Basic
-    @Column(name = "mCat")
-    public String getmCat() {
-        return mCat;
-    }
-
-    public void setmCat(String mCat) {
-        this.mCat = mCat;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof CardmessageEntity)) return false;
         CardmessageEntity that = (CardmessageEntity) o;
-        return id == that.id &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(ajid, that.ajid) &&
-                Objects.equals(kh, that.kh) &&
+                Objects.equals(pcid, that.pcid) &&
                 Objects.equals(khychsw, that.khychsw) &&
                 Objects.equals(khyczsw, that.khyczsw) &&
                 Objects.equals(khyczlw, that.khyczlw) &&
                 Objects.equals(khhsw, that.khhsw) &&
                 Objects.equals(zh, that.zh) &&
                 Objects.equals(dah, that.dah) &&
-                Objects.equals(kl, that.kl) &&
-                Objects.equals(mCat, that.mCat);
+                Objects.equals(kl, that.kl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, kh, khychsw, khyczsw, khyczlw, khhsw, zh, dah, kl, mCat);
+        return Objects.hash(id, ajid, pcid, khychsw, khyczsw, khyczlw, khhsw, zh, dah, kl);
     }
 }

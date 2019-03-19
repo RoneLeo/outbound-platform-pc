@@ -11,6 +11,8 @@ public class EmpmessageEntity {
     private Integer id;
     @ApiModelProperty(value = "案件id")
     private Integer ajid;
+    @ApiModelProperty(value = "批次id")
+    private String pcid;
     @ApiModelProperty(value = "催收员办公电话")
     private String csybgdh;
     @ApiModelProperty(value = "催收员手机")
@@ -41,6 +43,16 @@ public class EmpmessageEntity {
 
     public void setAjid(Integer ajid) {
         this.ajid = ajid;
+    }
+
+    @Basic
+    @Column(name = "batch_id")
+    public String getPcid() {
+        return pcid;
+    }
+
+    public void setPcid(String pcid) {
+        this.pcid = pcid;
     }
 
     @Basic
@@ -96,10 +108,11 @@ public class EmpmessageEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof EmpmessageEntity)) return false;
         EmpmessageEntity that = (EmpmessageEntity) o;
-        return id == that.id &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(ajid, that.ajid) &&
+                Objects.equals(pcid, that.pcid) &&
                 Objects.equals(csybgdh, that.csybgdh) &&
                 Objects.equals(csysj, that.csysj) &&
                 Objects.equals(csyxm, that.csyxm) &&
@@ -109,6 +122,6 @@ public class EmpmessageEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, csybgdh, csysj, csyxm, csygh, csbm);
+        return Objects.hash(id, ajid, pcid, csybgdh, csysj, csyxm, csygh, csbm);
     }
 }

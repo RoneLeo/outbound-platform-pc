@@ -16,10 +16,20 @@ public interface BatchRepository extends CrudRepository<BatchEntity, Long> {
     BatchEntity findById(Integer id);
 
     /**
-     *  查询所以
+     *  查询所有
      */
     List<BatchEntity> findAll();
 
+    /**
+     *  通过批次id查询
+     */
+    List<BatchEntity> findAllByPcidOrderBySort(String pcid);
+
+    /**
+     *  查询所有的类型
+     */
+    @Query(value = "select fieldcasebase_id from batch where batch_id = ?1", nativeQuery = true)
+    List<Integer> findAllJczdidsByPcid(String pcid);
     /**
      *  保存
      */

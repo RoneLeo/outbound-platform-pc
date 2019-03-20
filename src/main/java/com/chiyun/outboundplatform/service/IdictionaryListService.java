@@ -9,12 +9,7 @@ import java.util.Map;
  * Created by Linqi on 2019-03-14.
  */
 public interface IdictionaryListService {
-    /**
-     * 通过id查询单个
-     * @param id
-     * @return
-     */
-     DictionarylistEntity findById(Integer id);
+
 
 
 
@@ -24,6 +19,8 @@ public interface IdictionaryListService {
      * @return
      */
       Map<String,Object> save(DictionarylistEntity entity);
+
+      /********************************************上线前需要注释掉的代码*******************************************************/
     /**
      *  通过id删除
      */
@@ -37,22 +34,8 @@ public interface IdictionaryListService {
      */
      int deleteByDid(Integer did);
 
+    /***************************************************************************************************/
 
-    /**
-     * 根据字典英文名和字典项代号查询字典项的值
-     * @param zdywm
-     * @param key
-     * @return
-     */
-  //    String querDictListByZdywmAndKey(String zdywm, String key);
-
-    /**
-     * 根据字典中文名和字典项代号查询字典项的值
-     * @param zdzwm
-     * @param key
-     * @return
-     */
-   //   String  querDictListByZdzwmAndKey(String zdzwm, String key);
 
     /**
      *  单个对象信息修改
@@ -61,14 +44,6 @@ public interface IdictionaryListService {
      */
      int updateOne(DictionarylistEntity entity);
 
-    /**
-     *  通过外键批量注销
-     * @param did
-     * @return
-     */
-   //  int cancellationDicListByZdid(Integer did);
-
-   //  int unCancellationDicListByZdid(Integer did);
 
     /**
      * 通过 id注销
@@ -80,12 +55,33 @@ public interface IdictionaryListService {
     int   unCancellationDicListById(Integer id);
 
 
+    List<DictionarylistEntity> findBydid(Integer zdid,String zxbz);
 
-    List<DictionarylistEntity> findBydid(Integer did,String zxbz);
+    List<DictionarylistEntity> findByCtdm(Integer zdid,String ctdm,String zxbz);
 
-    List<DictionarylistEntity> findByCtdm(Integer did,String ctdm,String zxbz);
+    List<DictionarylistEntity> findByCtz(Integer zdid,String ctmc,String zxbz);
 
-    List<DictionarylistEntity> findByCtz(Integer did,String ctz,String zxbz);
+    List<DictionarylistEntity> findByCtdmAndCtz(Integer zdid,String ctdm,String ctmc ,String zxbz);
 
-    List<DictionarylistEntity> findByCtdmAndCtz(Integer did,String ctdm,String ctz ,String zxbz);
+    /*****************************************给其它模块提供的接口***********************************************/
+
+    /**
+     * 通过id查询单个
+     * @param id
+     * @return
+     */
+     DictionarylistEntity findById(Integer id);
+
+    /*
+     * 根据字典中文名和字典项代号查询字典项的值
+     */
+    //   String  querDictListByZdzwmAndKey(String zdzwm, String key);
+
+    /*
+     * 根据字典英文名和字典项代号查询字典项的值
+     *
+     */
+    //    String querDictListByZdywmAndKey(String zdywm, String key);
+
+
 }

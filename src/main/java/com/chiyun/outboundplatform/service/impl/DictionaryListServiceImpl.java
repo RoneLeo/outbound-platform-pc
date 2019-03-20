@@ -47,46 +47,24 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
     }
 
     @Override
-    public List<DictionarylistEntity> findByCtz(Integer did,String ctz, String zxbz) {
+    public List<DictionarylistEntity> findByCtz(Integer did,String ctmc, String zxbz) {
         if(StringUtil.isNull(zxbz)){
-         return  dictionaryListRepository.findByCtz(did, ctz);
+         return  dictionaryListRepository.findByCtz(did, ctmc);
         }else{
-        return  dictionaryListRepository.findByCtzAndZxbz(did, ctz, zxbz);
+        return  dictionaryListRepository.findByCtzAndZxbz(did, ctmc, zxbz);
         }
     }
 
     @Override
-    public List<DictionarylistEntity> findByCtdmAndCtz(Integer did,String ctdm, String ctz, String zxbz) {
+    public List<DictionarylistEntity> findByCtdmAndCtz(Integer did,String ctdm, String ctmc, String zxbz) {
         if (StringUtil.isNull(zxbz)) {
-            return dictionaryListRepository.findByCtdmAndCtz(did, ctdm, ctz);
+            return dictionaryListRepository.findByCtdmAndCtz(did, ctdm, ctmc);
         } else {
-            return dictionaryListRepository.findByCtdmAndCtzAndZxbz(did, ctdm, ctz, zxbz);
+            return dictionaryListRepository.findByCtdmAndCtzAndZxbz(did, ctdm, ctmc, zxbz);
         }
     }
 
-    /**
-     * 通过 字典英文名和字典项词条代码 查询字典项词条值
-     *
-     * @param zdywm
-     * @param ctdm
-     * @return
-     */
- /*   @Override
-    public String querDictListByZdywmAndKey(String zdywm, String ctdm) {
-        return dictionaryListRepository.querDictListByZdywmAndKey(zdywm, ctdm);
-    }*/
 
-    /**
-     * 通过 字典中文名和字典项词条代码 查询字典项词条值
-     *
-     * @param zdzwm
-     * @param ctdm
-     * @return
-     */
-   /* @Override
-    public String querDictListByZdzwmAndKey(String zdzwm, String ctdm) {
-        return dictionaryListRepository.querDictListByZdzwmAndKey(zdzwm, ctdm);
-    }*/
 
 
 
@@ -101,7 +79,7 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
         System.out.println(entity.toString());
         Map<String,Object> msg=new HashMap<String,Object>();
         //查询词条是否已存在
-         int  cn=dictionaryListRepository.findByParms(entity.getCtdm(),entity.getCtz(),entity.getZdid());
+         int  cn=dictionaryListRepository.findByParms(entity.getCtdm(),entity.getCtmc(),entity.getZdid());
    if(cn==0){
        DictionarylistEntity entiy1= dictionaryListRepository.save(entity);
          if(entiy1==null){
@@ -143,15 +121,7 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
 
 
 
-//    @Override
-//    public int cancellationDicListByZdid(Integer did) {
-//        return dictionaryListRepository.cancellationDicListByZdid(did);
-//    }
 
-//    @Override
-//    public int unCancellationDicListByZdid(Integer did) {
-//        return dictionaryListRepository.unCancellationDicListByZdid();
-//    }
 
     @Override
     public int cancellationDicListById(Integer id) {
@@ -163,13 +133,34 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
         return dictionaryListRepository.unCancellationDicListById(id);
     }
 
+/*****************************************给其它模块提供的接口***********************************************/
 
 
 
 
-
-
-
+//    *
+//     * 通过 字典英文名和字典项词条代码 查询字典项词条值
+//     *
+//     * @param zdywm
+//     * @param ctdm
+//     * @return
+//
+//   @Override
+//    public String querDictListByZdywmAndKey(String zdywm, String ctdm) {
+//        return dictionaryListRepository.querDictListByZdywmAndKey(zdywm, ctdm);
+//    }
+//
+//    *
+//     * 通过 字典中文名和字典项词条代码 查询字典项词条值
+//     *
+//     * @param zdzwm
+//     * @param ctdm
+//     * @return
+//
+//    @Override
+//    public String querDictListByZdzwmAndKey(String zdzwm, String ctdm) {
+//        return dictionaryListRepository.querDictListByZdzwmAndKey(zdzwm, ctdm);
+//    }
 
 
 

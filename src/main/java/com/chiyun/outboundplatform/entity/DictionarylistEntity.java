@@ -19,8 +19,8 @@ public class DictionarylistEntity {
     private String zxbz;
     @ApiModelProperty(value = "字典项词条代码")
     private String ctdm;
-    @ApiModelProperty(value = "字典项词条值")
-    private String ctz;
+    @ApiModelProperty(value = "字典项词条名称")
+    private String ctmc;
 
     @Id
     @Column(name = "id")
@@ -85,12 +85,12 @@ public class DictionarylistEntity {
 
     @Basic
     @Column(name = "entryvalue")
-    public String getCtz() {
-        return ctz;
+    public String getCtmc() {
+        return ctmc;
     }
 
-    public void setCtz(String ctz) {
-        this.ctz = ctz;
+    public void setCtmc(String ctmc) {
+        this.ctmc = ctmc;
     }
 
     @Override
@@ -106,7 +106,7 @@ public class DictionarylistEntity {
         if (zdywmc != null ? !zdywmc.equals(that.zdywmc) : that.zdywmc != null) return false;
         if (zxbz != null ? !zxbz.equals(that.zxbz) : that.zxbz != null) return false;
         if (ctdm != null ? !ctdm.equals(that.ctdm) : that.ctdm != null) return false;
-        if (ctz != null ? !ctz.equals(that.ctz) : that.ctz != null) return false;
+        if (ctmc != null ? !ctmc.equals(that.ctmc) : that.ctmc != null) return false;
 
         return true;
     }
@@ -119,7 +119,7 @@ public class DictionarylistEntity {
         result = 31 * result + (zdywmc != null ? zdywmc.hashCode() : 0);
         result = 31 * result + (zxbz != null ? zxbz.hashCode() : 0);
         result = 31 * result + (ctdm != null ? ctdm.hashCode() : 0);
-        result = 31 * result + (ctz != null ? ctz.hashCode() : 0);
+        result = 31 * result + (ctmc != null ? ctmc.hashCode() : 0);
         return result;
     }
 
@@ -132,7 +132,7 @@ public class DictionarylistEntity {
                 ", zdywmc='" + zdywmc + '\'' +
                 ", zxbz='" + zxbz + '\'' +
                 ", ctdm='" + ctdm + '\'' +
-                ", ctz='" + ctz + '\'' +
+                ", ctz='" + ctmc + '\'' +
                 '}';
     }
 }

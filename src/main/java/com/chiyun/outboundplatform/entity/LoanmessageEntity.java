@@ -12,8 +12,12 @@ public class LoanmessageEntity {
     private Integer id;
     @ApiModelProperty(value = "案件id")
     private Integer ajid;
-    @ApiModelProperty(value = "批次id")
-    private String pcid;
+    @ApiModelProperty(value = "委案日期")
+    private Date warq;
+    @ApiModelProperty(value = "贷款日期")
+    private Date dkrq;
+    @ApiModelProperty(value = "委案金额")
+    private Double waje;
     @ApiModelProperty(value = "预计退案日")
     private Date yjtar;
     @ApiModelProperty(value = " 欠款")
@@ -54,13 +58,33 @@ public class LoanmessageEntity {
     }
 
     @Basic
-    @Column(name = "batch_id")
-    public String getPcid() {
-        return pcid;
+    @Column(name = "caseDate")
+    public Date getWarq() {
+        return warq;
     }
 
-    public void setPcid(String pcid) {
-        this.pcid = pcid;
+    public void setWarq(Date warq) {
+        this.warq = warq;
+    }
+
+    @Basic
+    @Column(name = "loanDate")
+    public Date getDkrq() {
+        return dkrq;
+    }
+
+    public void setDkrq(Date dkrq) {
+        this.dkrq = dkrq;
+    }
+
+    @Basic
+    @Column(name = "caseAmt")
+    public Double getWaje() {
+        return waje;
+    }
+
+    public void setWaje(Double waje) {
+        this.waje = waje;
     }
 
     @Basic
@@ -150,7 +174,9 @@ public class LoanmessageEntity {
         LoanmessageEntity that = (LoanmessageEntity) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(ajid, that.ajid) &&
-                Objects.equals(pcid, that.pcid) &&
+                Objects.equals(warq, that.warq) &&
+                Objects.equals(dkrq, that.dkrq) &&
+                Objects.equals(waje, that.waje) &&
                 Objects.equals(yjtar, that.yjtar) &&
                 Objects.equals(qk, that.qk) &&
                 Objects.equals(zxhk, that.zxhk) &&
@@ -163,6 +189,6 @@ public class LoanmessageEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, pcid, yjtar, qk, zxhk, pcp, lx, znj, yhk, zdhk);
+        return Objects.hash(id, ajid, warq, dkrq, waje, yjtar, qk, zxhk, pcp, lx, znj, yhk, zdhk);
     }
 }

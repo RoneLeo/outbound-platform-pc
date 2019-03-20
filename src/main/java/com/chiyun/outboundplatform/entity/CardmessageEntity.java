@@ -11,8 +11,8 @@ public class CardmessageEntity {
     private Integer id;
     @ApiModelProperty(value = "案件id")
     private Integer ajid;
-    @ApiModelProperty(value = "批次id")
-    private String pcid;
+    @ApiModelProperty(value = "卡号")
+    private String kh;
     @ApiModelProperty(value = "卡号(隐藏后四位)")
     private String khychsw;
     @ApiModelProperty(value = "卡号(隐藏中四位)")
@@ -27,6 +27,8 @@ public class CardmessageEntity {
     private String dah;
     @ApiModelProperty(value = "卡类")
     private String kl;
+    @ApiModelProperty(value = "币种")
+    private String bz;
 
 
     @Id
@@ -51,13 +53,13 @@ public class CardmessageEntity {
     }
 
     @Basic
-    @Column(name = "batch_id")
-    public String getPcid() {
-        return pcid;
+    @Column(name = "cardNo")
+    public String getKh() {
+        return kh;
     }
 
-    public void setPcid(String pcid) {
-        this.pcid = pcid;
+    public void setKh(String kh) {
+        this.kh = kh;
     }
 
     @Basic
@@ -121,13 +123,13 @@ public class CardmessageEntity {
     }
 
     @Basic
-    @Column(name = "cardCat")
-    public String getKl() {
-        return kl;
+    @Column(name = "mCat")
+    public String getBz() {
+        return bz;
     }
 
-    public void setKl(String kl) {
-        this.kl = kl;
+    public void setBz(String bz) {
+        this.bz = bz;
     }
 
     @Override
@@ -137,18 +139,19 @@ public class CardmessageEntity {
         CardmessageEntity that = (CardmessageEntity) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(ajid, that.ajid) &&
-                Objects.equals(pcid, that.pcid) &&
+                Objects.equals(kh, that.kh) &&
                 Objects.equals(khychsw, that.khychsw) &&
                 Objects.equals(khyczsw, that.khyczsw) &&
                 Objects.equals(khyczlw, that.khyczlw) &&
                 Objects.equals(khhsw, that.khhsw) &&
                 Objects.equals(zh, that.zh) &&
                 Objects.equals(dah, that.dah) &&
-                Objects.equals(kl, that.kl);
+                Objects.equals(kl, that.kl) &&
+                Objects.equals(bz, that.bz);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, pcid, khychsw, khyczsw, khyczlw, khhsw, zh, dah, kl);
+        return Objects.hash(id, ajid, kh, khychsw, khyczsw, khyczlw, khhsw, zh, dah, kl, bz);
     }
 }

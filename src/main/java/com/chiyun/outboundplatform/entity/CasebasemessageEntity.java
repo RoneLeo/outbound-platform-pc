@@ -68,7 +68,7 @@ public class CasebasemessageEntity {
     @ApiModelProperty(value = "催收员信息")
     private EmpmessageEntity csxx;
     @ApiModelProperty(value = "外访信息")
-    private OutboundmessageEntity wfxx;
+    private List<OutboundmessageEntity> wfxx;
     @ApiModelProperty(value = "其他信息")
     private OthermessageEntity qtxx;
     @ApiModelProperty(value = "备注信息")
@@ -375,13 +375,13 @@ public class CasebasemessageEntity {
         this.csxx = csxx;
     }
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "outboundMsg", unique = true)
-    public OutboundmessageEntity getWfxx() {
+    @OneToMany(cascade={CascadeType.ALL})
+    @JoinColumn(name="casebase_id")
+    public List<OutboundmessageEntity> getWfxx() {
         return wfxx;
     }
 
-    public void setWfxx(OutboundmessageEntity wfxx) {
+    public void setWfxx(List<OutboundmessageEntity> wfxx) {
         this.wfxx = wfxx;
     }
 

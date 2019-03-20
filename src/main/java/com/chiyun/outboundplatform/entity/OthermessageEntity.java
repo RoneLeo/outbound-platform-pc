@@ -12,8 +12,6 @@ public class OthermessageEntity {
     private Integer id;
     @ApiModelProperty(value = "案件id")
     private Integer ajid;
-    @ApiModelProperty(value = "批次id")
-    private String pcid;
     @ApiModelProperty(value = "逾期账龄")
     private String yqzl;
     @ApiModelProperty(value = "还款期限")
@@ -90,15 +88,6 @@ public class OthermessageEntity {
         this.ajid = ajid;
     }
 
-    @Basic
-    @Column(name = "batch_id")
-    public String getPcid() {
-        return pcid;
-    }
-
-    public void setPcid(String pcid) {
-        this.pcid = pcid;
-    }
 
     @Basic
     @Column(name = "aged")
@@ -376,7 +365,6 @@ public class OthermessageEntity {
         OthermessageEntity that = (OthermessageEntity) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(ajid, that.ajid) &&
-                Objects.equals(pcid, that.pcid) &&
                 Objects.equals(yqzl, that.yqzl) &&
                 Objects.equals(hkqx, that.hkqx) &&
                 Objects.equals(xyed, that.xyed) &&
@@ -408,6 +396,6 @@ public class OthermessageEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, pcid, yqzl, hkqx, xyed, xdfl, xdflmc, cslx, cslxmc, tqjb, tqjbmc, bzj, kkr, zhhkr, zhhke, zhxfr, zhtxr, tkr, zdr, rmb, usd, gb, waqs, yqts, sybj, yqqs, yhqs, sp, sh);
+        return Objects.hash(id, ajid, yqzl, hkqx, xyed, xdfl, xdflmc, cslx, cslxmc, tqjb, tqjbmc, bzj, kkr, zhhkr, zhhke, zhxfr, zhtxr, tkr, zdr, rmb, usd, gb, waqs, yqts, sybj, yqqs, yhqs, sp, sh);
     }
 }

@@ -11,8 +11,6 @@ public class UsermessageEntity {
     private Integer id;
     @ApiModelProperty(value = "案件id")
     private Integer ajid;
-    @ApiModelProperty(value = "批次id")
-    private String pcid;
     @ApiModelProperty(value = "对象姓名")
     private String dxxm;
     @ApiModelProperty(value = "对象年龄")
@@ -43,16 +41,6 @@ public class UsermessageEntity {
 
     public void setAjid(Integer ajid) {
         this.ajid = ajid;
-    }
-
-    @Basic
-    @Column(name = "batch_id")
-    public String getPcid() {
-        return pcid;
-    }
-
-    public void setPcid(String pcid) {
-        this.pcid = pcid;
     }
 
     @Basic
@@ -112,7 +100,6 @@ public class UsermessageEntity {
         UsermessageEntity that = (UsermessageEntity) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(ajid, that.ajid) &&
-                Objects.equals(pcid, that.pcid) &&
                 Objects.equals(dxxm, that.dxxm) &&
                 Objects.equals(dxnl, that.dxnl) &&
                 Objects.equals(dxxb, that.dxxb) &&
@@ -122,6 +109,6 @@ public class UsermessageEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, pcid, dxxm, dxnl, dxxb, dxdz, dzlx);
+        return Objects.hash(id, ajid, dxxm, dxnl, dxxb, dxdz, dzlx);
     }
 }

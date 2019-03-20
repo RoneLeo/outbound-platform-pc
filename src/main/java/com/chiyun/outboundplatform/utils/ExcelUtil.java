@@ -1,7 +1,6 @@
 package com.chiyun.outboundplatform.utils;
 
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.Region;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.util.List;
@@ -58,16 +57,8 @@ public class ExcelUtil {
                 cell.setCellStyle(style);
                 sheet.addMergedRegion(new CellRangeAddress(0, 0, flag, flag + lx - 1));
                 flag += lx;
-                System.out.print("列--" + mc + "  flag=" + flag + "\n");
             }
-//            flag += Integer.parseInt(map.get("num").toString());
-            // 合并大字段
         }
-//        // 合并单元格
-//        // 合并默认字段，上下合并
-//        for (int i = 0; i < num; i++) {
-////            sheet.addMergedRegion(new CellRangeAddress(0, (short) i, 1, (short) (i + 1)));
-//        }
         return wb;
     }
 

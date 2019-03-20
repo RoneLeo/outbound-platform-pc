@@ -38,7 +38,7 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
     }
 
     @Override
-    public List<DictionarylistEntity> findByCtdm(Integer did,String ctdm, String zxbz) {
+    public List<DictionarylistEntity> findByCtdm(Integer did,Integer ctdm, String zxbz) {
         if(StringUtil.isNull(zxbz)){
             return  dictionaryListRepository.findByCtdm(did, ctdm);
         }else{
@@ -56,7 +56,7 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
     }
 
     @Override
-    public List<DictionarylistEntity> findByCtdmAndCtz(Integer did,String ctdm, String ctmc, String zxbz) {
+    public List<DictionarylistEntity> findByCtdmAndCtz(Integer did,Integer ctdm, String ctmc, String zxbz) {
         if (StringUtil.isNull(zxbz)) {
             return dictionaryListRepository.findByCtdmAndCtz(did, ctdm, ctmc);
         } else {
@@ -86,6 +86,8 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
              msg.put("fail","词条新增失败");
              return msg;
          }
+            entiy1.setId(entiy1.getCtdm());//ID主键和词条代码保持一致，数据库主键是词条代码
+            int con = updateOne(entiy1); //完善信息后在去存入
            msg.put("success",entiy1);
    }else{
        msg.put("fail","该词条信息已存在，请查看是否已被注销");
@@ -133,7 +135,7 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
         return dictionaryListRepository.unCancellationDicListById(id);
     }
 
-/*****************************************给其它模块提供的接口***********************************************/
+/*****************************************给其它模块提供的接口词条信息查询***********************************************/
 
 
 
@@ -146,19 +148,19 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
 //     * @return
 //
 //   @Override
-//    public String querDictListByZdywmAndKey(String zdywm, String ctdm) {
+//    public String querDictListByZdywmAndKey(String zdywm, Integer ctdm) {
 //        return dictionaryListRepository.querDictListByZdywmAndKey(zdywm, ctdm);
 //    }
 //
-//    *
-//     * 通过 字典中文名和字典项词条代码 查询字典项词条值
+//     *
+//     * 通过 字典名称和字典项词条代码 查询字典项词条值
 //     *
 //     * @param zdzwm
 //     * @param ctdm
 //     * @return
 //
 //    @Override
-//    public String querDictListByZdzwmAndKey(String zdzwm, String ctdm) {
+//    public String querDictListByZdzwmAndKey(String zdzwm, Integer ctdm) {
 //        return dictionaryListRepository.querDictListByZdzwmAndKey(zdzwm, ctdm);
 //    }
 

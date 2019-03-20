@@ -57,31 +57,33 @@ public interface IdictionaryListService {
 
     List<DictionarylistEntity> findBydid(Integer zdid,String zxbz);
 
-    List<DictionarylistEntity> findByCtdm(Integer zdid,String ctdm,String zxbz);
+    List<DictionarylistEntity> findByCtdm(Integer zdid,Integer ctdm,String zxbz);
 
     List<DictionarylistEntity> findByCtz(Integer zdid,String ctmc,String zxbz);
 
-    List<DictionarylistEntity> findByCtdmAndCtz(Integer zdid,String ctdm,String ctmc ,String zxbz);
+    List<DictionarylistEntity> findByCtdmAndCtz(Integer zdid,Integer ctdm,String ctmc ,String zxbz);
 
     /*****************************************给其它模块提供的接口***********************************************/
 
     /**
-     * 通过id查询单个
+     * 通过id查询单个词条
      * @param id
      * @return
      */
      DictionarylistEntity findById(Integer id);
 
     /*
-     * 根据字典中文名和字典项代号查询字典项的值
+     * 根据字典名称和词条代码查询词条名称
      */
     //   String  querDictListByZdzwmAndKey(String zdzwm, String key);
-
     /*
-     * 根据字典英文名和字典项代号查询字典项的值
-     *
+     * 根据字典代码和词条代码查询词条名称
      */
     //    String querDictListByZdywmAndKey(String zdywm, String key);
 
+    /* 根据字典名称和词条代码查询词条名称*/
+    //   String  querDictListByZdywmAndVule(String zdywm, String value);
 
+     /*根据字典代码和词条代码查询词条名称*/
+    //   String  querDictListByZdzwmAndVule(String zdzwm, String value);
 }

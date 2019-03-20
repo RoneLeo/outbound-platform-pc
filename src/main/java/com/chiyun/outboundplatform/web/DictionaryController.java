@@ -112,21 +112,17 @@ public class DictionaryController {
     @RequestMapping(value = "/updateDict", method = RequestMethod.POST)
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query",name = "id", value = "字典ID", required = true, dataType = "Integer"),
-            @ApiImplicitParam(paramType = "query",name = "zxbz", value = "注销标志 [0 :未注销/1:注销],不填写后台自动获取当前数据库的值", required = false, dataType = "String"),
             @ApiImplicitParam(paramType = "query",name = "zdzwmc", value = "字典中文名称", required = false, dataType = "String"),
             @ApiImplicitParam(paramType = "query",name = "zdywmc", value = "字典英文名称[字典代码]", required = false, dataType = "String")
     })
     public ApiResult<Object> updateDict(@RequestParam Integer id,
-                                        @RequestParam(required = false) String zxbz,
                                         @RequestParam (required = false)String zdzwmc,
                                         @RequestParam(required = false) String zdywmc) {
         //判断对象是否存在  ，其次才去更新
         if (id == 0) {
             return ApiResult.FAILURE("主键不能为空！！");
         }
-        if (!(StringUtil.isNull(zxbz) || zxbz.equals("0") || zxbz.equals("1"))) {
-            return ApiResult.FAILURE("注销标志格式不对：注销标志 [0 :未注销/1:注销],不填写，后台自动获取当前数据库的值");
-        }
+
         DictionaryEntity entity1 = idictionaryService.findById(id);
         if (!(entity1 == null)) {
             DictionaryEntity entity = new DictionaryEntity();
@@ -141,11 +137,7 @@ public class DictionaryController {
             } else {
                 entity.setZdywmc(zdywmc);
             }
-            if (StringUtil.isNull(zxbz)) {
-                entity.setZxbz(entity1.getZxbz());
-            } else {
-                entity.setZxbz(zxbz);
-            }
+            entity.setZxbz(entity1.getZxbz());
 
 
             int cn = idictionaryService.update(entity);
@@ -181,10 +173,10 @@ public class DictionaryController {
 
     }
 
-    @ApiOperation("根据id 激活已注销字典")
-    @RequestMapping(value = "/unCancellationDictById", method = RequestMethod.POST)
+    @ApiOperation("根据id 激活字典")
+    @RequestMapping(value = "/activationDictById", method = RequestMethod.POST)
     @ApiImplicitParam(paramType = "query", name = "id", value = "ID", required = true, dataType = "Integer")
-    public ApiResult<Object>  unCancellationDictById(@RequestParam Integer id){
+    public ApiResult<Object>  activationDictById(@RequestParam Integer id){
         if (id == 0) {
             return ApiResult.FAILURE("主键不能为空！！");
         }

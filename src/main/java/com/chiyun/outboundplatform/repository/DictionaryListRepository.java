@@ -18,26 +18,51 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
 
      List<DictionarylistEntity> findAll();
 
-    List<DictionarylistEntity> findAllByState(String state);
 
 
-    @Query(value = "select * from dictionarylist where dictname like  concat('%',?1,'%') ", nativeQuery = true)
-    List<DictionarylistEntity>  findByZdzwm(String zdzwm);
-
-
-    @Query(value = "select * from dictionarylist where zdywm like  concat('%',?1,'%') ", nativeQuery = true)
-    List<DictionarylistEntity>  findByZdywm(String zdywm);
-
-    @Query(value = "select * from dictionarylist where  did=?1", nativeQuery = true)
+    @Query(value = "select * from dictionarylist where  dictid=?1", nativeQuery = true)
     List<DictionarylistEntity> findBydid(Integer did);
-    @Query(value="select count(*) from dictionarylist where =?1 and ",nativeQuery = true)
-    List<DictionarylistEntity>findByParms(String ctdm,String ctz,Integer zdid);
 
-    @Query(value = "select c_name from dictionarylist where zdywm = ?1 and c_id= ?2 ", nativeQuery = true)
-    String querDictListByZdywmAndKey(String zdywm, String key);
 
-    @Query(value = "select c_name from dictionarylist where dictname = ?1 and c_id= ?2 ", nativeQuery = true)
-    String  querDictListByZdzwmAndKey(String zdzwm, String key);
+    @Query(value = "select * from dictionarylist where  dictid=?1 and state=?2", nativeQuery = true)
+    List<DictionarylistEntity> findBydidAndZxbz(Integer did,String zxbz);
+
+
+    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') ", nativeQuery = true)
+    List<DictionarylistEntity>  findByCtdm(Integer did,String ctdm);
+
+    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and state=?3", nativeQuery = true)
+    List<DictionarylistEntity>  findByCtdmAndZxbz(Integer did,String ctdm,String zxbz);
+
+    @Query(value = "select * from dictionarylist where  dictid=?1 and entryvalue like concat('%',?2,'%')", nativeQuery = true)
+    List<DictionarylistEntity>  findByCtz(Integer did,String ctz);
+
+    @Query(value = "select * from dictionarylist where  dictid=?1 and entryvalue like concat('%',?2,'%') and state=?3", nativeQuery = true)
+    List<DictionarylistEntity>  findByCtzAndZxbz(Integer did,String ctz,String zxbz);
+
+    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and entryvalue like concat('%',?3,'%')", nativeQuery = true)
+    List<DictionarylistEntity>  findByCtdmAndCtz(Integer did,String ctdm,String ctz);
+
+    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and entryvalue like concat('%',?3,'%') and state=?4", nativeQuery = true)
+    List<DictionarylistEntity>  findByCtdmAndCtzAndZxbz(Integer did,String ctdm,String ctz ,String zxbz);
+
+ /**
+  *   词条查询是否已存在
+  * @param ctdm
+  * @param ctz
+  * @param zdid
+  * @return
+  */
+ @Query(value="select count(*) from dictionarylist where (entrycode =?1 or entryvalue=?2) and dictid=?3 ",nativeQuery = true)
+    int findByParms(String ctdm,String ctz,Integer zdid);
+
+
+
+//    @Query(value = "select c_name from dictionarylist where dicteng_name = ?1 and entrycode= ?2 ", nativeQuery = true)
+//    String querDictListByZdywmAndKey(String zdywm, String key);
+
+//    @Query(value = "select c_name from dictionarylist where dictname = ?1 and entrycode= ?2 ", nativeQuery = true)
+//    String  querDictListByZdzwmAndKey(String zdzwm, String key);
 
 
 
@@ -59,39 +84,55 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
 
 
 
-    /**
-     *  批量更新 字典项关于字典的信息
-     * @param zdywm
-     * @param zdzwm
-     * @param Ndid
-     * @param Odid
-     * @return
-     */
-    @Query(value = "update  dictionarylist dicList set  dicList.zdywm=?1," +
-                   "dicList.zdzwm=?2,dicList.c_id=?3  " +
-                   "where dicList.did =?4 ", nativeQuery = true)
-    @Modifying
-    @Transactional
-      int updateZdywmAndZdzwnAndDid(String zdywm,String zdzwm ,Integer Ndid,Integer Odid);
+//    /**  预留方法
+//     *  批量更新 字典项关于字典的信息
+//     * @param zdywm
+//     * @param zdzwm
+//     * @param Ndid
+//     * @param Odid
+//     * @return
+//     */
+//    @Query(value = "update  dictionarylist dicList set  dicList.dicteng_name=?1," +
+//                   "dicList.dictname=?2,dicList.dictid=?3  " +
+//                   "where dicList.dictid =?4 ", nativeQuery = true)
+//    @Modifying
+//    @Transactional
+//      int updateZdywmAndZdzwnAndDid(String zdywm,String zdzwm ,Integer Ndid,Integer Odid);
 
-    /**
+    /*
      * 通过外键批量注销字典项
-     * @param did
+     * @param zdid
      * @return
      */
-      @Query(value = "update  dictionarylist  set state='1'  where did =?1 and state='0'", nativeQuery = true)
-      @Modifying
-      @Transactional
-      int  cancellationByDid(Integer did);
+//      @Query(value = "update  dictionarylist  set state='1'  where dictid =?1 and state='0'", nativeQuery = true)
+//      @Modifying
+//      @Transactional
+//      int  cancellationDicListByZdid(Integer zdid);
+//
+
+//    @Query(value = "update  dictionarylist  set state='0'  where dictid =?1 and state='1'", nativeQuery = true)
+//    @Modifying
+//    @Transactional
+//    int unCancellationDicListByZdid(Integer did);
 
     /**
      * 注销单个
      * @param id
      * @return
      */
-    @Query(value = "update dictionarylist   set zxbz='1' where id=?1 and zxbz='0'" , nativeQuery = true)
+    @Query(value = "update dictionarylist   set state='1' where id=?1 and state='0'" , nativeQuery = true)
     @Modifying
     @Transactional
-     int    cancellationById(Integer id);
+     int    cancellationDicListById(Integer id);
+
+    /**
+     * 激活
+     * @param id
+     * @return
+     */
+    @Query(value = "update dictionarylist   set state='0' where id=?1 and state='1'" , nativeQuery = true)
+    @Modifying
+    @Transactional
+    int   unCancellationDicListById(Integer id);
 
 }

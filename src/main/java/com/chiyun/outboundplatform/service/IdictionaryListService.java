@@ -16,12 +16,6 @@ public interface IdictionaryListService {
      */
      DictionarylistEntity findById(Integer id);
 
-    /**
-     * 查询所有
-     * @return
-     */
-     List<DictionarylistEntity> findAll(String state);
-
 
 
     /**
@@ -50,7 +44,7 @@ public interface IdictionaryListService {
      * @param key
      * @return
      */
-      String querDictListByZdywmAndKey(String zdywm, String key);
+  //    String querDictListByZdywmAndKey(String zdywm, String key);
 
     /**
      * 根据字典中文名和字典项代号查询字典项的值
@@ -58,7 +52,7 @@ public interface IdictionaryListService {
      * @param key
      * @return
      */
-      String  querDictListByZdzwmAndKey(String zdzwm, String key);
+   //   String  querDictListByZdzwmAndKey(String zdzwm, String key);
 
     /**
      *  单个对象信息修改
@@ -68,20 +62,30 @@ public interface IdictionaryListService {
      int updateOne(DictionarylistEntity entity);
 
     /**
-     *  通过外键批量注销字典项
+     *  通过外键批量注销
      * @param did
      * @return
      */
-     int zhuXiaoByDid(Integer did);
+   //  int cancellationDicListByZdid(Integer did);
 
-     int   zhuXiaoOne(Integer id);
+   //  int unCancellationDicListByZdid(Integer did);
 
-    int updateZdywmAndZdzwnAndDid(String zdywm,String zdzwm ,Integer Ndid,Integer Odid);
+    /**
+     * 通过 id注销
+     * @param id
+     * @return
+     */
+     int   cancellationDicListById(Integer id);
 
-    List<DictionarylistEntity> findBydid(Integer did);
+    int   unCancellationDicListById(Integer id);
 
-    List<DictionarylistEntity>  findByZdzwm(String zdzwm);
 
-    List<DictionarylistEntity>  findByZdywm(String zdywm);
 
+    List<DictionarylistEntity> findBydid(Integer did,String zxbz);
+
+    List<DictionarylistEntity> findByCtdm(Integer did,String ctdm,String zxbz);
+
+    List<DictionarylistEntity> findByCtz(Integer did,String ctz,String zxbz);
+
+    List<DictionarylistEntity> findByCtdmAndCtz(Integer did,String ctdm,String ctz ,String zxbz);
 }

@@ -25,7 +25,7 @@
     <mapping class="com.chiyun.outboundplatform.entity.RemarkmsgEntity"/>
     <!--字典管理使用到的表-->
     <mapping class="com.chiyun.outboundplatform.entity.DictionaryEntity"/>
-    <mapping class="com.chiyun.outboundplatform.entity.DictionaryListEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.DictionarylistEntity"/>
 
     <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->

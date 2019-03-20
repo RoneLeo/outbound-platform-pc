@@ -95,4 +95,14 @@ public class DictionaryEntity {
         result = 31 * result + zxbz.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "DictionaryEntity{" +
+                "id=" + id +
+                ", zdzwmc='" + zdzwmc + '\'' +
+                ", zdywmc='" + zdywmc + '\'' +
+                ", zxbz='" + zxbz + '\'' +
+                '}';
+    }
 }

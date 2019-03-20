@@ -2,10 +2,10 @@ import Vue from 'vue';
 import App from './App';
 import router from './router';
 import axios from 'axios';
-import dict from './components/common/dict';
 import common from './components/common/commonFn';
 import qs from 'qs';
 import ElementUI from 'element-ui';
+import { Message } from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';    // 默认主题
 // import '../static/css/theme-green/index.css';       // 浅绿色主题
 import '../static/css/icon.css';
@@ -21,7 +21,10 @@ axios.defaults.baseURL = 'https://localhost/';
 axios.interceptors.request.use(
     config => {
         const uuid = localStorage.getItem("uuid"); //获取存储在本地的token
-        // config.data = qs.stringify(config.data);
+        if(config.data){
+            config.data = qs.stringify(config.data); //处理参数格式
+        }
+        //
         // console.log(config.data)
         // config.headers = {
         //     'Content-Type': 'application/x-www-form-urlencoded', //参数格式设置
@@ -42,7 +45,13 @@ axios.interceptors.response.use(
         let status = response.status;
         let statusText = response.statusText;
         if(status == 200){
-            return response.data;
+            var data = response.data;
+            if(data.resCode == -1){
+                Message.error(data.resMsg);
+            }
+            else{
+                return response.data;
+            }
         }else{
             console.log(status + ':' + statusText);
         }
@@ -58,7 +67,6 @@ axios.interceptors.response.use(
 Vue.use(ElementUI, { size: 'small' });
 Vue.prototype.$axios = axios;
 Vue.prototype.$qs = qs;
-Vue.prototype.$dict = dict;
 Vue.prototype.$common = common;
 
 //使用钩子函数对路由进行权限跳转
@@ -79,7 +87,7 @@ router.beforeEach((to, from, next) => {
             next();
         }
     }
-})
+});
 
 new Vue({
     router,

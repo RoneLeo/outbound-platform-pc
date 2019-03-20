@@ -48,7 +48,7 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
     @Query(value = "select * from dictionary where eng_name like  concat('%',?1,'%')  and static=?2", nativeQuery = true)
     List<DictionaryEntity>  findByEng_NameAndState(String zdywmc,String state);
 
-    @Query(value = "select * from dictionary where name =?1  and eng_name=?2 ", nativeQuery = true)
+    @Query(value = "select * from dictionary where name =?1  or eng_name=?2 ", nativeQuery = true)
     List<DictionaryEntity>  findDictByZdzwmAndZdywm(String zdzwmc,String zdywmc);
 
 

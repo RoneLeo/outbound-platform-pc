@@ -19,7 +19,7 @@ import java.util.Map;
  * Created by Linqi on 2019-03-14.
  */
 @Service
-@Transactional
+
 public class DictionaryServiceImpl implements IdictionaryService {
 
     @Resource

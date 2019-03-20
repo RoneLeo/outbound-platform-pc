@@ -7,6 +7,7 @@ import com.chiyun.outboundplatform.utils.StringUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,22 +21,48 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
     @Resource
     private DictionaryListRepository dictionaryListRepository;
 
-    /*****************************************查询操作*********************************************************/
+
     @Override
     public DictionarylistEntity findById(Integer id) {
         return dictionaryListRepository.findById(id);
     }
 
     @Override
-    public List<DictionarylistEntity> findAll(String state) {
-         if(StringUtil.isNull(state)){
-             return dictionaryListRepository.findAll();
-         }else{
-             return  dictionaryListRepository.findAllByState(state);
-         }
+    public List<DictionarylistEntity> findBydid(Integer did,String zxbz) {
+        if(StringUtil.isNull(zxbz)){
+            return dictionaryListRepository.findBydid(did);
+        }else{
+            return dictionaryListRepository.findBydidAndZxbz(did, zxbz);
+        }
 
     }
 
+    @Override
+    public List<DictionarylistEntity> findByCtdm(Integer did,String ctdm, String zxbz) {
+        if(StringUtil.isNull(zxbz)){
+            return  dictionaryListRepository.findByCtdm(did, ctdm);
+        }else{
+            return  dictionaryListRepository.findByCtdmAndZxbz(did, ctdm, zxbz);
+        }
+    }
+
+    @Override
+    public List<DictionarylistEntity> findByCtz(Integer did,String ctz, String zxbz) {
+        if(StringUtil.isNull(zxbz)){
+         return  dictionaryListRepository.findByCtz(did, ctz);
+        }else{
+        return  dictionaryListRepository.findByCtzAndZxbz(did, ctz, zxbz);
+        }
+    }
+
+    @Override
+    public List<DictionarylistEntity> findByCtdmAndCtz(Integer did,String ctdm, String ctz, String zxbz) {
+        if (StringUtil.isNull(zxbz)) {
+            return dictionaryListRepository.findByCtdmAndCtz(did, ctdm, ctz);
+        } else {
+            return dictionaryListRepository.findByCtdmAndCtzAndZxbz(did, ctdm, ctz, zxbz);
+        }
+    }
 
     /**
      * 通过 字典英文名和字典项词条代码 查询字典项词条值
@@ -44,10 +71,10 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
      * @param ctdm
      * @return
      */
-    @Override
+ /*   @Override
     public String querDictListByZdywmAndKey(String zdywm, String ctdm) {
         return dictionaryListRepository.querDictListByZdywmAndKey(zdywm, ctdm);
-    }
+    }*/
 
     /**
      * 通过 字典中文名和字典项词条代码 查询字典项词条值
@@ -56,26 +83,38 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
      * @param ctdm
      * @return
      */
-    @Override
+   /* @Override
     public String querDictListByZdzwmAndKey(String zdzwm, String ctdm) {
         return dictionaryListRepository.querDictListByZdzwmAndKey(zdzwm, ctdm);
-    }
+    }*/
 
-    /*****************************************新增操作*********************************************************/
 
+
+
+    /**
+     *  新增字典项
+     * @param entity
+     * @return
+     */
     @Override
     public Map<String,Object> save(DictionarylistEntity entity) {
+        System.out.println(entity.toString());
         Map<String,Object> msg=new HashMap<String,Object>();
-        //查询是否已存在
-            dictionaryListRepository.findByParms(entity.getCtdm(),entity.getCtz(),entity.getZdid());
-
-         dictionaryListRepository.save(entity);
-
+        //查询词条是否已存在
+         int  cn=dictionaryListRepository.findByParms(entity.getCtdm(),entity.getCtz(),entity.getZdid());
+   if(cn==0){
+       DictionarylistEntity entiy1= dictionaryListRepository.save(entity);
+         if(entiy1==null){
+             msg.put("fail","词条新增失败");
+             return msg;
+         }
+           msg.put("success",entiy1);
+   }else{
+       msg.put("fail","该词条信息已存在，请查看是否已被注销");
+   }
          return msg;
     }
 
-
-    /*****************************************删除操作*********************************************************/
 
     @Override
     public int deleteById(Integer id) {
@@ -87,43 +126,46 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
         return dictionaryListRepository.deleteByDid(did);
     }
 
-    /*****************************************更新操作*********************************************************/
 
     @Override
     public int updateOne(DictionarylistEntity entity) {
         int cn=0;
-        return  cn;
+        DictionarylistEntity  gxxx  =dictionaryListRepository.save(entity);
+        if(gxxx==null){
+            return  cn;
+        }else{
+            cn=1;
+            return  cn;
+        }
+
+
+    }
+
+
+
+//    @Override
+//    public int cancellationDicListByZdid(Integer did) {
+//        return dictionaryListRepository.cancellationDicListByZdid(did);
+//    }
+
+//    @Override
+//    public int unCancellationDicListByZdid(Integer did) {
+//        return dictionaryListRepository.unCancellationDicListByZdid();
+//    }
+
+    @Override
+    public int cancellationDicListById(Integer id) {
+        return dictionaryListRepository.cancellationDicListById(id);
     }
 
     @Override
-    public int zhuXiaoByDid(Integer did) {
-        return dictionaryListRepository.cancellationByDid(did);
+    public int unCancellationDicListById(Integer id) {
+        return dictionaryListRepository.unCancellationDicListById(id);
     }
 
-    @Override
-    public int zhuXiaoOne(Integer id) {
-        return dictionaryListRepository.cancellationById(id);
-    }
 
-    @Override
-    public int updateZdywmAndZdzwnAndDid(String zdywm, String zdzwm, Integer Ndid, Integer Odid) {
-        return dictionaryListRepository.updateZdywmAndZdzwnAndDid(zdywm,zdzwm,Ndid,Odid);
-    }
 
-    @Override
-    public List<DictionarylistEntity> findBydid(Integer did) {
-        return dictionaryListRepository.findBydid(did);
-    }
 
-    @Override
-    public List<DictionarylistEntity> findByZdzwm(String zdzwm) {
-        return dictionaryListRepository.findByZdzwm(zdzwm);
-    }
-
-    @Override
-    public List<DictionarylistEntity> findByZdywm(String zdywm) {
-        return dictionaryListRepository.findByZdywm(zdywm);
-    }
 
 
 

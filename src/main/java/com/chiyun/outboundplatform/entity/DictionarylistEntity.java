@@ -1,7 +1,7 @@
 package com.chiyun.outboundplatform.entity;
 
 import javax.persistence.*;
-
+import io.swagger.annotations.ApiModelProperty;
 /**
  * Created by Linqi on 2019-03-19.
  */
@@ -9,15 +9,22 @@ import javax.persistence.*;
 @Table(name = "dictionarylist", schema = "ajjcxx", catalog = "")
 public class DictionarylistEntity {
     private int id;
+    @ApiModelProperty(value = "字典ID")
     private int zdid;
+    @ApiModelProperty(value = "字典中文名称")
     private String zdzwmc;
-    private String dictengName;
-    private String state;
+    @ApiModelProperty(value = "字典英文名称")
+    private String zdywmc;
+    @ApiModelProperty(value = "注销标志【0：未注销，1：已注销】")
+    private String zxbz;
+    @ApiModelProperty(value = "字典项词条代码")
     private String ctdm;
+    @ApiModelProperty(value = "字典项词条值")
     private String ctz;
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getId() {
         return id;
     }
@@ -48,22 +55,22 @@ public class DictionarylistEntity {
 
     @Basic
     @Column(name = "dicteng_name")
-    public String getDictengName() {
-        return dictengName;
+    public String getZdywmc() {
+        return zdywmc;
     }
 
-    public void setDictengName(String dictengName) {
-        this.dictengName = dictengName;
+    public void setZdywmc(String zdywmc) {
+        this.zdywmc = zdywmc;
     }
 
     @Basic
     @Column(name = "state")
-    public String getState() {
-        return state;
+    public String getZxbz() {
+        return zxbz;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setZxbz(String zxbz) {
+        this.zxbz = zxbz;
     }
 
     @Basic
@@ -96,8 +103,8 @@ public class DictionarylistEntity {
         if (id != that.id) return false;
         if (zdid != that.zdid) return false;
         if (zdzwmc != null ? !zdzwmc.equals(that.zdzwmc) : that.zdzwmc != null) return false;
-        if (dictengName != null ? !dictengName.equals(that.dictengName) : that.dictengName != null) return false;
-        if (state != null ? !state.equals(that.state) : that.state != null) return false;
+        if (zdywmc != null ? !zdywmc.equals(that.zdywmc) : that.zdywmc != null) return false;
+        if (zxbz != null ? !zxbz.equals(that.zxbz) : that.zxbz != null) return false;
         if (ctdm != null ? !ctdm.equals(that.ctdm) : that.ctdm != null) return false;
         if (ctz != null ? !ctz.equals(that.ctz) : that.ctz != null) return false;
 
@@ -109,10 +116,23 @@ public class DictionarylistEntity {
         int result = id;
         result = 31 * result + zdid;
         result = 31 * result + (zdzwmc != null ? zdzwmc.hashCode() : 0);
-        result = 31 * result + (dictengName != null ? dictengName.hashCode() : 0);
-        result = 31 * result + (state != null ? state.hashCode() : 0);
+        result = 31 * result + (zdywmc != null ? zdywmc.hashCode() : 0);
+        result = 31 * result + (zxbz != null ? zxbz.hashCode() : 0);
         result = 31 * result + (ctdm != null ? ctdm.hashCode() : 0);
         result = 31 * result + (ctz != null ? ctz.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "DictionarylistEntity{" +
+                "id=" + id +
+                ", zdid=" + zdid +
+                ", zdzwmc='" + zdzwmc + '\'' +
+                ", zdywmc='" + zdywmc + '\'' +
+                ", zxbz='" + zxbz + '\'' +
+                ", ctdm='" + ctdm + '\'' +
+                ", ctz='" + ctz + '\'' +
+                '}';
     }
 }

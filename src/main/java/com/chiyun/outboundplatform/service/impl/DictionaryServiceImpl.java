@@ -50,6 +50,8 @@ public class DictionaryServiceImpl implements IdictionaryService {
 
     }
 
+
+
     @Override
     public List<DictionaryEntity> findAll(String state) {
        if(StringUtil.isNull(state)){
@@ -61,19 +63,24 @@ public class DictionaryServiceImpl implements IdictionaryService {
     }
 
     @Override
+    public List<DictionaryEntity> findDictByNameAndEng_NameAndState(String name, String eng_name, String state) {
+        if(StringUtil.isNull(state)){
+            return dictionaryRepository.findDictByNameAndEng_Name(name,eng_name);
+        }else{
+            return dictionaryRepository.findDictByNameAndEng_NameAndState(name,eng_name,state);
+        }
+    }
+
+    @Override
     public Map<String,Object>  save(DictionaryEntity entity) {
         Map<String,Object> msg=new HashMap<String,Object>();
         //查询是否已经存在
-        List<DictionaryEntity> dicts=  dictionaryRepository.findByZdywmAndZdzwmAndState(entity.getZdzwmc(),entity.getZdywmc());
-       if(dicts.size()>0){
+        List<DictionaryEntity> dicts=  dictionaryRepository.findDictByZdzwmAndZdywm(entity.getZdzwmc(),entity.getZdywmc());
+       if(!(dicts.isEmpty())){
         msg.put("failuer","字典信息已存在");
            return msg;
        }
-
-        if(!(entity.getId()==0)){
-            entity.setId(0); //id由系统后台自动生成，因此这里必须处理掉id的值。
-         }
-        entity.setZt("0");//默认为未注销状态
+         entity.setZxbz("0");//默认为未注销状态
         DictionaryEntity saveEntity=dictionaryRepository.save(entity);
          if(!(saveEntity==null)){
              msg.put("success",saveEntity);
@@ -108,6 +115,11 @@ public class DictionaryServiceImpl implements IdictionaryService {
     @Override
     public int  cancellationById(Integer id) {
         return dictionaryRepository.cancellationById(id);
+    }
+
+    @Override
+    public int unCancellationById(Integer id) {
+        return dictionaryRepository.unCancellationById(id);
     }
 
     @Override

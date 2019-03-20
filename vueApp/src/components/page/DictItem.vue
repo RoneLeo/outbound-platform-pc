@@ -1,50 +1,40 @@
 <template>
-    <div class="table">
-        <div class="crumbs">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i> 用户信息</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
-        <div class="handle-box">
-
-        </div>
+    <div>
         <div class="container">
-            <el-table :data="tableData" class="table" ref="multipleTable" @selection-change="handleSelectionChange">
-                <el-table-column prop="zh" label="账号"></el-table-column>
-                <el-table-column prop="xm" label="姓名"></el-table-column>
-                <el-table-column prop="cjsj" label="创建时间"></el-table-column>
-                <el-table-column label="操作"  align="center">
-                    <template slot-scope="scope">
-                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                        <el-button type="text" style="color: green" @click="resetMM(scope.$index, scope.row)">重置密码</el-button>
-                        <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <div style="padding: 20px 8px">
-                <el-button type="primary" @click="add">添加用户</el-button>
-            </div>
+            <el-tabs v-model="tabActive" @tab-click="tabClick">
+                <el-tab-pane v-for="(item,index) in tabArr" :label="item.zdzwmc" :name="item.zdywmc" :key="index"></el-tab-pane>
+                <div style="margin-bottom: 10px;">
+                    <el-button size="mini" type="success" @click="addDict">添加字典项</el-button>
+                </div>
+                <!---->
+                <el-table v-loading="tableLoading" border :data="tableData" class="table" ref="multipleTable" @selection-change="handleSelectionChange">
+                    <el-table-column prop="zdzwmc" label="字典项名称"></el-table-column>
+                    <el-table-column prop="zdywmc" label="字典项代码"></el-table-column>
+                    <!--<el-table-column prop="zt" label="是否注销"></el-table-column>-->
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button type="text"  @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                            <el-button type="text" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-tabs>
+
         </div>
 
         <!-- 弹出框 -->
         <el-dialog :title="modelTitle" :visible.sync="modelVisible" width="35%"
                    :close-on-click-modal="false" @closed="closeClear">
             <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="账号"
-                              prop="zh"
-                              :rules="[{ required: true, message: '登录账号不能为空', trigger: 'blur' }]">
-                    <el-input v-model="form.zh"></el-input>
+                <el-form-item label="字典名称"
+                              prop="zdzwmc"
+                              :rules="[{ required: true, message: '字典名称不能为空', trigger: 'blur' }]">
+                    <el-input v-model="form.zdzwmc"></el-input>
                 </el-form-item>
-                <el-form-item label="密码"
-                              v-if="!form.uuid"
-                              prop="mm"
-                              :rules="[{ required: true, message: '密码不能为空', trigger: 'blur' }]">
-                    <el-input v-model="form.mm"></el-input>
-                </el-form-item>
-                <el-form-item label="姓名"
-                              prop="xm"
-                              :rules="[{ required: true, message: '姓名不能为空', trigger: 'blur' }]">
-                    <el-input v-model="form.xm"></el-input>
+                <el-form-item label="字典代码"
+                              prop="zdywmc"
+                              :rules="[{ required: true, message: '字典代码不能为空', trigger: 'blur' }]">
+                    <el-input v-model="form.zdywmc"></el-input>
                 </el-form-item>
 
             </el-form>
@@ -70,20 +60,24 @@
         name: 'basetable',
         data() {
             return {
-                modelTitle: '添加信息',
-                url: './static/vuetable.json',
+                tabActive: '',
+                tabArr:[],
+                tableLoading: false,
                 tableData: [],
+                modelVisible: false,
+                modelTitle: '添加字典信息',
+                form: {},
                 cur_page: 1,
                 multipleSelection: [],
                 select_cate: '',
                 select_word: '',
                 del_list: [],
                 is_search: false,
-                modelVisible: false,
+
                 delVisible: false,
-                form: {},
+
                 idx: -1,
-                dict: this.$dict
+                dict: this.$dict,
             }
         },
         created() {
@@ -93,9 +87,23 @@
 
         },
         methods: {
-//            formatterGS(row) {
-//                return this.$common.dictParse(row.gsid, this.dict.company);
-//            },
+            tabClick(tab, event){
+                console.log(tab.name);
+            },
+            getData(){
+                this.tableLoading = true;
+                this.$axios.post('dict/findDictAll').then((res) => {
+                    this.tableData = res.data;
+                    let tabArr = res.data;
+                    this.tabActive = tabArr[0].zdywmc;
+                    this.tabArr = tabArr;
+
+                    this.tableLoading = false;
+                });
+            },
+            addDict(){
+                this.modelVisible = true;
+            },
             closeClear() {
                 this.$refs.form.resetFields()
             },
@@ -103,14 +111,6 @@
             handleCurrentChange(val) {
                 this.cur_page = val;
                 this.getData();
-            },
-            // 获取 easy-mock 的模拟数据
-            getData() {
-                this.$axios.post('/user/findAllByGsid').then((res) => {
-                    if(res.resCode == 200){
-                        this.tableData = res.data;
-                    }
-                });
             },
             search() {
                 this.is_search = true;
@@ -187,28 +187,3 @@
 
 </script>
 
-<style scoped>
-    .handle-box {
-        margin-bottom: 20px;
-    }
-
-    .handle-select {
-        width: 120px;
-    }
-
-    .handle-input {
-        width: 300px;
-        display: inline-block;
-    }
-    .del-dialog-cnt{
-        font-size: 16px;
-        text-align: center
-    }
-    .table{
-        width: 100%;
-        font-size: 14px;
-    }
-    .red{
-        color: #ff0000;
-    }
-</style>

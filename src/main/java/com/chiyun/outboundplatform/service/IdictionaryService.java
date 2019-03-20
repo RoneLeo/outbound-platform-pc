@@ -18,7 +18,7 @@ public interface IdictionaryService {
      * @param id
      * @return
      */
-    public DictionaryEntity findById(Integer id);
+   DictionaryEntity findById(Integer id);
 
     /**
      *  通过 字典中文名查询
@@ -39,7 +39,7 @@ public interface IdictionaryService {
      */
      List<DictionaryEntity> findAll(String state);
 
-
+    List<DictionaryEntity> findDictByNameAndEng_NameAndState (String name,String eng_name ,String state);
 
     /**
      *  新增//修改
@@ -60,14 +60,21 @@ public interface IdictionaryService {
      * @param entity
      * @return
      */
-    public int update(DictionaryEntity entity);
+   int update(DictionaryEntity entity);
 
     /**
      * 注销字典
      * @param id
      * @return
      */
-    public int   cancellationById(Integer id);
+   int   cancellationById(Integer id);
+
+    /**
+     * 激活字典
+     * @param id
+     * @return
+     */
+    int   unCancellationById(Integer id);
 
     /**
      * 通过id查询是否已存在

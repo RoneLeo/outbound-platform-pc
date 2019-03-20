@@ -11,6 +11,7 @@ import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -125,9 +126,8 @@ public class BatchController {
     @ApiOperation("导入模板")
     @RequestMapping("/importExcel")
     public ApiResult<Object> importExcel(String pcid, String filepath) {
-        // 判断是否是excel文件
         if (!filepath.endsWith(".xls") && !filepath.endsWith(".xlsx")) {
-            return ApiResult.FAILURE("该文件不是excel文件");
+            return ApiResult.FAILURE("该文件不是excel类型");
         }
         FileInputStream fis = null;
         Workbook workbook = null;
@@ -136,21 +136,38 @@ public class BatchController {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
         try {
-            workbook = new HSSFWorkbook(fis);
-        } catch (IOException e) {
-            try {
+            // 2003版本
+            if (filepath.endsWith(".xls")) {
+                workbook = new HSSFWorkbook(fis);
+            } else if (filepath.endsWith(".xlsx")){
                 workbook = new XSSFWorkbook(fis);
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 获取一张表
+        Sheet sheet = workbook.getSheetAt(0);
+        // 获得总行数
+        int totalRowNum = sheet.getLastRowNum();
+        // 获得所有数据
+        for (int rownum = 1; rownum < totalRowNum; rownum++) {
+            // 获得第i行
+            Row row = sheet.getRow(rownum);
+            // 获得所有列
+            int firstCellNum = row.getFirstCellNum();
+            int lastCellNum = row.getLastCellNum();
+            List<String> rowlist = new ArrayList<>();
+            // 遍历列
+            for (int cellnum = firstCellNum; cellnum < lastCellNum; cellnum++) {
+                Cell cell = row.getCell(cellnum);
+                if (cell == null) {
+                    continue;
+                }
+                String value = cell.getStringCellValue();
+                System.out.println("第" + rownum + "行第" + cellnum + "列的值为：" + value);
             }
         }
-        // 获得一个工作表
-        Sheet sheet = workbook.getSheetAt(0);
-        // 获得表头
-        Row rowHead = sheet.getRow(0);
-
         return ApiResult.SUCCESS();
     }
 

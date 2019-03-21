@@ -36,13 +36,13 @@ public class DictionaryListController {
     @RequestMapping(value = "/findDictList",method = {RequestMethod.GET, RequestMethod.POST})
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", name = "zdid", value = "字典ID", required = true, dataType = "Integer"),
-            @ApiImplicitParam(paramType = "query", name = "ctdm", value = "词条代码,不填写 表示这个不作为查询条件", required = false, dataType = "String"),
+            @ApiImplicitParam(paramType = "query", name = "ctdm", value = "词条代码,不填写 表示这个不作为查询条件", required = false, dataType = "Integer"),
             @ApiImplicitParam(paramType = "query", name = "ctmc", value = "词条名称,不填写 表示这个不作为查询条件", required = false, dataType = "String"),
             @ApiImplicitParam(paramType = "query", name = "zxbz", value = "注销标志 [0 :未注销/1:注销],不填写后台默认查全部", required = false, dataType = "String")
 
     })
-    public ApiResult<Object> findDictList(@RequestParam Integer zdid,
-                                               @RequestParam(required = false)  String ctdm,
+    public ApiResult<Object> findDictList(     @RequestParam Integer zdid,
+                                               @RequestParam(required = false)  Integer ctdm,
                                                @RequestParam(required = false)  String ctmc,
                                                @RequestParam(required = false) String zxbz
                                           ){
@@ -50,13 +50,15 @@ public class DictionaryListController {
                 return ApiResult.FAILURE("字典ID不能为空");
             }
          List<DictionarylistEntity> list =null ;
-
-            if(  StringUtil.isNull(ctdm)&& StringUtil.isNull(ctmc)){
+            if( ctdm==null){
+                ctdm=0;
+            }
+            if( (ctdm==0)&& StringUtil.isNull(ctmc)){
                  list = idictionaryListService.findBydid(zdid,zxbz);
-            }else if (!(StringUtil.isNull(ctdm))&& StringUtil.isNull(ctmc)){
+            }else if (!(ctdm==0)&& StringUtil.isNull(ctmc)){
                 list = idictionaryListService.findByCtdm(zdid,ctdm,zxbz);
             }
-             else if(StringUtil.isNull(ctdm)&& !(StringUtil.isNull(ctmc))){
+             else if((ctdm==0)&& !(StringUtil.isNull(ctmc))){
                 list = idictionaryListService.findByCtz(zdid,ctmc,zxbz);
             } else {
                 list = idictionaryListService.findByCtdmAndCtz(zdid,ctdm,ctmc,zxbz);
@@ -70,11 +72,10 @@ public class DictionaryListController {
     @RequestMapping(value ="/addDictList" ,method = RequestMethod.POST)
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query", name = "zdid", value = "字典ID", required = true, dataType = "Integer"),
-            @ApiImplicitParam(paramType="query", name = "ctdm", value = "词条代码", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "ctmc", value = "项词条名称", required = true, dataType = "String")
     })
     public ApiResult<Object> addDictList(@RequestParam  Integer zdid,
-                                         @RequestParam  String  ctdm,
+                                        // @RequestParam  String  ctdm,
                                          @RequestParam  String  ctmc
                                          ){
 
@@ -91,7 +92,6 @@ public class DictionaryListController {
                 entity.setZdywmc(zdxx.getZdywmc());
                 entity.setZdzwmc(zdxx.getZdzwmc());
                 entity.setZdid(zdid);
-                entity.setCtdm(ctdm);
                 entity.setCtmc(ctmc);
                 entity.setZxbz("0");// 默认填写为0,未注销
 
@@ -151,11 +151,10 @@ public class DictionaryListController {
     @RequestMapping(value = "/updateDictList",method = RequestMethod.POST)
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query", name = "id", value = "ID", required = true, dataType = "Integer"),
-            @ApiImplicitParam(paramType="query", name = "ctdm", value = "词条代码", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "ctmc", value = "词条名称", required = true, dataType = "String")
     })
     public ApiResult<Object> updateDictList (  @RequestParam  Integer id,
-                                               @RequestParam  String  ctdm,
+
                                                @RequestParam  String  ctmc
 
                ){
@@ -167,7 +166,7 @@ public class DictionaryListController {
         if(entity==null){
             return  ApiResult.FAILURE("更新失败,未找到对应的字典项");
         }
-        entity.setCtdm(ctdm);
+
         entity.setCtmc(ctmc);
         int  cn=idictionaryListService.updateOne(entity);
         if(cn==1){

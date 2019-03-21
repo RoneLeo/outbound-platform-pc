@@ -18,13 +18,12 @@ public class DictionarylistEntity {
     @ApiModelProperty(value = "注销标志【0：未注销，1：已注销】")
     private String zxbz;
     @ApiModelProperty(value = "字典项词条代码")
-    private String ctdm;
+    private Integer ctdm;
     @ApiModelProperty(value = "字典项词条名称")
     private String ctmc;
 
-    @Id
+    @Basic
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getId() {
         return id;
     }
@@ -73,13 +72,14 @@ public class DictionarylistEntity {
         this.zxbz = zxbz;
     }
 
-    @Basic
+    @Id
     @Column(name = "entrycode")
-    public String getCtdm() {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Integer getCtdm() {
         return ctdm;
     }
 
-    public void setCtdm(String ctdm) {
+    public void setCtdm(Integer ctdm) {
         this.ctdm = ctdm;
     }
 
@@ -93,33 +93,32 @@ public class DictionarylistEntity {
         this.ctmc = ctmc;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof DictionarylistEntity)) return false;
 
         DictionarylistEntity that = (DictionarylistEntity) o;
 
         if (id != that.id) return false;
         if (zdid != that.zdid) return false;
-        if (zdzwmc != null ? !zdzwmc.equals(that.zdzwmc) : that.zdzwmc != null) return false;
-        if (zdywmc != null ? !zdywmc.equals(that.zdywmc) : that.zdywmc != null) return false;
-        if (zxbz != null ? !zxbz.equals(that.zxbz) : that.zxbz != null) return false;
-        if (ctdm != null ? !ctdm.equals(that.ctdm) : that.ctdm != null) return false;
-        if (ctmc != null ? !ctmc.equals(that.ctmc) : that.ctmc != null) return false;
-
-        return true;
+        if (!zdzwmc.equals(that.zdzwmc)) return false;
+        if (!zdywmc.equals(that.zdywmc)) return false;
+        if (!zxbz.equals(that.zxbz)) return false;
+        if (!ctdm.equals(that.ctdm)) return false;
+        return ctmc.equals(that.ctmc);
     }
 
     @Override
     public int hashCode() {
         int result = id;
         result = 31 * result + zdid;
-        result = 31 * result + (zdzwmc != null ? zdzwmc.hashCode() : 0);
-        result = 31 * result + (zdywmc != null ? zdywmc.hashCode() : 0);
-        result = 31 * result + (zxbz != null ? zxbz.hashCode() : 0);
-        result = 31 * result + (ctdm != null ? ctdm.hashCode() : 0);
-        result = 31 * result + (ctmc != null ? ctmc.hashCode() : 0);
+        result = 31 * result + zdzwmc.hashCode();
+        result = 31 * result + zdywmc.hashCode();
+        result = 31 * result + zxbz.hashCode();
+        result = 31 * result + ctdm.hashCode();
+        result = 31 * result + ctmc.hashCode();
         return result;
     }
 

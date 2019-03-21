@@ -23,14 +23,14 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
      * @param
      * @return
      */
-    @Query(value = "select * from dictionary where name like  concat('%',?1,'%') ", nativeQuery = true)
+    @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionaryEntity>  findByZdmc(String zdmc);
     /**
      *   通过字典中文名和字典状态赛选来查询字典
      * @param
      * @return
      */
-    @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  and state=?2", nativeQuery = true)
+    @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  and state=?2 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionaryEntity>  findByZdmcAndZxbz(String zdmc,String zxbz);
 
     /**
@@ -38,25 +38,25 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
      * @param
      * @return
      */
-    @Query(value = "select * from dictionary where eng_name like  concat('%',?1,'%') ", nativeQuery = true)
+    @Query(value = "select * from dictionary where eng_name like  concat('%',?1,'%') ORDER BY FIELD (state,'0','1') ", nativeQuery = true)
     List<DictionaryEntity>  findByZddm(String zddm);
     /**
      *   通过字典代码和注销标志赛选查询字典
      * @param
      * @return
      */
-    @Query(value = "select * from dictionary where eng_name like  concat('%',?1,'%')  and state=?2", nativeQuery = true)
+    @Query(value = "select * from dictionary where eng_name like  concat('%',?1,'%')  and state=?2 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionaryEntity>  findByZddmAndZxbz(String zddm,String zxbz);
 
-    @Query(value = "select * from dictionary where name =?1  or eng_name=?2 ", nativeQuery = true)
+    @Query(value = "select * from dictionary where name =?1  or eng_name=?2 ORDER BY FIELD (state,'0','1') ", nativeQuery = true)
     List<DictionaryEntity>  findDictByZdmcAndZddm(String zdmc,String zddm);
 
 
-    @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  and eng_name  like  concat('%',?2,'%') ", nativeQuery = true)
+    @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  and eng_name  like  concat('%',?2,'%') ORDER BY FIELD (state,'0','1') ", nativeQuery = true)
     List<DictionaryEntity>   findByZdmcAndZddm(String zdmc,String zddm);
 
 
-    @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  and eng_name like  concat('%',?2,'%')  and state=?3", nativeQuery = true)
+    @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  and eng_name like  concat('%',?2,'%')  and state=?3 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionaryEntity>  findByZdmcAndZddmAndZxbz (String zdmc,String zddm ,String zxbz);
 
 
@@ -64,12 +64,13 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
      * 查询所有的数据
      * @return
      */
+    @Query(value = "select * from dictionary  ORDER BY FIELD (state,'0','1')",nativeQuery = true)
     List<DictionaryEntity> findAll();
     /**
      * 查询所有的数据
      * @return
      */
-    @Query(value = "select * from dictionary where state=?1",nativeQuery = true)
+    @Query(value = "select * from dictionary where state=?1 ORDER BY FIELD (state,'0','1')",nativeQuery = true)
     List<DictionaryEntity> findAllByZxbz(String zxbz);
 
     /**

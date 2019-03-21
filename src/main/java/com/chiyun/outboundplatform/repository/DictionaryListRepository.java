@@ -15,35 +15,35 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
 
      DictionarylistEntity findById(Integer id);
 
-
+    @Query(value = "select * from dictionarylist  ORDER BY FIELD (state,'0','1')", nativeQuery = true)
      List<DictionarylistEntity> findAll();
 
 
 
-    @Query(value = "select * from dictionarylist where  dictid=?1", nativeQuery = true)
+    @Query(value = "select * from dictionarylist where  dictid=?1 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionarylistEntity> findByZdid(Integer zdid);
 
 
-    @Query(value = "select * from dictionarylist where  dictid=?1 and state=?2", nativeQuery = true)
+    @Query(value = "select * from dictionarylist where  dictid=?1 and state=?2 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionarylistEntity> findByZdidAndZxbz(Integer zdid,String zxbz);
 
 
-    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') ", nativeQuery = true)
+    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') ORDER BY FIELD (state,'0','1') ", nativeQuery = true)
     List<DictionarylistEntity>  findByCtdm(Integer zdid,Integer ctdm);
 
-    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and state=?3", nativeQuery = true)
+    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and state=?3 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionarylistEntity>  findByCtdmAndZxbz(Integer zdid,Integer ctdm,String zxbz);
 
-    @Query(value = "select * from dictionarylist where  dictid=?1 and entryvalue like concat('%',?2,'%')", nativeQuery = true)
+    @Query(value = "select * from dictionarylist where  dictid=?1 and entryvalue like concat('%',?2,'%') ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionarylistEntity>  findByCtz(Integer zdid,String ctz);
 
-    @Query(value = "select * from dictionarylist where  dictid=?1 and entryvalue like concat('%',?2,'%') and state=?3", nativeQuery = true)
+    @Query(value = "select * from dictionarylist where  dictid=?1 and entryvalue like concat('%',?2,'%') and state=?3 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionarylistEntity>  findByCtzAndZxbz(Integer zdid,String ctz,String zxbz);
 
-    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and entryvalue like concat('%',?3,'%')", nativeQuery = true)
+    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and entryvalue like concat('%',?3,'%') ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionarylistEntity>  findByCtdmAndCtz(Integer zdid,Integer ctdm,String ctz);
 
-    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and entryvalue like concat('%',?3,'%') and state=?4", nativeQuery = true)
+    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and entryvalue like concat('%',?3,'%') and state=?4 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionarylistEntity>  findByCtdmAndCtzAndZxbz(Integer zdid,Integer ctdm,String ctz ,String zxbz);
 
  /**

@@ -31,21 +31,21 @@ public class DictionaryServiceImpl implements IdictionaryService {
     }
 
     @Override
-    public List<DictionaryEntity> findDictByNameAndState(String name,String state) {
-        if(StringUtil.isNull(state)){
-            return dictionaryRepository.findByName(name);
+    public List<DictionaryEntity> findDictByNameAndZxbz(String zdmc,String zxbz) {
+        if(StringUtil.isNull(zxbz)){
+            return dictionaryRepository.findByZdmc(zdmc);
         }else{
-            return dictionaryRepository.findByNameAndState(name,state);
+            return dictionaryRepository.findByZdmcAndZxbz(zdmc,zxbz);
         }
 
     }
 
     @Override
-    public List<DictionaryEntity> findDictByEng_NameAndState(String eng_name ,String state) {
-        if(StringUtil.isNull(state)){
-            return dictionaryRepository.findByEng_Name(eng_name);
+    public List<DictionaryEntity> findDictByEng_NameAndZxbz(String zddm ,String zxbz) {
+        if(StringUtil.isNull(zxbz)){
+            return dictionaryRepository.findByZddm(zddm);
         }else{
-            return dictionaryRepository.findByEng_NameAndState(eng_name,state);
+            return dictionaryRepository.findByZddmAndZxbz(zddm,zxbz);
         }
 
     }
@@ -53,21 +53,21 @@ public class DictionaryServiceImpl implements IdictionaryService {
 
 
     @Override
-    public List<DictionaryEntity> findAll(String state) {
-       if(StringUtil.isNull(state)){
+    public List<DictionaryEntity> findAll(String zxbz) {
+       if(StringUtil.isNull(zxbz)){
            return dictionaryRepository.findAll();
        }else{
-           return dictionaryRepository.findAllByState(state);
+           return dictionaryRepository.findAllByZxbz(zxbz);
        }
 
     }
 
     @Override
-    public List<DictionaryEntity> findDictByNameAndEng_NameAndState(String name, String eng_name, String state) {
-        if(StringUtil.isNull(state)){
-            return dictionaryRepository.findDictByNameAndEng_Name(name,eng_name);
+    public List<DictionaryEntity>  findByZdmcAndZddmAndZxbz(String zdmc, String zddm, String zxbz) {
+        if(StringUtil.isNull(zxbz)){
+            return dictionaryRepository. findByZdmcAndZddm(zdmc,zddm);
         }else{
-            return dictionaryRepository.findDictByNameAndEng_NameAndState(name,eng_name,state);
+            return dictionaryRepository. findByZdmcAndZddmAndZxbz(zdmc,zddm,zxbz);
         }
     }
 
@@ -75,9 +75,9 @@ public class DictionaryServiceImpl implements IdictionaryService {
     public Map<String,Object>  save(DictionaryEntity entity) {
         Map<String,Object> msg=new HashMap<String,Object>();
         //查询是否已经存在
-        List<DictionaryEntity> dicts=  dictionaryRepository.findDictByZdzwmAndZdywm(entity.getZdzwmc(),entity.getZdywmc());
+        List<DictionaryEntity> dicts=  dictionaryRepository.findDictByZdmcAndZddm(entity.getZdmc(),entity.getZddm());
        if(!(dicts.isEmpty())){
-        msg.put("failuer","字典信息已存在");
+        msg.put("failuer","字典名称或则代码已经被使用");
            return msg;
        }
          entity.setZxbz("0");//默认为未注销状态

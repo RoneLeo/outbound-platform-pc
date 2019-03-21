@@ -55,7 +55,7 @@ public interface IdictionaryListService {
     int   unCancellationDicListById(Integer id);
 
 
-    List<DictionarylistEntity> findBydid(Integer zdid,String zxbz);
+    List<DictionarylistEntity> findByZdid(Integer zdid,String zxbz);
 
     List<DictionarylistEntity> findByCtdm(Integer zdid,Integer ctdm,String zxbz);
 
@@ -75,15 +75,15 @@ public interface IdictionaryListService {
     /*
      * 根据字典名称和词条代码查询词条名称
      */
-    //   String  querDictListByZdzwmAndKey(String zdzwm, String key);
+    //   String  querDictListByZdzwmAndKey(String zdmc, String ctdm);
     /*
      * 根据字典代码和词条代码查询词条名称
      */
-    //    String querDictListByZdywmAndKey(String zdywm, String key);
+    //    String querDictListByZdywmAndKey(String zddm, String ctdm);
 
     /* 根据字典名称和词条代码查询词条名称*/
-    //   String  querDictListByZdywmAndVule(String zdywm, String value);
+    //   String  querDictListByZdywmAndVule(String zddm, String ctmc);
 
      /*根据字典代码和词条代码查询词条名称*/
-    //   String  querDictListByZdzwmAndVule(String zdzwm, String value);
+    //   String  querDictListByZdzwmAndVule(String zdmc, String ctmc);
 }

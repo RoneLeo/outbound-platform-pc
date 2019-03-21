@@ -112,6 +112,7 @@ public class CardmessageEntity {
         this.zh = zh;
     }
 
+
     @Basic
     @Column(name = "fileNo")
     public String getDah() {
@@ -120,6 +121,17 @@ public class CardmessageEntity {
 
     public void setDah(String dah) {
         this.dah = dah;
+    }
+
+
+    @Basic
+    @Column(name = "cardCat")
+    public String getKl() {
+        return kl;
+    }
+
+    public void setKl(String kl) {
+        this.kl = kl;
     }
 
     @Basic

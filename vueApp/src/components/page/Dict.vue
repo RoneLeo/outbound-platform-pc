@@ -1,12 +1,17 @@
 <template>
-    <div>
+    <div  v-loading="loading" element-loading-text="数据加载中...">
         <div class="container">
             <el-button size="mini" type="success" @click="handleAdd">添加字典</el-button>
+            <el-radio-group v-model="dictType" @change="changeType" size="mini">
+                <el-radio-button label="">全部</el-radio-button>
+                <el-radio-button label="0">已激活</el-radio-button>
+                <el-radio-button label="1">已注销</el-radio-button>
+            </el-radio-group>
         </div>
         <div class="container">
-            <el-table v-loading="tableLoading" border :data="tableData" class="table" ref="multipleTable" @selection-change="handleSelectionChange">
-                <el-table-column prop="zdzwmc" label="字典名称"></el-table-column>
-                <el-table-column prop="zdywmc" label="字典代码"></el-table-column>
+            <el-table  border :data="tableData" class="table" ref="multipleTable" >
+                <el-table-column prop="zdmc" label="字典名称"></el-table-column>
+                <el-table-column prop="zddm" label="字典代码"></el-table-column>
                 <el-table-column prop="zxbz" label="是否注销">
                     <template slot-scope="scope">
                         {{scope.row.zxbz == 1 ? '是' : '否'}}
@@ -27,17 +32,17 @@
 
         <!-- 弹出框 -->
         <el-dialog :title="modelTitle" :visible.sync="modelVisible" width="35%"
-                   :close-on-click-modal="false" @closed="closeClear">
+                   :close-on-click-modal="false">
             <el-form ref="form" :model="dictForm" label-width="100px">
                 <el-form-item label="字典名称"
-                              prop="zdzwmc"
+                              prop="zdmc"
                               :rules="[{ required: true, message: '字典名称不能为空', trigger: 'blur' }]">
-                    <el-input v-model="dictForm.zdzwmc"></el-input>
+                    <el-input v-model="dictForm.zdmc"></el-input>
                 </el-form-item>
                 <el-form-item label="字典代码"
-                              prop="zdywmc"
+                              prop="zddm"
                               :rules="[{ required: true, message: '字典代码不能为空', trigger: 'blur' }]">
-                    <el-input v-model="dictForm.zdywmc"></el-input>
+                    <el-input v-model="dictForm.zddm"></el-input>
                 </el-form-item>
 
             </el-form>
@@ -47,14 +52,6 @@
             </span>
         </el-dialog>
 
-        <!-- 删除提示框 -->
-        <el-dialog title="提示" :visible.sync="delVisible" width="300px" center>
-            <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="delVisible = false">取 消</el-button>
-                <el-button type="primary" @click="deleteRow">确 定</el-button>
-            </span>
-        </el-dialog>
     </div>
 </template>
 
@@ -63,9 +60,10 @@
         name: 'basetable',
         data() {
             return {
+                dictType: '',
                 tabActive: '',
                 tabArr:[],
-                tableLoading: false,
+                loading: false,
                 tableData: [],
                 modelVisible: false,
                 modelTitle: '添加字典信息',
@@ -86,22 +84,23 @@
 
         },
         methods: {
-            tabClick(tab, event){
-                console.log(tab.name);
+            changeType(){
+                this.getData();
             },
             getData(){
-                this.tableLoading = true;
-                this.$axios.post('dict/findDicts').then((res) => {
+                this.loading = true;
+                this.$axios.post('dict/findDicts',{zxbz:this.dictType}).then((res) => {
                     this.tableData = res.data;
-                    this.tableLoading = false;
+                    this.loading = false;
                 });
             },
-
             handleAdd() {
+                this.modelTitle = '添加字典信息';
                 this.dictForm = {};
                 this.modelVisible = true;
             },
             handleEdit(row) {
+                this.modelTitle = '编辑字典信息';
                 this.dictForm = Object.assign({}, row);
                 this.modelVisible = true;
             },
@@ -110,11 +109,11 @@
                 if(this.dictForm.id){
                     url = 'dict/updateDict';
                 }
-                let loading = this.$loading();
+                this.loading = true;
                 this.$axios.post(url,this.dictForm).then((res) => {
                     if(res.resCode == 200){
-                        loading.close();
                         this.modelVisible = false;
+                        this.loading = false;
                         this.getData();
                     }
                 });
@@ -128,7 +127,7 @@
                 }).then(() => {
                     this.$axios.post('dict/deleteDictById', {id: row.id}).then((res) => {
                         this.getData();
-                        this.$message.success(row.zdzwmc + ' 已删除！');
+                        this.$message.success(row.zdmc + ' 已删除！');
                     });
                 }).catch();
             },
@@ -146,66 +145,9 @@
                 }).then(() => {
                     this.$axios.post(url, {id: row.id}).then((res) => {
                         this.getData();
-                        this.$message.success(row.zdzwmc + ' 已'+txt+'！');
+                        this.$message.success(row.zdmc + ' 已'+txt+'！');
                     });
                 });
-            },
-
-
-
-            closeClear() {
-                this.$refs.form.resetFields()
-            },
-            // 分页导航
-            handleCurrentChange(val) {
-                this.cur_page = val;
-                this.getData();
-            },
-            search() {
-                this.is_search = true;
-            },
-            add(){
-                this.form = {
-                    mm: '123456'
-                };
-                this.modelVisible = true;
-            },
-            formatter(row, column) {
-                return row.address;
-            },
-            filterTag(value, row) {
-                return row.tag === value;
-            },
-
-            delAll() {
-                const length = this.multipleSelection.length;
-                let str = '';
-                this.del_list = this.del_list.concat(this.multipleSelection);
-                for (let i = 0; i < length; i++) {
-                    str += this.multipleSelection[i].name + ' ';
-                }
-                this.$message.error('删除了' + str);
-                this.multipleSelection = [];
-            },
-            handleSelectionChange(val) {
-                this.multipleSelection = val;
-            },
-            // 保存编辑
-            saveEdit() {
-                let url = '/user/add';
-                if(this.form.uuid) {
-                    url = '/user/update';
-                }
-                this.$axios.post(url ,this.$qs.stringify(Object.assign({}, this.form))).then((res) => {
-                    this.$message.success(res.resMsg);
-                    this.modelVisible = false;
-                    this.getData();
-                });
-            },
-            // 确定删除
-            deleteRow(){
-                this.$message.success('删除成功');
-                this.delVisible = false;
             }
         }
     }

@@ -11,12 +11,12 @@ import java.util.Objects;
 @Table(name = "casebasemessage", schema = "ajjcxx", catalog = "")
 public class CasebasemessageAllEntity {
     private Integer id;
-    @ApiModelProperty(value = "案件id")
-    private Integer ajid;
     @ApiModelProperty(value = "批次id")
     private String pcid;
     @ApiModelProperty(value = "个案序列号")
     private String gaxlh;
+    @ApiModelProperty(value = "批次号")
+    private String pch;
     @ApiModelProperty(value = "案件名称")
     private String ajmc;
     @ApiModelProperty(value = "案件类型")
@@ -62,16 +62,6 @@ public class CasebasemessageAllEntity {
     }
 
     @Basic
-    @Column(name = "case_id")
-    public Integer getAjid() {
-        return ajid;
-    }
-
-    public void setAjid(Integer ajid) {
-        this.ajid = ajid;
-    }
-
-    @Basic
     @Column(name = "case_name")
     public String getAjmc() {
         return ajmc;
@@ -89,6 +79,16 @@ public class CasebasemessageAllEntity {
 
     public void setPcid(String pcid) {
         this.pcid = pcid;
+    }
+
+    @Basic
+    @Column(name = "batNo")
+    public String getPch() {
+        return pch;
+    }
+
+    public void setPch(String pch) {
+        this.pch = pch;
     }
 
     @Basic
@@ -247,9 +247,9 @@ public class CasebasemessageAllEntity {
         if (!(o instanceof CasebasemessageAllEntity)) return false;
         CasebasemessageAllEntity that = (CasebasemessageAllEntity) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(ajid, that.ajid) &&
                 Objects.equals(pcid, that.pcid) &&
                 Objects.equals(gaxlh, that.gaxlh) &&
+                Objects.equals(pch, that.pch) &&
                 Objects.equals(ajmc, that.ajmc) &&
                 Objects.equals(ajlx, that.ajlx) &&
                 Objects.equals(ajzt, that.ajzt) &&
@@ -269,6 +269,6 @@ public class CasebasemessageAllEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, pcid, gaxlh, ajmc, ajlx, ajzt, ajqy, ajyj, drsj, khxx, csyxx, dkxx, dxxx, wfxx, arxx, qtxx, lxrxx, bzxx);
+        return Objects.hash(id, pcid, gaxlh, pch, ajmc, ajlx, ajzt, ajqy, ajyj, drsj, khxx, csyxx, dkxx, dxxx, wfxx, arxx, qtxx, lxrxx, bzxx);
     }
 }

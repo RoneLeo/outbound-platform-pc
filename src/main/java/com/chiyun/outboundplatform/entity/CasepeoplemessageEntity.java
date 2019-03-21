@@ -42,8 +42,6 @@ public class CasepeoplemessageEntity {
     private String arzjh;
     @ApiModelProperty(value = "案人电邮")
     private String ardy;
-    @ApiModelProperty(value = "当前日期")
-    private Date dqrq;
     @ApiModelProperty(value = "案人证件号(隐藏后四位)")
     private String arzjhychsw;
     @ApiModelProperty(value = "案人证件号(隐藏中四位)")
@@ -274,7 +272,6 @@ public class CasepeoplemessageEntity {
                 Objects.equals(ardwdh, that.ardwdh) &&
                 Objects.equals(arzjh, that.arzjh) &&
                 Objects.equals(ardy, that.ardy) &&
-                Objects.equals(dqrq, that.dqrq) &&
                 Objects.equals(arzjhychsw, that.arzjhychsw) &&
                 Objects.equals(arzjhyczsw, that.arzjhyczsw) &&
                 Objects.equals(arzjhyczlw, that.arzjhyczlw);
@@ -282,6 +279,6 @@ public class CasepeoplemessageEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, wtfmc, armc, arxb, dwmc, dwdz, arbm, arzw, jtdz, hjdz, dzddz, arsj, arzd, ardwdh, arzjh, ardy, dqrq, arzjhychsw, arzjhyczsw, arzjhyczlw);
+        return Objects.hash(id, ajid, wtfmc, armc, arxb, dwmc, dwdz, arbm, arzw, jtdz, hjdz, dzddz, arsj, arzd, ardwdh, arzjh, ardy, arzjhychsw, arzjhyczsw, arzjhyczlw);
     }
 }

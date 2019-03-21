@@ -9,8 +9,6 @@ import java.util.*;
 @Table(name = "casebasemessage", schema = "ajjcxx", catalog = "")
 public class CasebasemessageEntity {
     private Integer id;
-    @ApiModelProperty(value = "案件id")
-    private Integer ajid;
     @ApiModelProperty(value = "批次id")
     private String pcid;
     @ApiModelProperty(value = "个案序列号")
@@ -41,16 +39,6 @@ public class CasebasemessageEntity {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    @Basic
-    @Column(name = "case_id")
-    public Integer getAjid() {
-        return ajid;
-    }
-
-    public void setAjid(Integer ajid) {
-        this.ajid = ajid;
     }
 
     @Basic
@@ -149,7 +137,6 @@ public class CasebasemessageEntity {
         if (!(o instanceof CasebasemessageEntity)) return false;
         CasebasemessageEntity that = (CasebasemessageEntity) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(ajid, that.ajid) &&
                 Objects.equals(pcid, that.pcid) &&
                 Objects.equals(gaxlh, that.gaxlh) &&
                 Objects.equals(pch, that.pch) &&
@@ -163,6 +150,6 @@ public class CasebasemessageEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, pcid, gaxlh, pch, ajmc, ajlx, ajzt, ajqy, ajyj, drsj);
+        return Objects.hash(id, pcid, gaxlh, pch, ajmc, ajlx, ajzt, ajqy, ajyj, drsj);
     }
 }

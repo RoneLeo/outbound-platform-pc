@@ -1,5 +1,6 @@
 package com.chiyun.outboundplatform.web;
 
+
 import com.chiyun.outboundplatform.common.ApiResult;
 
 import com.chiyun.outboundplatform.entity.DictionaryEntity;
@@ -115,6 +116,7 @@ public class DictionaryListController {
         if (id == 0) {
             return ApiResult.FAILURE("删除失败,主键不能为空！！");
         }
+
         int con = idictionaryListService.deleteById(id);
         if (con == 1) {
             return ApiResult.SUCCESS("删除成功");
@@ -207,7 +209,7 @@ public class DictionaryListController {
 
     //其它模块使用
 
-    @ApiOperation("根据主ID查询词条")
+    @ApiOperation("根据ID查询词条")
     @RequestMapping(value = "/findDictListById", method = {RequestMethod.GET, RequestMethod.POST})
     @ApiImplicitParam(paramType = "query", name = "id", value = "主键", required = true, dataType = "Integer")
     public ApiResult<Object> findDictListById(Integer id) {

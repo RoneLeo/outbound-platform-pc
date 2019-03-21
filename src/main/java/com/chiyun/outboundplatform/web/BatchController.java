@@ -6,6 +6,9 @@ import com.chiyun.outboundplatform.entity.FieldcasebaseEntity;
 import com.chiyun.outboundplatform.repository.BasetypeRepository;
 import com.chiyun.outboundplatform.repository.BatchRepository;
 import com.chiyun.outboundplatform.repository.FieldCaseBaseRepository;
+import com.chiyun.outboundplatform.service.IbatchService;
+import com.chiyun.outboundplatform.utils.DateUtils;
+import com.chiyun.outboundplatform.utils.ExcelImportUtils;
 import com.chiyun.outboundplatform.utils.ExcelUtil;
 import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.Api;
@@ -19,6 +22,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.util.*;
 
 @Api(description = "批次管理")
@@ -39,6 +44,8 @@ public class BatchController {
     private FieldCaseBaseRepository fieldCaseBaseRepository;
     @Resource
     private BasetypeRepository basetypeRepository;
+    @Resource
+    private IbatchService ibatchService;
 
     @ApiOperation("添加")
     @RequestMapping("/add")
@@ -88,27 +95,12 @@ public class BatchController {
         List<String> mrlist = fieldCaseBaseRepository.findAllZdzwmc();
         List<BatchEntity> list = batchRepository.findAllByPcidOrderBySort(pcid);
         // 新建数组,保存第二列所有字段名称
-        String title[] = new String[list.size() + mrlist.size()];
-        int j = 0;
-//        for (int i = 0; i < mrlist.size(); i++) {
-//            title[i] = mrlist.get(i);
-//            j++;
-//        }
+        String title[] = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {
-            title[i + j] = list.get(i).getZdzwmc();
-
+            title[i] = list.get(i).getZdzwmc();
         }
         // 查询所有类型名称、个数
         List<Map<String, Object>> firstList = batchRepository.findAllByPcid(pcid);
-//        List<Integer> jczdids = batchRepository.findAllJczdidsByPcid(pcid);
-//        for (int i = 0; i < jczdids.size(); i++) {
-//            // 查询字段类型
-//            Map<String, Object> map = new HashMap<>();
-//            int jcxxlx = fieldCaseBaseRepository.findById(jczdids.get(i)).getJcxxlx();
-//            map.put("name", basetypeRepository.findNameByType(jcxxlx));
-//            map.put("num", fieldCaseBaseRepository.countFieldcasebaseEntitiesByJcxxlx(jcxxlx));
-//            firstList.add(map);
-//        }
         // 获取默认字段个数
         int num = fieldCaseBaseRepository.countFieldcasebaseEntitiesByJcxxlx(0);
         String sheetname = "sheet1";
@@ -125,51 +117,28 @@ public class BatchController {
 
     @ApiOperation("导入模板")
     @RequestMapping("/importExcel")
-    public ApiResult<Object> importExcel(String pcid, String filepath) {
-        if (!filepath.endsWith(".xls") && !filepath.endsWith(".xlsx")) {
-            return ApiResult.FAILURE("该文件不是excel类型");
-        }
-        FileInputStream fis = null;
-        Workbook workbook = null;
-        try {
-            fis = new FileInputStream(filepath);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+    public ApiResult<Object> importExcel(String pcid, MultipartFile file) {
+        //判断文件是否为空
+        if (file == null) {
+            return ApiResult.FAILURE("文件不能为空");
         }
 
-        try {
-            // 2003版本
-            if (filepath.endsWith(".xls")) {
-                workbook = new HSSFWorkbook(fis);
-            } else if (filepath.endsWith(".xlsx")){
-                workbook = new XSSFWorkbook(fis);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        //获取文件名
+        String fileName = file.getOriginalFilename();
+
+        //验证文件名是否合格
+        if (!ExcelImportUtils.validateExcel(fileName)) {
+            return ApiResult.FAILURE("文件必须是excel格式");
         }
-        // 获取一张表
-        Sheet sheet = workbook.getSheetAt(0);
-        // 获得总行数
-        int totalRowNum = sheet.getLastRowNum();
-        // 获得所有数据
-        for (int rownum = 1; rownum < totalRowNum; rownum++) {
-            // 获得第i行
-            Row row = sheet.getRow(rownum);
-            // 获得所有列
-            int firstCellNum = row.getFirstCellNum();
-            int lastCellNum = row.getLastCellNum();
-            List<String> rowlist = new ArrayList<>();
-            // 遍历列
-            for (int cellnum = firstCellNum; cellnum < lastCellNum; cellnum++) {
-                Cell cell = row.getCell(cellnum);
-                if (cell == null) {
-                    continue;
-                }
-                String value = cell.getStringCellValue();
-                System.out.println("第" + rownum + "行第" + cellnum + "列的值为：" + value);
-            }
+
+        //进一步判断文件内容是否为空（即判断其大小是否为0或其名称是否为null）
+        long size = file.getSize();
+        if (StringUtil.isNull(fileName) || size == 0) {
+            return ApiResult.FAILURE("文件不能为空");
         }
-        return ApiResult.SUCCESS();
+        //批量导入
+        ApiResult message = ExcelImportUtils.batchImport(pcid, fileName, file, ibatchService);
+        return message;
     }
 
 

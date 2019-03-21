@@ -26,8 +26,8 @@ public class ExcelUtil {
         // 2、在workbook添加sheet
         HSSFSheet sheet = wb.createSheet(sheetName);
         // 3、在sheet中添加表头第0行
-        HSSFRow row = sheet.createRow(0);
         sheet.setDefaultColumnWidth(11);
+        HSSFRow row = sheet.createRow(0);
         HSSFRow row1 = sheet.createRow(1);
         // 4、创建单元格
         HSSFCellStyle style = wb.createCellStyle();

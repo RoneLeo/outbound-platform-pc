@@ -1,6 +1,5 @@
 package com.chiyun.outboundplatform.repository;
 
-import com.chiyun.outboundplatform.entity.BasetypeEntity;
 import com.chiyun.outboundplatform.entity.BatchEntity;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

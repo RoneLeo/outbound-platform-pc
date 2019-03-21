@@ -58,8 +58,8 @@ public class UserController {
 
     @ApiOperation(value = "微信小程序登录")
     @RequestMapping("/weLogin")
-    public ApiResult<Object> weLogin(String sqm,String encryptedData,String iv, HttpServletRequest request, HttpServletResponse response){
-        Map<String, Object> map = weChatLogin(request,encryptedData,iv);
+    public ApiResult<Object> weLogin(String sqm,String encryptedData,String iv, String code, HttpServletResponse response){
+        Map<String, Object> map = weChatLogin(code,encryptedData,iv);
         if(map.get("status").toString()=="0"){
             return ApiResult.FAILURE(map.get("msg").toString());
         }
@@ -117,13 +117,13 @@ public class UserController {
 //        }
 //    }
 
-    public Map<String, Object> weChatLogin(HttpServletRequest request, String encryptedData,String iv){
+    public Map<String, Object> weChatLogin(String code, String encryptedData,String iv){
         Map<String, Object> map = new HashMap<String, Object>();
         String status = "1";
         String msg = "ok";
         String WX_URL = "https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code";
         try {
-            String code = request.getParameter("code");
+//            String code = request.getParameter("code");
             if(StringUtil.isNull(code)){
                 status = "0";//失败状态
                 msg = "code为空";

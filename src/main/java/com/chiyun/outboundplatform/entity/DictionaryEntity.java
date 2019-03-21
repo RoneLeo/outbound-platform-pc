@@ -17,11 +17,11 @@ public class DictionaryEntity {
 
     private Integer id;
 
-    @ApiModelProperty(value = "字典中文名称")
-    private String zdzwmc;
+    @ApiModelProperty(value = "字典名称")
+    private String zdmc;
 
-    @ApiModelProperty(value = "字典英文名称")
-    private String zdywmc;
+    @ApiModelProperty(value = "字典代码")
+    private String zddm;
 
     @ApiModelProperty(value = "状注销标志态")
     private String zxbz;
@@ -39,28 +39,29 @@ public class DictionaryEntity {
     }
 
 
-
     @Basic
     @Column(name = "name")
-    public String getZdzwmc() {
-        return zdzwmc;
+    public String getZdmc() {
+        return zdmc;
     }
 
-    public void setZdzwmc(String zdzwmc) {
-        this.zdzwmc= zdzwmc;
+    public void setZdmc(String zdmc) {
+        this.zdmc = zdmc;
     }
-
 
 
     @Basic
     @Column(name = "eng_name")
-    public String getZdywmc() {
-        return zdywmc;
+    public String getZddm() {
+        return zddm;
     }
 
-    public void setZdywmc(String zdywmc) {
-        this.zdywmc= zdywmc;
+    public void setZddm(String zddm) {
+        this.zddm = zddm;
     }
+
+
+
 
 
 
@@ -82,16 +83,16 @@ public class DictionaryEntity {
         DictionaryEntity that = (DictionaryEntity) o;
 
         if (!id.equals(that.id)) return false;
-        if (!zdzwmc.equals(that.zdzwmc)) return false;
-        if (!zdywmc.equals(that.zdywmc)) return false;
+        if (!zdmc.equals(that.zdmc)) return false;
+        if (!zddm.equals(that.zddm)) return false;
         return zxbz.equals(that.zxbz);
     }
 
     @Override
     public int hashCode() {
         int result = id.hashCode();
-        result = 31 * result + zdzwmc.hashCode();
-        result = 31 * result + zdywmc.hashCode();
+        result = 31 * result + zdmc.hashCode();
+        result = 31 * result + zddm.hashCode();
         result = 31 * result + zxbz.hashCode();
         return result;
     }
@@ -100,8 +101,8 @@ public class DictionaryEntity {
     public String toString() {
         return "DictionaryEntity{" +
                 "id=" + id +
-                ", zdzwmc='" + zdzwmc + '\'' +
-                ", zdywmc='" + zdywmc + '\'' +
+                ", zdmc='" + zdmc + '\'' +
+                ", zddm='" + zddm + '\'' +
                 ", zxbz='" + zxbz + '\'' +
                 '}';
     }

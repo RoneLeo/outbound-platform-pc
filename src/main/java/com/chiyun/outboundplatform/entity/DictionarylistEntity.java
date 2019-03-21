@@ -11,15 +11,15 @@ public class DictionarylistEntity {
     private int id;
     @ApiModelProperty(value = "字典ID")
     private int zdid;
-    @ApiModelProperty(value = "字典中文名称")
-    private String zdzwmc;
-    @ApiModelProperty(value = "字典英文名称")
-    private String zdywmc;
+    @ApiModelProperty(value = "字典名称")
+    private String zdmc;
+    @ApiModelProperty(value = "字典代码")
+    private String zddm;
     @ApiModelProperty(value = "注销标志【0：未注销，1：已注销】")
     private String zxbz;
-    @ApiModelProperty(value = "字典项词条代码")
+    @ApiModelProperty(value = "词条代码")
     private Integer ctdm;
-    @ApiModelProperty(value = "字典项词条名称")
+    @ApiModelProperty(value = "词条名称")
     private String ctmc;
 
     @Basic
@@ -44,22 +44,22 @@ public class DictionarylistEntity {
 
     @Basic
     @Column(name = "dictname")
-    public String getZdzwmc() {
-        return zdzwmc;
+    public String getZdmc() {
+        return zdmc;
     }
 
-    public void setZdzwmc(String zdzwmc) {
-        this.zdzwmc = zdzwmc;
+    public void setZdmc(String zdmc) {
+        this.zdmc = zdmc;
     }
 
     @Basic
     @Column(name = "dicteng_name")
-    public String getZdywmc() {
-        return zdywmc;
+    public String getZddm() {
+        return zddm;
     }
 
-    public void setZdywmc(String zdywmc) {
-        this.zdywmc = zdywmc;
+    public void setZddm(String zddm) {
+        this.zddm = zddm;
     }
 
     @Basic
@@ -103,8 +103,8 @@ public class DictionarylistEntity {
 
         if (id != that.id) return false;
         if (zdid != that.zdid) return false;
-        if (!zdzwmc.equals(that.zdzwmc)) return false;
-        if (!zdywmc.equals(that.zdywmc)) return false;
+        if (!zdmc.equals(that.zdmc)) return false;
+        if (!zddm.equals(that.zddm)) return false;
         if (!zxbz.equals(that.zxbz)) return false;
         if (!ctdm.equals(that.ctdm)) return false;
         return ctmc.equals(that.ctmc);
@@ -114,8 +114,8 @@ public class DictionarylistEntity {
     public int hashCode() {
         int result = id;
         result = 31 * result + zdid;
-        result = 31 * result + zdzwmc.hashCode();
-        result = 31 * result + zdywmc.hashCode();
+        result = 31 * result + zdmc.hashCode();
+        result = 31 * result + zddm.hashCode();
         result = 31 * result + zxbz.hashCode();
         result = 31 * result + ctdm.hashCode();
         result = 31 * result + ctmc.hashCode();
@@ -127,8 +127,8 @@ public class DictionarylistEntity {
         return "DictionarylistEntity{" +
                 "id=" + id +
                 ", zdid=" + zdid +
-                ", zdzwmc='" + zdzwmc + '\'' +
-                ", zdywmc='" + zdywmc + '\'' +
+                ", zdmc='" + zdmc + '\'' +
+                ", zddm='" + zddm + '\'' +
                 ", zxbz='" + zxbz + '\'' +
                 ", ctdm='" + ctdm + '\'' +
                 ", ctz='" + ctmc + '\'' +

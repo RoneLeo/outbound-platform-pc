@@ -22,24 +22,24 @@ public interface IdictionaryService {
 
     /**
      *  通过 字典中文名查询
-     * @param name
+     * @param zdmc
      * @return
      */
-     List<DictionaryEntity>  findDictByNameAndState(String name,String state);
+     List<DictionaryEntity>  findDictByNameAndZxbz(String zdmc,String zxbz);
 
     /**
      *  通过 字典英文名查询
-     * @param eng_name
+     * @param zddm
      * @return
      */
-    List<DictionaryEntity>  findDictByEng_NameAndState(String eng_name ,String state);
+    List<DictionaryEntity>  findDictByEng_NameAndZxbz(String zddm ,String zxbz);
     /**
      * 查询所有
      * @return
      */
-     List<DictionaryEntity> findAll(String state);
+     List<DictionaryEntity> findAll(String zxbz);
 
-    List<DictionaryEntity> findDictByNameAndEng_NameAndState (String name,String eng_name ,String state);
+    List<DictionaryEntity>  findByZdmcAndZddmAndZxbz (String zdmc,String zddm ,String zxbz);
 
     /**
      *  新增//修改

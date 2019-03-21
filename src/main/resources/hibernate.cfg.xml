@@ -9,6 +9,7 @@
     <mapping class="com.chiyun.outboundplatform.entity.BasetypeEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.BatchEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.CardmessageEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.CasemanagementEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.CasepeoplemessageEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.ColltypeEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.DelaylvEntity"/>
@@ -25,8 +26,12 @@
     <!--字典管理使用到的表-->
     <mapping class="com.chiyun.outboundplatform.entity.DictionaryEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.DictionarylistEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.DictionaryListEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.RoleEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.UserEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.UserRoleEntity"/>
 
-    <!-- <property name="connection.username"/> -->
+      <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 
     <!-- DB schema will be updated if needed -->

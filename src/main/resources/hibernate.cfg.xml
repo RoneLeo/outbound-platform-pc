@@ -9,7 +9,6 @@
     <mapping class="com.chiyun.outboundplatform.entity.BasetypeEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.BatchEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.CardmessageEntity"/>
-    <mapping class="com.chiyun.outboundplatform.entity.CasemanagementEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.CasepeoplemessageEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.ColltypeEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.DelaylvEntity"/>

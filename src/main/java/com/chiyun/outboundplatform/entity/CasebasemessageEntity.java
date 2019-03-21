@@ -15,6 +15,8 @@ public class CasebasemessageEntity {
     private String pcid;
     @ApiModelProperty(value = "个案序列号")
     private String gaxlh;
+    @ApiModelProperty(value = "批次号")
+    private String pch;
     @ApiModelProperty(value = "案件名称")
     private String ajmc;
     @ApiModelProperty(value = "案件类型")
@@ -52,7 +54,7 @@ public class CasebasemessageEntity {
     }
 
     @Basic
-    @Column(name = "casename")
+    @Column(name = "case_name")
     public String getAjmc() {
         return ajmc;
     }
@@ -69,6 +71,26 @@ public class CasebasemessageEntity {
 
     public void setPcid(String pcid) {
         this.pcid = pcid;
+    }
+
+    @Basic
+    @Column(name = "caseNo")
+    public String getGaxlh() {
+        return gaxlh;
+    }
+
+    public void setGaxlh(String gaxlh) {
+        this.gaxlh = gaxlh;
+    }
+
+    @Basic
+    @Column(name = "batNo")
+    public String getPch() {
+        return pch;
+    }
+
+    public void setPch(String pch) {
+        this.pch = pch;
     }
 
     @Basic
@@ -130,6 +152,7 @@ public class CasebasemessageEntity {
                 Objects.equals(ajid, that.ajid) &&
                 Objects.equals(pcid, that.pcid) &&
                 Objects.equals(gaxlh, that.gaxlh) &&
+                Objects.equals(pch, that.pch) &&
                 Objects.equals(ajmc, that.ajmc) &&
                 Objects.equals(ajlx, that.ajlx) &&
                 Objects.equals(ajzt, that.ajzt) &&
@@ -140,6 +163,6 @@ public class CasebasemessageEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, pcid, gaxlh, ajmc, ajlx, ajzt, ajqy, ajyj, drsj);
+        return Objects.hash(id, ajid, pcid, gaxlh, pch, ajmc, ajlx, ajzt, ajqy, ajyj, drsj);
     }
 }

@@ -17,6 +17,8 @@ public class CasebasemessageAllEntity {
     private String pcid;
     @ApiModelProperty(value = "个案序列号")
     private String gaxlh;
+    @ApiModelProperty(value = "批次号")
+    private String pch;
     @ApiModelProperty(value = "案件名称")
     private String ajmc;
     @ApiModelProperty(value = "案件类型")
@@ -89,6 +91,16 @@ public class CasebasemessageAllEntity {
 
     public void setPcid(String pcid) {
         this.pcid = pcid;
+    }
+
+    @Basic
+    @Column(name = "batNo")
+    public String getPch() {
+        return pch;
+    }
+
+    public void setPch(String pch) {
+        this.pch = pch;
     }
 
     @Basic
@@ -250,6 +262,7 @@ public class CasebasemessageAllEntity {
                 Objects.equals(ajid, that.ajid) &&
                 Objects.equals(pcid, that.pcid) &&
                 Objects.equals(gaxlh, that.gaxlh) &&
+                Objects.equals(pch, that.pch) &&
                 Objects.equals(ajmc, that.ajmc) &&
                 Objects.equals(ajlx, that.ajlx) &&
                 Objects.equals(ajzt, that.ajzt) &&
@@ -269,6 +282,6 @@ public class CasebasemessageAllEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, pcid, gaxlh, ajmc, ajlx, ajzt, ajqy, ajyj, drsj, khxx, csyxx, dkxx, dxxx, wfxx, arxx, qtxx, lxrxx, bzxx);
+        return Objects.hash(id, ajid, pcid, gaxlh, pch, ajmc, ajlx, ajzt, ajqy, ajyj, drsj, khxx, csyxx, dkxx, dxxx, wfxx, arxx, qtxx, lxrxx, bzxx);
     }
 }

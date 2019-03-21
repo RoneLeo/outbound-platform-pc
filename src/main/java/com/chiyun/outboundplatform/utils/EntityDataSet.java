@@ -6,6 +6,30 @@ import com.chiyun.outboundplatform.entity.*;
  * Created by wazto on 2019/3/20.
  */
 public class EntityDataSet {
+
+    /**
+     * @Description:案件基本信息设置
+     * @Date:2019/3/20
+     */
+    public static void basedataset(String data, String tagart, CasebasemessageEntity entity) {
+        switch (tagart) {
+            case "个案序列号":
+                entity.setGaxlh(data);
+                break;
+            case "批次id":
+                entity.setPcid(data);
+                break;
+            case "案件名称":
+                entity.setAjmc(data);
+                break;
+            case "案件佣金":
+                entity.setAjyj(StringUtil.getMoneyDouble(Double.valueOf(data)));
+                break;
+            default:
+                break;
+        }
+    }
+
     /**
      * @Description:卡号信息设置
      * @Date:2019/3/20
@@ -77,28 +101,28 @@ public class EntityDataSet {
     public static void loandataset(String data, String tagart, LoanmessageEntity entity) {
         switch (tagart) {
             case "欠款":
-                entity.setQk(Double.valueOf(data));
+                entity.setQk(StringUtil.getMoneyDouble(Double.valueOf(data)));
                 break;
             case "委案金额":
-                entity.setWaje(Double.valueOf(data));
+                entity.setWaje(StringUtil.getMoneyDouble(Double.valueOf(data)));
                 break;
             case "本金":
-                entity.setPcp(Double.valueOf(data));
+                entity.setPcp(StringUtil.getMoneyDouble(Double.valueOf(data)));
                 break;
             case "最新欠款":
-                entity.setZxhk(Double.valueOf(data));
+                entity.setZxhk(StringUtil.getMoneyDouble(Double.valueOf(data)));
                 break;
             case "利息":
-                entity.setLx(Double.valueOf(data));
+                entity.setLx(StringUtil.getMoneyDouble(Double.valueOf(data)));
                 break;
             case "滞纳金":
-                entity.setZnj(Double.valueOf(data));
+                entity.setZnj(StringUtil.getMoneyDouble(Double.valueOf(data)));
                 break;
             case "已还款":
-                entity.setYhk(Double.valueOf(data));
+                entity.setYhk(StringUtil.getMoneyDouble(Double.valueOf(data)));
                 break;
             case "最低还款":
-                entity.setZdhk(Double.valueOf(data));
+                entity.setZdhk(StringUtil.getMoneyDouble(Double.valueOf(data)));
                 break;
             case "委案日期":
                 entity.setWarq(DateUtils.getDateByString(data));
@@ -292,8 +316,90 @@ public class EntityDataSet {
      * @Date:2019/3/20
      */
     public static void otherdataset(String data, String tagart, OthermessageEntity entity) {
-        if (tagart.equals("商户")) {
-            entity.setSh(data);
+        switch (tagart) {
+            case "逾期账龄":
+                entity.setYqzl(data);
+                break;
+            case "还款期限":
+                entity.setHkqx(DateUtils.getDateByString(data));
+                break;
+            case "信用额度":
+                entity.setXyed(data);
+                break;
+            case "信贷分类":
+                entity.setXdfl(Integer.valueOf(data));
+                break;
+            case "信贷分类名称":
+                entity.setXdflmc(data);
+                break;
+            case "催收分类":
+                entity.setCslx(Integer.valueOf(data));
+                break;
+            case "催收分类名称":
+                entity.setCslxmc(data);
+                break;
+            case "拖欠级别":
+                entity.setTqjb(Integer.valueOf(data));
+                break;
+            case "拖欠级别名称":
+                entity.setTqjbmc(data);
+                break;
+            case "保证金":
+                entity.setBzj(StringUtil.getMoneyDouble(Double.valueOf(data)));
+                break;
+            case "开卡日":
+                entity.setKkr(DateUtils.getDateByString(data));
+                break;
+            case "最后还款日":
+                entity.setZhhkr(DateUtils.getDateByString(data));
+                break;
+            case "最后还款额":
+                entity.setZhhke(StringUtil.getMoneyDouble(Double.valueOf(data)));
+                break;
+            case "最后消费日":
+                entity.setZhxfr(DateUtils.getDateByString(data));
+                break;
+            case "最后提现日":
+                entity.setZhtxr(DateUtils.getDateByString(data));
+                break;
+            case "停卡日":
+                entity.setTkr(DateUtils.getDateByString(data));
+                break;
+            case "账单日":
+                entity.setZdr(DateUtils.getDateByString(data));
+                break;
+            case "人民币":
+                entity.setRmb(StringUtil.getMoneyDouble(Double.valueOf(data)));
+                break;
+            case "外币":
+                entity.setUsd(StringUtil.getMoneyDouble(Double.valueOf(data)));
+                break;
+            case "港币":
+                entity.setGb(StringUtil.getMoneyDouble(Double.valueOf(data)));
+                break;
+            case "委案期数":
+                entity.setWaqs(Integer.valueOf(data));
+                break;
+            case "逾期天数":
+                entity.setYqts(Integer.valueOf(data));
+                break;
+            case "剩余本金":
+                entity.setSybj(StringUtil.getMoneyDouble(Double.valueOf(data)));
+                break;
+            case "逾期期数":
+                entity.setYqqs(Integer.valueOf(data));
+                break;
+            case "已还期数":
+                entity.setYhqs(Integer.valueOf(data));
+                break;
+            case "商品":
+                entity.setSp(data);
+                break;
+            case "商户":
+                entity.setSh(data);
+                break;
+            default:
+                break;
         }
     }
 

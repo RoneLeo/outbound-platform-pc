@@ -1,5 +1,6 @@
 package com.chiyun.outboundplatform.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.chiyun.outboundplatform.common.ApiResult;
 import com.chiyun.outboundplatform.entity.*;
 import com.chiyun.outboundplatform.service.IbatchService;
@@ -105,7 +106,7 @@ public class ExcelImportUtils {
      * @param wb
      * @return
      */
-    private static ApiResult readExcelValue(String xmbh, Workbook wb, File tempFile, IbatchService excelController) throws ParseException {
+    private static ApiResult readExcelValue(String xmbh, Workbook wb, File tempFile, IbatchService ibatchService) throws ParseException {
         //导入数据数量
         int sj = 0;
         //错误信息接收器
@@ -160,12 +161,29 @@ public class ExcelImportUtils {
         for (int r = 2; r < totalRows; r++) {
             Row datarow = sheet1.getRow(r);
             if (datarow == null) {
-                errorMsg += br + "第" + (r + 1) + "行数据有问题，请仔细检查！";
+                errorMsg += br + "第" + (r + 1) + "行数据为空！";
                 continue;
             }
+            CasebasemessageEntity baseentity = new CasebasemessageEntity();
+            List<CardmessageEntity> cardmessageEntityList = new ArrayList<>();
+            List<EmpmessageEntity> empmessageEntityList = new ArrayList<>();
+            List<LoanmessageEntity> loanmessageEntityList = new ArrayList<>();
+            List<UsermessageEntity> usermessageEntityList = new ArrayList<>();
+            List<OutboundmessageEntity> outboundmessageEntityList = new ArrayList<>();
+            List<CasepeoplemessageEntity> casepeoplemessageEntityList = new ArrayList<>();
+            List<LinkmanmessageEntity> linkmanmessageEntityList = new ArrayList<>();
+            List<OthermessageEntity> othermessageEntityList = new ArrayList<>();
+            List<RemarkmsgEntity> remarkmsgEntityList = new ArrayList<>();
             for (HashMap<String, Object> map : tablelist) {
-                getentitybytable(map, datarow);
+                getentitybytable(baseentity, map, datarow, cardmessageEntityList, empmessageEntityList, loanmessageEntityList, usermessageEntityList, outboundmessageEntityList
+                        , casepeoplemessageEntityList, linkmanmessageEntityList, othermessageEntityList, remarkmsgEntityList);
 
+            }
+            if (ibatchService.saveall(baseentity, cardmessageEntityList, empmessageEntityList, loanmessageEntityList, usermessageEntityList, outboundmessageEntityList
+                    , casepeoplemessageEntityList, linkmanmessageEntityList, othermessageEntityList, remarkmsgEntityList)) {
+                sj++;
+            } else {
+                errorMsg += br + "第" + (r + 1) + "行数据有问题，请仔细检查！";
             }
         }
         //删除上传的临时文件
@@ -174,95 +192,162 @@ public class ExcelImportUtils {
         }
 
         errorMsg = "导入成功，共" + sj + "条数据！" + errorMsg;
-        return ApiResult.SUCCESS(tablelist);
+        return ApiResult.SUCCESS(errorMsg);
     }
 
-    private static void getentitybytable(HashMap<String, Object> map, Row datarow) {
+    private static void getentitybytable(CasebasemessageEntity baseentity, HashMap<String, Object> map, Row datarow, List<CardmessageEntity> cardmessageEntityList
+            , List<EmpmessageEntity> empmessageEntityList, List<LoanmessageEntity> loanmessageEntityList, List<UsermessageEntity> usermessageEntityList
+            , List<OutboundmessageEntity> outboundmessageEntityList, List<CasepeoplemessageEntity> casepeoplemessageEntityList,
+                                         List<LinkmanmessageEntity> linkmanmessageEntityList, List<OthermessageEntity> othermessageEntityList
+            , List<RemarkmsgEntity> remarkmsgEntityList) {
         int begin = Integer.valueOf(map.get("begin").toString());
         int end = Integer.valueOf(map.get("end").toString());
         String table = map.get("name").toString();
-        if (table.equals("默认")) {
-
-        } else if (table.equals("卡号信息")) {
-            CardmessageEntity card = new CardmessageEntity();
-            for (int i = begin; i <= end; i++) {
-                Cell cell = datarow.getCell(i);
-                cell.setCellType(Cell.CELL_TYPE_STRING);
-                String str = listMap.get(i);//目标字段名称
-                String datastr = cell.getStringCellValue();//数据内容
-                EntityDataSet.carddataset(datastr, str, card);
+        switch (table) {
+            case "默认":
+                for (int i = begin; i <= end; i++) {
+                    Cell cell = datarow.getCell(i);
+                    if (cell == null)
+                        continue;
+                    cell.setCellType(Cell.CELL_TYPE_STRING);
+                    String str = listMap.get(i);//目标字段名称
+                    String datastr = cell.getStringCellValue();//数据内容
+                    EntityDataSet.basedataset(datastr, str, baseentity);
+                }
+                break;
+            case "卡号信息":
+                CardmessageEntity card = new CardmessageEntity();
+                for (int i = begin; i <= end; i++) {
+                    Cell cell = datarow.getCell(i);
+                    if (cell == null)
+                        continue;
+                    cell.setCellType(Cell.CELL_TYPE_STRING);
+                    String str = listMap.get(i);//目标字段名称
+                    String datastr = cell.getStringCellValue();//数据内容
+                    EntityDataSet.carddataset(datastr, str, card);
+                }
+                if (!StringUtil.checkObjAllFieldsIsNull(card))
+                    cardmessageEntityList.add(card);
+                break;
+            case "催收员信息": {
+                EmpmessageEntity entity = new EmpmessageEntity();
+                for (int i = begin; i <= end; i++) {
+                    Cell cell = datarow.getCell(i);
+                    if (cell == null)
+                        continue;
+                    cell.setCellType(Cell.CELL_TYPE_STRING);
+                    String str = listMap.get(i);//目标字段名称
+                    String datastr = cell.getStringCellValue();//数据内容
+                    EntityDataSet.empdataset(datastr, str, entity);
+                }
+                if (!StringUtil.checkObjAllFieldsIsNull(entity))
+                    empmessageEntityList.add(entity);
+                break;
             }
-        } else if (table.equals("催收员信息")) {
-            EmpmessageEntity entity = new EmpmessageEntity();
-            for (int i = begin; i <= end; i++) {
-                Cell cell = datarow.getCell(i);
-                cell.setCellType(Cell.CELL_TYPE_STRING);
-                String str = listMap.get(i);//目标字段名称
-                String datastr = cell.getStringCellValue();//数据内容
-                EntityDataSet.empdataset(datastr, str, entity);
+            case "贷款信息": {
+                LoanmessageEntity entity = new LoanmessageEntity();
+                for (int i = begin; i <= end; i++) {
+                    Cell cell = datarow.getCell(i);
+                    if (cell == null)
+                        continue;
+                    cell.setCellType(Cell.CELL_TYPE_STRING);
+                    String str = listMap.get(i);//目标字段名称
+                    String datastr = cell.getStringCellValue();//数据内容
+                    EntityDataSet.loandataset(datastr, str, entity);
+                }
+                if (!StringUtil.checkObjAllFieldsIsNull(entity))
+                    loanmessageEntityList.add(entity);
+                break;
             }
-        } else if (table.equals("贷款信息")) {
-            LoanmessageEntity entity = new LoanmessageEntity();
-            for (int i = begin; i <= end; i++) {
-                Cell cell = datarow.getCell(i);
-                cell.setCellType(Cell.CELL_TYPE_STRING);
-                String str = listMap.get(i);//目标字段名称
-                String datastr = cell.getStringCellValue();//数据内容
-                EntityDataSet.loandataset(datastr, str, entity);
+            case "对象信息": {
+                UsermessageEntity entity = new UsermessageEntity();
+                for (int i = begin; i <= end; i++) {
+                    Cell cell = datarow.getCell(i);
+                    if (cell == null)
+                        continue;
+                    cell.setCellType(Cell.CELL_TYPE_STRING);
+                    String str = listMap.get(i);//目标字段名称
+                    String datastr = cell.getStringCellValue();//数据内容
+                    EntityDataSet.userdataset(datastr, str, entity);
+                }
+                if (!StringUtil.checkObjAllFieldsIsNull(entity))
+                    usermessageEntityList.add(entity);
+                break;
             }
-        } else if (table.equals("对象信息")) {
-            UsermessageEntity entity = new UsermessageEntity();
-            for (int i = begin; i <= end; i++) {
-                Cell cell = datarow.getCell(i);
-                cell.setCellType(Cell.CELL_TYPE_STRING);
-                String str = listMap.get(i);//目标字段名称
-                String datastr = cell.getStringCellValue();//数据内容
-                EntityDataSet.userdataset(datastr, str, entity);
+            case "外访信息": {
+                OutboundmessageEntity entity = new OutboundmessageEntity();
+                for (int i = begin; i <= end; i++) {
+                    Cell cell = datarow.getCell(i);
+                    if (cell == null)
+                        continue;
+                    cell.setCellType(Cell.CELL_TYPE_STRING);
+                    String str = listMap.get(i);//目标字段名称
+                    String datastr = cell.getStringCellValue();//数据内容
+                    EntityDataSet.outbdataset(datastr, str, entity);
+                }
+                if (!StringUtil.checkObjAllFieldsIsNull(entity))
+                    outboundmessageEntityList.add(entity);
+                break;
             }
-        } else if (table.equals("外访信息")) {
-            OutboundmessageEntity entity = new OutboundmessageEntity();
-            for (int i = begin; i <= end; i++) {
-                Cell cell = datarow.getCell(i);
-                cell.setCellType(Cell.CELL_TYPE_STRING);
-                String str = listMap.get(i);//目标字段名称
-                String datastr = cell.getStringCellValue();//数据内容
-                EntityDataSet.outbdataset(datastr, str, entity);
+            case "案人信息": {
+                CasepeoplemessageEntity entity = new CasepeoplemessageEntity();
+                for (int i = begin; i <= end; i++) {
+                    Cell cell = datarow.getCell(i);
+                    if (cell == null)
+                        continue;
+                    cell.setCellType(Cell.CELL_TYPE_STRING);
+                    String str = listMap.get(i);//目标字段名称
+                    String datastr = cell.getStringCellValue();//数据内容
+                    EntityDataSet.casepdataset(datastr, str, entity);
+                }
+                if (!StringUtil.checkObjAllFieldsIsNull(entity))
+                    casepeoplemessageEntityList.add(entity);
+                break;
             }
-        } else if (table.equals("案人信息")) {
-            CasepeoplemessageEntity entity = new CasepeoplemessageEntity();
-            for (int i = begin; i <= end; i++) {
-                Cell cell = datarow.getCell(i);
-                cell.setCellType(Cell.CELL_TYPE_STRING);
-                String str = listMap.get(i);//目标字段名称
-                String datastr = cell.getStringCellValue();//数据内容
-                EntityDataSet.casepdataset(datastr, str, entity);
+            case "联系人信息": {
+                LinkmanmessageEntity entity = new LinkmanmessageEntity();
+                for (int i = begin; i <= end; i++) {
+                    Cell cell = datarow.getCell(i);
+                    if (cell == null)
+                        continue;
+                    cell.setCellType(Cell.CELL_TYPE_STRING);
+                    String str = listMap.get(i);//目标字段名称
+                    String datastr = cell.getStringCellValue();//数据内容
+                    EntityDataSet.linkdataset(datastr, str, entity);
+                }
+                if (!StringUtil.checkObjAllFieldsIsNull(entity))
+                    linkmanmessageEntityList.add(entity);
+                break;
             }
-        } else if (table.equals("联系人信息")) {
-            LinkmanmessageEntity entity = new LinkmanmessageEntity();
-            for (int i = begin; i <= end; i++) {
-                Cell cell = datarow.getCell(i);
-                cell.setCellType(Cell.CELL_TYPE_STRING);
-                String str = listMap.get(i);//目标字段名称
-                String datastr = cell.getStringCellValue();//数据内容
-                EntityDataSet.linkdataset(datastr, str, entity);
+            case "其他信息": {
+                OthermessageEntity entity = new OthermessageEntity();
+                for (int i = begin; i <= end; i++) {
+                    Cell cell = datarow.getCell(i);
+                    if (cell == null)
+                        continue;
+                    cell.setCellType(Cell.CELL_TYPE_STRING);
+                    String str = listMap.get(i);//目标字段名称
+                    String datastr = cell.getStringCellValue();//数据内容
+                    EntityDataSet.otherdataset(datastr, str, entity);
+                }
+                if (!StringUtil.checkObjAllFieldsIsNull(entity))
+                    othermessageEntityList.add(entity);
+                break;
             }
-        } else if (table.equals("其他信息")) {
-            OthermessageEntity entity = new OthermessageEntity();
-            for (int i = begin; i <= end; i++) {
-                Cell cell = datarow.getCell(i);
-                cell.setCellType(Cell.CELL_TYPE_STRING);
-                String str = listMap.get(i);//目标字段名称
-                String datastr = cell.getStringCellValue();//数据内容
-                EntityDataSet.otherdataset(datastr, str, entity);
-            }
-        } else if (table.equals("备注信息")) {
-            RemarkmsgEntity entity = new RemarkmsgEntity();
-            for (int i = begin; i <= end; i++) {
-                Cell cell = datarow.getCell(i);
-                cell.setCellType(Cell.CELL_TYPE_STRING);
-                String str = listMap.get(i);//目标字段名称
-                String datastr = cell.getStringCellValue();//数据内容
-                EntityDataSet.remarkdataset(datastr, str, entity);
+            case "备注信息": {
+                RemarkmsgEntity entity = new RemarkmsgEntity();
+                for (int i = begin; i <= end; i++) {
+                    Cell cell = datarow.getCell(i);
+                    if (cell == null)
+                        continue;
+                    cell.setCellType(Cell.CELL_TYPE_STRING);
+                    String str = listMap.get(i);//目标字段名称
+                    String datastr = cell.getStringCellValue();//数据内容
+                    EntityDataSet.remarkdataset(datastr, str, entity);
+                }
+                if (!StringUtil.checkObjAllFieldsIsNull(entity))
+                    remarkmsgEntityList.add(entity);
+                break;
             }
         }
     }

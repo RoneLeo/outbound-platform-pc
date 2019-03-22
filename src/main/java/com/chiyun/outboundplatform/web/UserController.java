@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.chiyun.outboundplatform.common.ApiResult;
 import com.chiyun.outboundplatform.entity.UserEntity;
 import com.chiyun.outboundplatform.repository.UserReposity;
-import com.chiyun.outboundplatform.utils.AesUtil;
-import com.chiyun.outboundplatform.utils.HttpUtil;
-import com.chiyun.outboundplatform.utils.MD5Util;
-import com.chiyun.outboundplatform.utils.StringUtil;
+import com.chiyun.outboundplatform.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 //import net.sf.json.JSONException;
@@ -72,10 +69,10 @@ public class UserController {
                 UserEntity userEntity1 = userReposity.findBySqm(sqm);
                 if(userEntity1==null){
                     //数据库找不到邀请码信息
-                    return ApiResult.FAILURE("数据库没有该邀请码");
+                    return ApiResult.FAILURE("数据库没有该授权码");
                 }else if(userEntity1.getOpenid()!=null){
                     //邀请码查询出来的数据有人绑定
-                    return ApiResult.FAILURE("邀请码已有人使用，请核实");
+                    return ApiResult.FAILURE("授权码已有人使用，请核实");
                 }
                 userEntity1.setOpenid(map.get("openid").toString());
                // userEntity1.setUnionid(map.get("unionid").toString());
@@ -102,20 +99,90 @@ public class UserController {
 
     }
 
+    @ApiOperation(value="添加用户")
+    @RequestMapping("/add")
+    public ApiResult<Object> add(HttpSession session,UserEntity userEntity) throws Exception {
+        //判断是否登录
 
-//    @ApiOperation(value="查询所有用户")
-//    @RequestMapping("/findAll")
-//    public ApiResult<Object> findAll(HttpSession session){
-//        String js = session.getAttribute("js").toString();
-//        List<UserEntity> userEntity;
-//        if(js=="1"){
-//            userEntity = userReposity.findAll();
-//        }else if(js=="2"){
-//            userEntity = userReposity.findByJsAAndSzxzqdm(4,session.getAttribute("szxzqdm").toString());
-//        }else {
-//            return ApiResult.FAILURE("没有权限查看用户");
-//        }
-//    }
+        //判断是否为管理员
+
+        /* 添加用户 */
+        UserEntity result=null;
+        userEntity.setCjsj(new Date());
+        //判断添加的用户为什么网站用户还是微信小程序用户
+        if("0".equals(userEntity.getLx())){
+            //网站用户
+            userEntity.setMm(MD5Util.MD5("666666"));
+            result = userReposity.save(userEntity);
+        }else if("1".equals(userEntity.getLx())){
+            //微信小程序用户
+            result = userReposity.save(userEntity);
+            String sqm=CodeUtil.toSerialCode(result.getId());
+            result.setSqm(sqm);
+            result = userReposity.save(result);
+        }else{
+            return ApiResult.FAILURE("添加用户类型错误");
+        }
+        if(result==null){
+            return ApiResult.FAILURE("添加失败");
+        }
+        return ApiResult.SUCCESS(result);
+    }
+
+    @ApiOperation(value="添加用户")
+    @RequestMapping("/delete")
+    public ApiResult<Object> delete(HttpSession session,int id) throws Exception {
+        //判断是否登录
+
+        //判断是否为管理员
+
+        /* 删除用户 */
+        UserEntity oldUserEntity = userReposity.findById(id);
+        if (oldUserEntity == null) {
+            return ApiResult.FAILURE("没有该用户的信息");
+        }
+        int result = userReposity.deleteById(id);
+        if(result==0){
+            return ApiResult.FAILURE("删除失败");
+        }
+        return ApiResult.SUCCESS("删除成功");
+    }
+
+    @ApiOperation(value="修改用户")
+    @RequestMapping("/update")
+    public ApiResult<Object> update(HttpSession session,UserEntity userEntity) throws Exception {
+        //判断是否登录
+
+        //判断是否为管理员
+
+        /* 修改用户 */
+        UserEntity oldUserEntity = userReposity.findById(userEntity.getId());
+        if (oldUserEntity == null) {
+            return ApiResult.FAILURE("没有该用户的信息");
+        }
+        userEntity.setCjsj(oldUserEntity.getCjsj());
+        UserEntity result = userReposity.save(userEntity);
+        if(result==null){
+            return ApiResult.FAILURE("修改失败");
+        }
+        return ApiResult.SUCCESS(result);
+    }
+
+    @ApiOperation(value="查询所有用户")
+    @RequestMapping("/findAll")
+    public ApiResult<Object> findAll(HttpSession session){
+        String js = session.getAttribute("js").toString();
+        List<UserEntity> userEntity;
+        if("1".equals(js)){
+            userEntity = userReposity.findAll();
+        }else if("2".equals(js)){
+            int a[]={2,4};
+            userEntity = userReposity.findByJsAndSzxzqdm(a,session.getAttribute("szxzqdm").toString());
+        }else {
+            return ApiResult.FAILURE("没有权限查看用户");
+        }
+        return ApiResult.SUCCESS(userEntity);
+    }
 
     public Map<String, Object> weChatLogin(String code, String encryptedData,String iv){
         Map<String, Object> map = new HashMap<String, Object>();

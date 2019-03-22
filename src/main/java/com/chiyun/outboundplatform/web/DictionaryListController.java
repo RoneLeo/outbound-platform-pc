@@ -75,7 +75,6 @@ public class DictionaryListController {
             @ApiImplicitParam(paramType = "query", name = "ctmc", value = "项词条名称", required = true, dataType = "String")
     })
     public ApiResult<Object> addDictList(@RequestParam Integer zdid,
-                                         // @RequestParam  String  ctdm,
                                          @RequestParam String ctmc
     ) {
 

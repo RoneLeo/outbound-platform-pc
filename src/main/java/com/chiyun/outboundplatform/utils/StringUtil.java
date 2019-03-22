@@ -2,6 +2,8 @@ package com.chiyun.outboundplatform.utils;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.UUID;
+
 
 public class StringUtil {
 
@@ -43,4 +45,23 @@ public class StringUtil {
 
         return true;
     }
+
+    /**
+     * 获取32位 UUID
+     * @return
+     */
+    public  static String  getUUID32(){
+        String  uuid= UUID.randomUUID().toString().replace("-","");
+        return  uuid;
+    }
+
+    /**
+     * 获取64位 UUID
+     * @return
+     */
+    public  static String  getUUID64(){
+        String  uuid= UUID.randomUUID().toString().replace("-","")+UUID.randomUUID().toString().replace("-","");
+        return  uuid;
+    }
+
 }

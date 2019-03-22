@@ -108,40 +108,7 @@ public class DictionaryListController {
     }
 
 
-    //删除操作 在上线部署时需要去掉
-    @ApiOperation("根据【ID】删除单个词条")
-    @RequestMapping(value = "/deleteDictListById", method = RequestMethod.POST)
-    @ApiImplicitParam(paramType = "query", name = "id", value = "主键", required = true, dataType = "Integer")
-    public ApiResult<Object> deleteDictListById(Integer id) {
-        if (id == 0) {
-            return ApiResult.FAILURE("删除失败,主键不能为空！！");
-        }
 
-        int con = idictionaryListService.deleteById(id);
-        if (con == 1) {
-            return ApiResult.SUCCESS("删除成功");
-        } else {
-            return ApiResult.FAILURE("删除失败");
-        }
-
-    }
-
-    //删除操作 在上线部署时需要去掉
-    @ApiOperation("根据[字典ID]批量删除词条")
-    @RequestMapping(value = "/deleteDictListByDid", method = RequestMethod.POST)
-    @ApiImplicitParam(paramType = "query", name = "zdid", value = "字典ID", required = true, dataType = "Integer")
-    public ApiResult<Object> deleteDictListByDid(Integer zdid) {
-
-        if (zdid == 0) {
-            return ApiResult.FAILURE("删除失败,主键不能为空！！");
-        }
-        int con = idictionaryListService.deleteByDid(zdid);
-        if (con >= 0) {
-            return ApiResult.SUCCESS("删除成功,共删除了:" + con + "个词条");
-        } else {
-            return ApiResult.FAILURE("删除失败");
-        }
-    }
 
 
     @ApiOperation("更新词条")
@@ -206,10 +173,9 @@ public class DictionaryListController {
 
     }
 
+    /**********************************************测试提供给其它模块使用的接口**********************************************************/
 
-    //其它模块使用
-
-    @ApiOperation("根据ID查询词条")
+    @ApiOperation("给其他模块提供的接口测试- [根据ID获取词条信息]")
     @RequestMapping(value = "/findDictListById", method = {RequestMethod.GET, RequestMethod.POST})
     @ApiImplicitParam(paramType = "query", name = "id", value = "主键", required = true, dataType = "Integer")
     public ApiResult<Object> findDictListById(Integer id) {
@@ -224,6 +190,97 @@ public class DictionaryListController {
         return ApiResult.SUCCESS(entity);
 
 
+    }
+
+
+    @ApiOperation("给其他模块提供的接口测试- [根据字典名称和词条名称获取词条代码]")
+    @RequestMapping(value = "/queryCtdmByZdmcAndCtmc", method = {RequestMethod.GET, RequestMethod.POST})
+    @ApiImplicitParams({
+    @ApiImplicitParam(paramType = "query", name = "zdmc", value = "字典名称", required = true, dataType = "String"),
+     @ApiImplicitParam(paramType = "query", name = "ctmc", value = "词条名称", required = true, dataType = "String")
+    })
+    public ApiResult<Object> queryCtdmByZdmcAndCtmc(@RequestParam String zdmc,
+                                                   @RequestParam String ctmc){
+             String  msg=idictionaryListService.queryCtdmByZdmcAndCtmc(zdmc, ctmc);
+        return ApiResult.SUCCESS(msg);
+    }
+
+
+    @ApiOperation("给其他模块提供的接口测试- [根据字典代码和词条名称获取词条代码]")
+    @RequestMapping(value = "/queryCtdmByZddmAndCtmc", method = {RequestMethod.GET, RequestMethod.POST})
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", name = "zddm", value = "字典代码", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "query", name = "ctmc", value = "词条名称", required = true, dataType = "String")
+    })
+    public ApiResult<Object> queryCtdmByZddmAndCtmc(@RequestParam String zddm,
+                                                    @RequestParam String ctmc){
+        String  msg=idictionaryListService.queryCtdmByZddmAndCtmc(zddm, ctmc);
+
+        return ApiResult.SUCCESS(msg);
+    }
+
+
+
+    @ApiOperation("给其他模块提供的接口测试- [根据字典名称和词条代码获取词条名称]")
+    @RequestMapping(value = "/queryCtmcByZdmcAndCtdm", method = {RequestMethod.GET, RequestMethod.POST})
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", name = "zdmc", value = "字典名称", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "query", name = "ctdm", value = "词条代码", required = true, dataType = "String")
+    })
+    public ApiResult<Object> queryCtmcByZdmcAndCtdm(@RequestParam String zdmc,
+                                                    @RequestParam String ctdm){
+        String  msg=idictionaryListService.queryCtmcByZdmcAndCtdm(zdmc, ctdm);
+        return ApiResult.SUCCESS(msg);
+    }
+
+
+    @ApiOperation("给其他模块提供的接口测试- [根据字典代码和词条代码获取词条名称]")
+    @RequestMapping(value = "/queryCtmcByZddmAndCtdm", method = {RequestMethod.GET, RequestMethod.POST})
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", name = "zddm", value = "字典代码", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "query", name = "ctdm", value = "词条代码", required = true, dataType = "String")
+    })
+    public ApiResult<Object> queryCtmcByZddmAndCtdm(@RequestParam String zddm,
+                                                    @RequestParam String ctdm){
+        String  msg=idictionaryListService.queryCtmcByZddmAndCtdm(zddm, ctdm);
+        return ApiResult.SUCCESS(msg);
+    }
+
+    /*********************便于开发调试提供的方法-在后期上线时需要删除掉****************************************************/
+
+    //删除操作 在上线部署时需要去掉
+    @ApiOperation("根据【ID】删除单个词条")
+    @RequestMapping(value = "/deleteDictListById", method = RequestMethod.POST)
+    @ApiImplicitParam(paramType = "query", name = "id", value = "主键", required = true, dataType = "Integer")
+    public ApiResult<Object> deleteDictListById(Integer id) {
+        if (id == 0) {
+            return ApiResult.FAILURE("删除失败,主键不能为空！！");
+        }
+
+        int con = idictionaryListService.deleteById(id);
+        if (con == 1) {
+            return ApiResult.SUCCESS("删除成功");
+        } else {
+            return ApiResult.FAILURE("删除失败");
+        }
+
+    }
+
+    //删除操作 在上线部署时需要去掉
+    @ApiOperation("根据[字典ID]批量删除词条")
+    @RequestMapping(value = "/deleteDictListByDid", method = RequestMethod.POST)
+    @ApiImplicitParam(paramType = "query", name = "zdid", value = "字典ID", required = true, dataType = "Integer")
+    public ApiResult<Object> deleteDictListByDid(Integer zdid) {
+
+        if (zdid == 0) {
+            return ApiResult.FAILURE("删除失败,主键不能为空！！");
+        }
+        int con = idictionaryListService.deleteByDid(zdid);
+        if (con >= 0) {
+            return ApiResult.SUCCESS("删除成功,共删除了:" + con + "个词条");
+        } else {
+            return ApiResult.FAILURE("删除失败");
+        }
     }
 
 

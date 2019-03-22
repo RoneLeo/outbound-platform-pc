@@ -13,7 +13,7 @@ import java.util.List;
 public interface DictionaryListRepository extends CrudRepository<DictionarylistEntity , Long> {
 
 
-     DictionarylistEntity findById(Integer id);
+
 
     @Query(value = "select * from dictionarylist  ORDER BY FIELD (state,'0','1')", nativeQuery = true)
      List<DictionarylistEntity> findAll();
@@ -61,17 +61,6 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
     DictionarylistEntity save(DictionarylistEntity entity);
 
 
-    @Query(value = "delete from dictionarylist where id = ?1", nativeQuery = true)
-    @Modifying
-    @Transactional
-     int deleteById(Integer id);
-
-
-    @Query(value = "delete from dictionarylist where dictid = ?1", nativeQuery = true)
-    @Modifying
-    @Transactional
-    int deleteByDid(Integer zdid);
-
 
 
     /**
@@ -96,48 +85,43 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
 
     /**************************************给其它模块提供的功能方法********************************************************/
 
-    //    /**  预留方法
-//     *  批量更新 词条关于字典的信息
-//     * @param zdywm
-//     * @param zdzwm
-//     * @param Ndid
-//     * @param Odid
-//     * @return
-//     */
-//    @Query(value = "update  dictionarylist dicList set  dicList.dicteng_name=?1," +
-//                   "dicList.dictname=?2,dicList.dictid=?3  " +
-//                   "where dicList.dictid =?4 ", nativeQuery = true)
-//    @Modifying
-//    @Transactional
-//      int updateZdywmAndZdzwnAndDid(String zdywm,String zdzwm ,Integer Ndid,Integer Odid);
+    DictionarylistEntity findById(Integer id);
 
-    /*
-     * 通过外键批量注销词条
-     * @param zdid
-     * @return
+    /**
+     * 根据字典名称和词条代码查询词条名称 --用于导出数据时把字典字段的代码转换成中文名
      */
-//      @Query(value = "update  dictionarylist  set state='1'  where dictid =?1 and state='0'", nativeQuery = true)
-//      @Modifying
-//      @Transactional
-//      int  cancellationDicListByZdid(Integer zdid);
-//
-    /*
-     * 通过外键批量激活词条
-     * @param zdid
-     * @return
+    @Query(value = "select entryvalue from dictionarylist where dictname=?1 and entrycode=?2",nativeQuery = true)
+    String  queryCtmcByZdmcAndCtdm(String zdmc, String ctdm);
+    /**
+     * 根据字典代码和词条代码查询词条名称 --用于导出数据时把字典字段的代码转换成中文名
      */
-//    @Query(value = "update  dictionarylist  set state='0'  where dictid =?1 and state='1'", nativeQuery = true)
-//    @Modifying
-//    @Transactional
-//    int unCancellationDicListByZdid(Integer zdid);
+    @Query(value = "select entryvalue from dictionarylist where dicteng_name=?1 and entrycode=?2",nativeQuery = true)
+    String queryCtmcByZddmAndCtdm(String zddm, String ctdm);
 
-      //通过字典代码和词条代码 查询词条名称
-//    @Query(value = "select c_name from dictionarylist where dicteng_name = ?1 and entrycode= ?2  and state='0'", nativeQuery = true)
-//    String querDictListByZdywmAndKey(String zdywm, Integer key);
+    /**
+     * 根据字典名称和词条名称查询词条代码 --用于导入数据时把字典字段的词条名称转换成对应的词条代码
+     */
+    @Query(value = "select entrycode from dictionarylist where dicteng_name=?1 and entryvalue=?2",nativeQuery = true)
+    String  queryCtdmByZddmAndCtmc(String zddm, String ctmc);
 
-      // 通过字典名称和词条代码 查询词条名称
-//    @Query(value = "select c_name from dictionarylist where dictname = ?1 and entrycode= ?2 and state='0'", nativeQuery = true)
-//    String  querDictListByZdzwmAndKey(String zdzwm, Integer key);
+    /**
+     * 根据字典名称和词条名称查询词条代码 --用于导入数据时把字典字段的词条名称转换成对应的词条代码
+     */
+    @Query(value = "select entrycode from dictionarylist where dictname=?1 and entryvalue=?2",nativeQuery = true)
+    String  queryCtdmByZdmcAndCtmc(String zdmc, String ctmc);
 
+
+    /*********************便于开发调试提供的方法-在后期上线时需要删除掉****************************************************/
+
+    @Query(value = "delete from dictionarylist where id = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
+    int deleteById(Integer id);
+
+
+    @Query(value = "delete from dictionarylist where dictid = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
+    int deleteByDid(Integer zdid);
 
 }

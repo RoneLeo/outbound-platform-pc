@@ -78,7 +78,7 @@ public class UserController {
                     return ApiResult.FAILURE("邀请码已有人使用，请核实");
                 }
                 userEntity1.setOpenid(map.get("openid").toString());
-                userEntity1.setUnionid(map.get("unionid").toString());
+               // userEntity1.setUnionid(map.get("unionid").toString());
                 userEntity1.setSk(map.get("session_key").toString());
                 userEntity1.setSkcjsj(new Date());
                 userEntity1.setBdsj(new Date());
@@ -138,7 +138,7 @@ public class UserController {
                         map.put("openid", jsonObject.getString("openid"));
                         map.put("session_key", jsonObject.getString("session_key"));
                         Map<String, Object> map1 = decrypt(encryptedData,iv, jsonObject.getString("session_key"));
-                        map.put("unionID",map.get("unionId"));
+                        map.put("unionID",map1.get("unionId"));
                     } catch (JSONException e) {
                         // 获取token失败
                         status = "0";
@@ -167,6 +167,8 @@ public class UserController {
                 map.put("status", 1);
                 map.put("msg", "解密成功");
                 Map userInfo = new HashMap();
+//                System.out.print("result:"+result);
+//                System.out.print("unionid:"+result.get("unionId"));
                 userInfo.put("openId", result.get("openId"));
                 userInfo.put("nickName", result.get("nickName"));
                 userInfo.put("gender", result.get("gender"));
@@ -174,7 +176,7 @@ public class UserController {
                 userInfo.put("province", result.get("province"));
                 userInfo.put("country", result.get("country"));
                 userInfo.put("avatarUrl", result.get("avatarUrl"));
-                userInfo.put("unionId", result.get("unionId"));
+                //userInfo.put("unionId", result.get("unionId"));
                 map.put("userInfo", userInfo);
                 return map;
             }

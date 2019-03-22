@@ -11,8 +11,13 @@ import io.swagger.annotations.ApiOperation;
 //import net.sf.json.JSONException;
 //import net.sf.json.JSONObject;
 //import org.apache.commons.lang.StringUtils;
+import io.swagger.annotations.ApiParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -37,7 +42,7 @@ public class UserController {
 
     @ApiOperation(value = "登录")
     @RequestMapping("/login")
-    public ApiResult<Object> login(String yhm, String mm, HttpSession session) throws Exception{
+    public ApiResult<Object> login(@RequestParam @ApiParam(value = "用户名")String yhm, @RequestParam @ApiParam(value = "密码")String mm, HttpSession session) throws Exception{
         if(StringUtil.isNull(yhm)||StringUtil.isNull(mm)){
             return ApiResult.FAILURE("用户名或密码不能为空");
         }
@@ -55,7 +60,7 @@ public class UserController {
 
     @ApiOperation(value = "微信小程序登录")
     @RequestMapping("/weLogin")
-    public ApiResult<Object> weLogin(String sqm,String encryptedData,String iv, String code, HttpServletResponse response){
+    public ApiResult<Object> weLogin(@ApiParam(value = "授权码")String sqm,String encryptedData,String iv, String code, HttpServletResponse response){
         Map<String, Object> map = weChatLogin(code,encryptedData,iv);
         if(map.get("status").toString()=="0"){
             return ApiResult.FAILURE(map.get("msg").toString());
@@ -109,6 +114,7 @@ public class UserController {
         /* 添加用户 */
         UserEntity result=null;
         userEntity.setCjsj(new Date());
+        userEntity.setZt(0);
         //判断添加的用户为什么网站用户还是微信小程序用户
         if("0".equals(userEntity.getLx())){
             //网站用户
@@ -129,7 +135,7 @@ public class UserController {
         return ApiResult.SUCCESS(result);
     }
 
-    @ApiOperation(value="添加用户")
+    @ApiOperation(value="删除用户")
     @RequestMapping("/delete")
     public ApiResult<Object> delete(HttpSession session,int id) throws Exception {
         //判断是否登录
@@ -170,18 +176,21 @@ public class UserController {
 
     @ApiOperation(value="查询所有用户")
     @RequestMapping("/findAll")
-    public ApiResult<Object> findAll(HttpSession session){
+    public ApiResult<Object> findAll(@RequestParam int page, @RequestParam int size,HttpSession session){
+        //判断是否登录
+
+        Page<UserEntity> result;
+        //判断用户权限
         String js = session.getAttribute("js").toString();
-        List<UserEntity> userEntity;
         if("1".equals(js)){
-            userEntity = userReposity.findAll();
+            result = userReposity.findAll(PageRequest.of(page - 1, size, Sort.by(new Sort.Order(Sort.Direction.DESC, "cjsj"))));
         }else if("2".equals(js)){
             int a[]={2,4};
-            userEntity = userReposity.findByJsAndSzxzqdm(a,session.getAttribute("szxzqdm").toString());
+            result = userReposity.findByJsAndSzxzqdm(a,session.getAttribute("szxzqdm").toString(),PageRequest.of(page - 1, size, Sort.by(new Sort.Order(Sort.Direction.DESC, "create_time"))));
         }else {
             return ApiResult.FAILURE("没有权限查看用户");
         }
-        return ApiResult.SUCCESS(userEntity);
+        return ApiResult.SUCCESS(result);
     }
 
     public Map<String, Object> weChatLogin(String code, String encryptedData,String iv){

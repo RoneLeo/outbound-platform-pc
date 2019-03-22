@@ -29,11 +29,11 @@ public class UserEntity {
     private Integer nl;
     @ApiModelProperty(value="地址")
     private String dz;
-    @ApiModelProperty(value="所在行政区代码")
+    @ApiModelProperty(value="所在行政区代码",required = true)
     private String szxzqdm;
     @ApiModelProperty(value="状态")
     private Integer zt;
-    @ApiModelProperty(value="角色id")
+    @ApiModelProperty(value="角色id",required = true)
     private Integer js;
     @ApiModelProperty(value="openID")
     private String openid;

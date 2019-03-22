@@ -24,10 +24,6 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
     private DictionaryListRepository dictionaryListRepository;
 
 
-    @Override
-    public DictionarylistEntity findById(Integer id) {
-        return dictionaryListRepository.findById(id);
-    }
 
     @Override
     public List<DictionarylistEntity> findByZdid(Integer did, String zxbz) {
@@ -95,16 +91,6 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
     }
 
 
-    @Override
-    public int deleteById(Integer id) {
-        return dictionaryListRepository.deleteById(id);
-    }
-
-    @Override
-    public int deleteByDid(Integer did) {
-        return dictionaryListRepository.deleteByDid(did);
-    }
-
 
     @Override
     public int updateOne(DictionarylistEntity entity) {
@@ -133,30 +119,51 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
 
 /*****************************************给其它模块提供的接口词条信息查询***********************************************/
 
+ @Override
+ public DictionarylistEntity findById(Integer id) {
+    return dictionaryListRepository.findById(id);
+}
 
-//    *
-//     * 通过 字典代码和词条代码 查询词条值
-//     *
-//     * @param zdywm
-//     * @param ctdm
-//     * @return
-//
-//   @Override
-//    public String querDictListByZdywmAndKey(String zdywm, Integer ctdm) {
-//        return dictionaryListRepository.querDictListByZdywmAndKey(zdywm, ctdm);
-//    }
-//
-//     *
-//     * 通过 字典名称和词条代码 查询词条值
-//     *
-//     * @param zdzwm
-//     * @param ctdm
-//     * @return
-//
-//    @Override
-//    public String querDictListByZdzwmAndKey(String zdzwm, Integer ctdm) {
-//        return dictionaryListRepository.querDictListByZdzwmAndKey(zdzwm, ctdm);
-//    }
+@Override
+public String queryCtmcByZdmcAndCtdm(String zdmc, String ctdm) {
+      if(StringUtil.isNull(zdmc)||StringUtil.isNull(ctdm)){
+          return  "字典名称和词条代码不能为空";
+      }
+    return dictionaryListRepository.queryCtmcByZdmcAndCtdm(zdmc, ctdm);
+}
 
+    @Override
+    public String queryCtmcByZddmAndCtdm(String zddm, String ctdm) {
+        if(StringUtil.isNull(zddm)||StringUtil.isNull(ctdm)){
+            return  "字典代码和词条代码不能为空";
+        }
+        return dictionaryListRepository.queryCtmcByZddmAndCtdm(zddm, ctdm);
+    }
 
+    @Override
+    public String queryCtdmByZddmAndCtmc(String zddm, String ctmc) {
+        if(StringUtil.isNull(zddm)||StringUtil.isNull(ctmc)){
+            return  "字典代码和词条名称不能为空";
+        }
+        return dictionaryListRepository.queryCtdmByZddmAndCtmc(zddm, ctmc);
+    }
+
+    @Override
+    public String queryCtdmByZdmcAndCtmc(String zdmc, String ctmc) {
+        if(StringUtil.isNull(zdmc)||StringUtil.isNull(ctmc)){
+            return  "字典名称和词条名称不能为空";
+        }
+        return dictionaryListRepository.queryCtdmByZdmcAndCtmc(zdmc, ctmc);
+    }
+    /*********************便于开发调试提供的方法-在后期上线时需要删除掉****************************************************/
+
+    @Override
+    public int deleteById(Integer id) {
+        return dictionaryListRepository.deleteById(id);
+    }
+
+    @Override
+    public int deleteByDid(Integer did) {
+        return dictionaryListRepository.deleteByDid(did);
+    }
 }

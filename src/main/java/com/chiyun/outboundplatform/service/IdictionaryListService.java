@@ -20,22 +20,6 @@ public interface IdictionaryListService {
      */
       Map<String,Object> save(DictionarylistEntity entity);
 
-      /********************************************上线前需要注释掉的代码*******************************************************/
-    /**
-     *  通过id删除
-     */
-
-     int deleteById(Integer id);
-
-    /**
-     * 通过did 外键 批量删除
-     * @param did
-     * @return
-     */
-     int deleteByDid(Integer did);
-
-    /***************************************************************************************************/
-
 
     /**
      *  单个对象信息修改
@@ -66,24 +50,43 @@ public interface IdictionaryListService {
     /*****************************************给其它模块提供的接口***********************************************/
 
     /**
-     * 通过id查询单个词条
+     * 通过id查询单个词条，用于其他模块获取词条信息
      * @param id
      * @return
      */
      DictionarylistEntity findById(Integer id);
 
-    /*
-     * 根据字典名称和词条代码查询词条名称
-     */
-    //   String  querDictListByZdzwmAndKey(String zdmc, String ctdm);
-    /*
-     * 根据字典代码和词条代码查询词条名称
-     */
-    //    String querDictListByZdywmAndKey(String zddm, String ctdm);
 
-    /* 根据字典名称和词条代码查询词条名称*/
-    //   String  querDictListByZdywmAndVule(String zddm, String ctmc);
+    /**
+     * 根据字典名称和词条代码查询词条名称 --用于导出数据时把字典字段的代码转换成中文名
+     */
+      String  queryCtmcByZdmcAndCtdm(String zdmc, String ctdm);
+    /**
+     * 根据字典代码和词条代码查询词条名称 --用于导出数据时把字典字段的代码转换成中文名
+     */
+     String queryCtmcByZddmAndCtdm(String zddm, String ctdm);
 
-     /*根据字典代码和词条代码查询词条名称*/
-    //   String  querDictListByZdzwmAndVule(String zdmc, String ctmc);
+    /**
+    * 根据字典名称和词条名称查询词条代码 --用于导入数据时把字典字段的词条名称转换成对应的词条代码
+    */
+     String  queryCtdmByZddmAndCtmc(String zddm, String ctmc);
+
+    /**
+    * 根据字典名称和词条名称查询词条代码 --用于导入数据时把字典字段的词条名称转换成对应的词条代码
+    */
+     String  queryCtdmByZdmcAndCtmc(String zdmc, String ctmc);
+
+    /*********************便于开发调试提供的方法-在后期上线时需要删除掉****************************************************/
+    /*
+     *  通过id删除
+     */
+
+    int deleteById(Integer id);
+
+    /*
+     * 通过did 外键 批量删除
+     *
+     */
+    int deleteByDid(Integer did);
+
 }

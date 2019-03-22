@@ -11,12 +11,13 @@ import java.util.List;
 
 public interface DictionaryRepository extends CrudRepository<DictionaryEntity, Long> {
 
-    /**
-     * 通过主键来查询
-     * @param id
-     * @return
-     */
-     public DictionaryEntity findById(Integer id);
+
+    DictionaryEntity save(DictionaryEntity entity);
+
+
+      Boolean existsById(Integer id);
+
+     DictionaryEntity findById(Integer id);
 
     /**
      *   通过字典中文名来查询字典
@@ -59,7 +60,6 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
     @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  and eng_name like  concat('%',?2,'%')  and state=?3 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionaryEntity>  findByZdmcAndZddmAndZxbz (String zdmc,String zddm ,String zxbz);
 
-
     /**
      * 查询所有的数据
      * @return
@@ -72,25 +72,6 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
      */
     @Query(value = "select * from dictionary where state=?1 ORDER BY FIELD (state,'0','1')",nativeQuery = true)
     List<DictionaryEntity> findAllByZxbz(String zxbz);
-
-    /**
-     *  新增和修改都能执行
-     * @param entity
-     * @return
-     */
-
-     DictionaryEntity save(DictionaryEntity entity);
-
-
-
-    /**
-     *  通过id删除
-     */
-    @Query(value = "delete from dictionary where id = ?1", nativeQuery = true)
-    @Modifying
-    @Transactional
-    int deleteById(Integer id);
-
 
 
     /**
@@ -108,6 +89,16 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
     @Transactional
      int   unCancellationById(Integer id);
 
-    Boolean existsById(Integer id);
+
+    /*********************便于开发调试提供的方法-在后期上线时需要删除掉****************************************************/
+
+    /**
+     *  通过id删除
+     */
+    @Query(value = "delete from dictionary where id = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
+    int deleteById(Integer id);
+
 
 }

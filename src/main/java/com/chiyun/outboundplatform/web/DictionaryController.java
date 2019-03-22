@@ -93,7 +93,6 @@ public class DictionaryController {
 
         Map<String, Object> msg = idictionaryService.save(entity);
         String str = msg.keySet().toString().replace("[", " ").replace("]", " ").trim();
-        System.out.println(str);
         if ("failuer".equals(str)) {
             return ApiResult.FAILURE(msg.get("failuer").toString());
         } else if ("success".equals(str)) {

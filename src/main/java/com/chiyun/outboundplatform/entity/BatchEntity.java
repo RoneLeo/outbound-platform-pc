@@ -11,6 +11,8 @@ public class BatchEntity {
     private Integer id;
     @ApiModelProperty(value = "批次id")
     private String pcid;
+    @ApiModelProperty(value = "批次名称")
+    private String pcmc;
     @ApiModelProperty(value = "基础字段id")
     private String jczdid;
     @ApiModelProperty(value = "字段中文")
@@ -79,6 +81,16 @@ public class BatchEntity {
 
     public void setSort(Integer sort) {
         this.sort = sort;
+    }
+
+    @Basic
+    @Column(name = "batch_name")
+    public String getPcmc() {
+        return pcmc;
+    }
+
+    public void setPcmc(String pcmc) {
+        this.pcmc = pcmc;
     }
 
     @Override

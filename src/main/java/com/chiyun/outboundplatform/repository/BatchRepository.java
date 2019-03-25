@@ -1,6 +1,8 @@
 package com.chiyun.outboundplatform.repository;
 
 import com.chiyun.outboundplatform.entity.BatchEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -24,6 +26,10 @@ public interface BatchRepository extends CrudRepository<BatchEntity, Long> {
      * 通过批次id查询
      */
     List<BatchEntity> findAllByPcidOrderBySort(String pcid);
+
+
+    @Query(value = "SELECT batch_id,batch_name FROM batch GROUP BY batch_id,batch_name ORDER BY batch_id DESC ", countQuery = "SELECT count(*) FROM (SELECT batch_id,batch_name FROM batch GROUP BY batch_id,batch_name ORDER BY batch_id DESC)a", nativeQuery = true)
+    Page<Map<String, Object>> findAllPcid(Pageable pageable);
 
     /**
      * 查询所有的类型

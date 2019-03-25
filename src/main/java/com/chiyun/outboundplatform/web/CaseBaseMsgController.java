@@ -113,12 +113,11 @@ public class CaseBaseMsgController {
         if (id == null) {
             return ApiResult.FAILURE("id不能为空");
         }
-        Optional<CasebasemessageEntity> optional = casebasemessageRepository.findById(id);
-        if (!optional.isPresent()) {
+        if (!casebasemessageRepository.existsById(id)) {
             return ApiResult.FAILURE("该数据不存在");
         }
         try {
-            casebasemessageRepository.delete(optional.get());
+            casebasemessageRepository.deleteById(id);
         } catch (Exception e) {
             return ApiResult.FAILURE("删除失败");
         }

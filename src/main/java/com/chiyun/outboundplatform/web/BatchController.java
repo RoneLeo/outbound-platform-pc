@@ -7,12 +7,14 @@ import com.chiyun.outboundplatform.repository.BasetypeRepository;
 import com.chiyun.outboundplatform.repository.BatchRepository;
 import com.chiyun.outboundplatform.repository.FieldCaseBaseRepository;
 import com.chiyun.outboundplatform.service.IbatchService;
+import com.chiyun.outboundplatform.service.IdictionaryListService;
 import com.chiyun.outboundplatform.utils.DateUtils;
 import com.chiyun.outboundplatform.utils.ExcelImportUtils;
 import com.chiyun.outboundplatform.utils.ExcelUtil;
 import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -46,10 +48,12 @@ public class BatchController {
     private BasetypeRepository basetypeRepository;
     @Resource
     private IbatchService ibatchService;
+    @Resource
+    private IdictionaryListService idictionaryListService;
 
     @ApiOperation("添加")
     @RequestMapping("/add")
-    public ApiResult<Object> add(String zdids) {
+    public ApiResult<Object> add(@ApiParam(value = "所选字段id组合，英文','分隔") String zdids) {
         long now = System.currentTimeMillis();
         // 循环字段ids，查询选取保存
         String[] str = zdids.split(",");
@@ -117,12 +121,22 @@ public class BatchController {
 
     @ApiOperation("导入模板")
     @RequestMapping("/importExcel")
-    public ApiResult<Object> importExcel(String pcid, MultipartFile file) {
+    public ApiResult<Object> importExcel(String pcid, MultipartFile file, Integer ajqy, Integer ajlx) {
         //判断文件是否为空
         if (file == null) {
             return ApiResult.FAILURE("文件不能为空");
         }
-
+        // 判断案件区域
+//        if (ajqy == null || ajlx == null) {
+//            return ApiResult.FAILURE("案件区域和案件类型不能为空");
+//        }
+//        if (idictionaryListService.findById(ajqy) == null) {
+//            return ApiResult.FAILURE("该区域不存在");
+//        }
+//        // 判断案件类型
+//        if (idictionaryListService.findById(ajlx) == null) {
+//            return ApiResult.FAILURE("该案件类型不存在");
+//        }
         //获取文件名
         String fileName = file.getOriginalFilename();
 
@@ -137,7 +151,7 @@ public class BatchController {
             return ApiResult.FAILURE("文件不能为空");
         }
         //批量导入
-        ApiResult message = ExcelImportUtils.batchImport(pcid, fileName, file, ibatchService);
+        ApiResult message = ExcelImportUtils.batchImport(pcid, fileName, file, ibatchService, ajqy, ajlx);
         return message;
     }
 

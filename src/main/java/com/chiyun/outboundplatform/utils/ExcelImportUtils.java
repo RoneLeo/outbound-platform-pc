@@ -56,7 +56,7 @@ public class ExcelImportUtils {
      * @param mfile
      * @return
      */
-    public static ApiResult batchImport(String xmbh, String fileName, MultipartFile mfile, IbatchService ibatchService) {
+    public static ApiResult batchImport(String xmbh, String fileName, MultipartFile mfile, IbatchService ibatchService, Integer ajqy, Integer ajlx) {
 
         File uploadDir = new File("C:\\fileupload");
         //创建一个目录 （它的路径名由当前 File 对象指定，包括任一必须的父路径。）
@@ -81,7 +81,7 @@ public class ExcelImportUtils {
                 wb = new HSSFWorkbook(is);
             }
             //根据excel里面的内容读取知识库信息
-            return readExcelValue(xmbh, wb, tempFile, ibatchService);
+            return readExcelValue(xmbh, wb, tempFile, ibatchService, ajqy, ajlx);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -106,7 +106,7 @@ public class ExcelImportUtils {
      * @param wb
      * @return
      */
-    private static ApiResult readExcelValue(String xmbh, Workbook wb, File tempFile, IbatchService ibatchService) throws ParseException {
+    private static ApiResult readExcelValue(String xmbh, Workbook wb, File tempFile, IbatchService ibatchService, Integer ajqy, Integer ajlx) throws ParseException {
         //导入数据数量
         int sj = 0;
         //错误信息接收器
@@ -165,6 +165,12 @@ public class ExcelImportUtils {
                 continue;
             }
             CasebasemessageEntity baseentity = new CasebasemessageEntity();
+            // 设置批次id、案件区域、案件类型、导入时间
+            baseentity.setPcid(xmbh);
+            baseentity.setAjqy(ajqy);
+            baseentity.setAjlx(ajlx);
+            baseentity.setDrsj(new Date());
+
             List<CardmessageEntity> cardmessageEntityList = new ArrayList<>();
             List<EmpmessageEntity> empmessageEntityList = new ArrayList<>();
             List<LoanmessageEntity> loanmessageEntityList = new ArrayList<>();

@@ -28,7 +28,7 @@ public interface BatchRepository extends CrudRepository<BatchEntity, Long> {
     List<BatchEntity> findAllByPcidOrderBySort(String pcid);
 
 
-    @Query(value = "SELECT batch_id,batch_name FROM batch GROUP BY batch_id,batch_name ORDER BY batch_id DESC ", countQuery = "SELECT count(*) FROM (SELECT batch_id,batch_name FROM batch GROUP BY batch_id,batch_name ORDER BY batch_id DESC)a", nativeQuery = true)
+    @Query(value = "SELECT batch_id pcid,batch_name pcmc FROM batch GROUP BY batch_id,batch_name ORDER BY batch_id DESC ", countQuery = "SELECT count(*) FROM (SELECT batch_id,batch_name FROM batch GROUP BY batch_id,batch_name ORDER BY batch_id DESC)a", nativeQuery = true)
     Page<Map<String, Object>> findAllPcid(Pageable pageable);
 
     /**

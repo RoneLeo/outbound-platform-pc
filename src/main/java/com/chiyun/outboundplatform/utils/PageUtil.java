@@ -14,9 +14,9 @@ public class PageUtil {
     public  static int  getTotalPage( int counts ,int pageSize){
             int  num=0;
           if(  pageSize/counts ==0){
-              num= pageSize/counts;
+              num=counts/pageSize;
           }else{
-              num= pageSize/counts+1;
+              num=counts/pageSize+1;
           }
           return   num;
       }

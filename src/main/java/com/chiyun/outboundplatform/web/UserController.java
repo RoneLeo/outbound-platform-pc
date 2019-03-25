@@ -113,7 +113,7 @@ public class UserController {
 
         //判断用户名是否重复
         UserEntity oldUserEntity = userReposity.findByYhm(userEntity.getYhm());
-        if (oldUserEntity == null) {
+        if (oldUserEntity != null) {
             return ApiResult.FAILURE("该用户名已存在！");
         }
         /* 添加用户 */

@@ -2,6 +2,7 @@ package com.chiyun.outboundplatform.web;
 
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.chiyun.outboundplatform.common.ApiPageResult;
 import com.chiyun.outboundplatform.common.ApiResult;
 import com.chiyun.outboundplatform.entity.UserEntity;
 import com.chiyun.outboundplatform.repository.UserReposity;
@@ -14,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,10 +26,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Api(description = "用户管理")
 @RestController
@@ -43,13 +42,14 @@ public class UserController {
     @ApiOperation(value = "登录")
     @RequestMapping("/login")
     public ApiResult<Object> login(@RequestParam @ApiParam(value = "用户名")String yhm, @RequestParam @ApiParam(value = "密码")String mm, HttpSession session) throws Exception{
+        System.out.print("用戶名："+yhm);
         if(StringUtil.isNull(yhm)||StringUtil.isNull(mm)){
             return ApiResult.FAILURE("用户名或密码不能为空");
         }
         mm = MD5Util.MD5(mm);
         UserEntity userEntity = userReposity.findByYhmAndMm(yhm, mm);
         if(userEntity == null){
-            return ApiResult.FAILURE("用户名或密码为空");
+            return ApiResult.FAILURE("不存在该用户");
         }
         session.setAttribute("yhm", userEntity.getYhm());
         session.setAttribute("id", userEntity.getId());
@@ -111,6 +111,11 @@ public class UserController {
 
         //判断是否为管理员
 
+        //判断用户名是否重复
+        UserEntity oldUserEntity = userReposity.findByYhm(userEntity.getYhm());
+        if (oldUserEntity == null) {
+            return ApiResult.FAILURE("该用户名已存在！");
+        }
         /* 添加用户 */
         UserEntity result=null;
         userEntity.setCjsj(new Date());
@@ -121,7 +126,7 @@ public class UserController {
             userEntity.setMm(MD5Util.MD5("666666"));
             result = userReposity.save(userEntity);
         }else if("1".equals(userEntity.getLx())){
-            //微信小程序用户
+            //微信小程序用户,
             result = userReposity.save(userEntity);
             String sqm=CodeUtil.toSerialCode(result.getId());
             result.setSqm(sqm);
@@ -176,21 +181,23 @@ public class UserController {
 
     @ApiOperation(value="查询所有用户")
     @RequestMapping("/findAll")
-    public ApiResult<Object> findAll(@RequestParam int page, @RequestParam int size,HttpSession session){
+    public ApiResult<Object> findAll(@RequestParam int page, @RequestParam int size, HttpSession session){
         //判断是否登录
 
+        Pageable pageable = PageRequest.of(page-1,size,Sort.by(new Sort.Order(Sort.Direction.DESC, "cjsj")));
         Page<UserEntity> result;
         //判断用户权限
         String js = session.getAttribute("js").toString();
         if("1".equals(js)){
-            result = userReposity.findAll(PageRequest.of(page - 1, size, Sort.by(new Sort.Order(Sort.Direction.DESC, "cjsj"))));
+            result = userReposity.findAll(pageable);
         }else if("2".equals(js)){
-            int a[]={2,4};
-            result = userReposity.findByJsAndSzxzqdm(a,session.getAttribute("szxzqdm").toString(),PageRequest.of(page - 1, size, Sort.by(new Sort.Order(Sort.Direction.DESC, "create_time"))));
+            //List<Integer> a=new ArrayList<>();
+            int a[] = {2,4};
+            result = userReposity.findByJsInAndSzxzqdm(a,session.getAttribute("szxzqdm").toString(),pageable);
         }else {
-            return ApiResult.FAILURE("没有权限查看用户");
+            return ApiPageResult.FAILURE("没有权限查看用户");
         }
-        return ApiResult.SUCCESS(result);
+        return ApiPageResult.SUCCESS(result.getContent(), page, size, result.getTotalElements(), result.getTotalPages());
     }
 
     public Map<String, Object> weChatLogin(String code, String encryptedData,String iv){

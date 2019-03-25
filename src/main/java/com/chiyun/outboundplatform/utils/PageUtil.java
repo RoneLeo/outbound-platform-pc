@@ -42,6 +42,10 @@ public class PageUtil {
      */
     public   static  int   getPageEndNumber(int page,int pageSize){
 
+        if(page==0){
+           page=page+1;
+        }
+
         return  page*pageSize;
     }
 

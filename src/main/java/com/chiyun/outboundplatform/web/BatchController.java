@@ -127,16 +127,16 @@ public class BatchController {
             return ApiResult.FAILURE("文件不能为空");
         }
         // 判断案件区域
-//        if (ajqy == null || ajlx == null) {
-//            return ApiResult.FAILURE("案件区域和案件类型不能为空");
-//        }
-//        if (idictionaryListService.findById(ajqy) == null) {
-//            return ApiResult.FAILURE("该区域不存在");
-//        }
-//        // 判断案件类型
-//        if (idictionaryListService.findById(ajlx) == null) {
-//            return ApiResult.FAILURE("该案件类型不存在");
-//        }
+        if (ajqy == null || ajlx == null) {
+            return ApiResult.FAILURE("案件区域和案件类型不能为空");
+        }
+        if (idictionaryListService.findById(ajqy) == null) {
+            return ApiResult.FAILURE("该区域不存在");
+        }
+        // 判断案件类型
+        if (idictionaryListService.findById(ajlx) == null) {
+            return ApiResult.FAILURE("该案件类型不存在");
+        }
         //获取文件名
         String fileName = file.getOriginalFilename();
 

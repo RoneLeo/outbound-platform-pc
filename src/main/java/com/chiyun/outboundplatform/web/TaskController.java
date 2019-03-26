@@ -10,6 +10,7 @@ import com.chiyun.outboundplatform.service.IdictionaryListService;
 import com.chiyun.outboundplatform.service.ItaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,7 +38,7 @@ public class TaskController {
 
     @ApiOperation("添加")
     @RequestMapping("/add")
-    @ApiImplicitParam(name = "ajid",value = "案件id",dataType = "Integer", paramType = "body")
+    @ApiImplicitParam(name = "ajid",value = "案件id",dataType = "Integer", paramType = "query")
     public ApiResult<Object> add(TaskEntity entity, Integer ajid) {
         if (ajid == null) {
             return ApiResult.FAILURE("案件id不能为空");
@@ -130,6 +131,7 @@ public class TaskController {
         }
         return ApiResult.SUCCESS("删除成功");
     }
+
 
 
 

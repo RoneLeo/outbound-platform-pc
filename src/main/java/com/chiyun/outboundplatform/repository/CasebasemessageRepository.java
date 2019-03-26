@@ -14,14 +14,14 @@ import java.util.List;
 /**
  * Created by wazto on 2019/3/21.
  */
-public interface CasebasemessageRepository extends CrudRepository<CasebasemessageEntity, Long> {
+public interface CasebasemessageRepository extends JpaRepository<CasebasemessageEntity, Integer> {
 
     Page<CasebasemessageEntity> findAllByPch(String pch, Pageable pageable);
 
     /**
      *  通过id查询
      */
-    CasebasemessageEntity findById(Integer id);
+//    CasebasemessageEntity findById(Integer id);
 
     /**
      *  查询所有
@@ -36,10 +36,10 @@ public interface CasebasemessageRepository extends CrudRepository<Casebasemessag
     /**
      *  通过id删除
      */
-    @Query(value = "delete from casebasemessage where id = ?1", nativeQuery = true)
-    @Modifying
-    @Transactional
-    int deleteById(Integer id);
+//    @Query(value = "delete from casebasemessage where id = ?1", nativeQuery = true)
+//    @Modifying
+//    @Transactional
+//    int deleteById(Integer id);
 
     Page<CasebasemessageEntity> findAll(Pageable pageable);
 

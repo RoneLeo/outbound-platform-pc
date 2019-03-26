@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 /**
  * Created by wazto on 2019/3/22.
@@ -108,15 +109,16 @@ public class CaseBaseMsgController {
 
     @ApiOperation("删除")
     @RequestMapping("/delete")
-    public ApiResult<Object> delete(@ApiParam(value = "案件id")Integer id) {
+    public ApiResult<Object> delete(@ApiParam(value = "案件id") Integer id) {
         if (id == null) {
             return ApiResult.FAILURE("id不能为空");
         }
-        if (casebasemessageRepository.findById(id) == null) {
+        if (!casebasemessageRepository.existsById(id)) {
             return ApiResult.FAILURE("该数据不存在");
         }
-        int result = casebasemessageRepository.deleteById(id);
-        if (result < 1) {
+        try {
+            casebasemessageRepository.deleteById(id);
+        } catch (Exception e) {
             return ApiResult.FAILURE("删除失败");
         }
         return ApiResult.SUCCESS("删除成功");
@@ -139,29 +141,28 @@ public class CaseBaseMsgController {
         if (idictionaryListService.findById(ajqy) == null) {
             return ApiResult.FAILURE("该案件区域不存在");
         }
-        Pageable pageable = PageRequest.of(page - 1, size,  Sort.by(new Sort.Order(Sort.Direction.DESC, "id")));
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(new Sort.Order(Sort.Direction.DESC, "id")));
         Page<CasebasemessageEntity> list = casebasemessageRepository.findAllByAjqy(ajqy, pageable);
         return ApiPageResult.SUCCESS(list, page, size, list.getTotalElements(), list.getTotalPages());
     }
 
     @ApiOperation("修改案件状态")
     @RequestMapping("/updateAjzt")
-    public ApiResult<Object> updateAjzt(@ApiParam(value = "案件id")Integer id, @ApiParam(value = "案件状态")Integer ajzt) {
+    public ApiResult<Object> updateAjzt(@ApiParam(value = "案件id") Integer id, @ApiParam(value = "案件状态") Integer ajzt) {
         if (id == null || ajzt == null) {
             return ApiResult.FAILURE("id和案件状态不能为空");
         }
-        CasebasemessageEntity entity = casebasemessageRepository.findById(id);
-        if (entity == null) {
+        Optional<CasebasemessageEntity> optional = casebasemessageRepository.findById(id);
+        if (!optional.isPresent()) {
             return ApiResult.FAILURE("该数据不存在");
         }
         if (idictionaryListService.findById(ajzt) == null) {
             return ApiResult.FAILURE("该案件状态不存在");
         }
-        entity.setAjzt(ajzt);
-        casebasemessageRepository.save(entity);
+        optional.get().setAjzt(ajzt);
+        casebasemessageRepository.save(optional.get());
         return ApiResult.SUCCESS("修改成功");
     }
-
 
 
 }

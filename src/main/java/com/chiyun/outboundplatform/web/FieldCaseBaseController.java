@@ -7,6 +7,7 @@ import com.chiyun.outboundplatform.repository.BasetypeRepository;
 import com.chiyun.outboundplatform.repository.FieldCaseBaseRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +25,7 @@ public class FieldCaseBaseController {
 
     @ApiOperation("通过类型查询所有")
     @RequestMapping("/findAllByJcxxlx")
-    public ApiResult<Object> findAllByJcxxlx(Integer jcxxlx) {
+    public ApiResult<Object> findAllByJcxxlx(@ApiParam(value = "基础信息类型 数字0-9") Integer jcxxlx) {
         if (jcxxlx == null) {
             return ApiResult.FAILURE("字段类型不能为空");
         }

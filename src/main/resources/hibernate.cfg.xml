@@ -29,9 +29,10 @@
     <!--用户和权限管理使用到的表-->
       <mapping class="com.chiyun.outboundplatform.entity.RoleEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.UserEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.CaseanduserEntity"/>
 
 
-      <!-- <property name="connection.username"/> -->
+    <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 
     <!-- DB schema will be updated if needed -->

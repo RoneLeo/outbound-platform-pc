@@ -31,7 +31,7 @@ public class CaseBaseServiceImpl implements IcaseBaseService {
 
     @Override
     public CasebasemessageEntity findInfoById(Integer id) {
-        return casebasemessageRepository.findById(id);
+        return casebasemessageRepository.findById(id).orElse(null);
     }
 
     @Override

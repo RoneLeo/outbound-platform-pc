@@ -136,7 +136,8 @@ public class DictionaryController {
             entity.setZxbz(entity1.getZxbz());
 
 
-            int cn = idictionaryService.update(entity);
+            int cn = idictionaryService.update(entity);  //同时词条表也要同步更新才对
+
             if (cn == 1) {
 
                 return ApiResult.SUCCESS("更新成功");

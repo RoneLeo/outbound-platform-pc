@@ -83,6 +83,12 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
     @Transactional
     int   unCancellationDicListById(Integer id);
 
+
+    @Query(value = "update dictionarylist   set dictname=?1, dicteng_name=?2 where dictid=?3" , nativeQuery = true)
+    @Modifying
+    @Transactional
+    void  updateForDictnameAndDictengname (String dictName,String dictdm,int dictId);
+
     /**************************************给其它模块提供的功能方法********************************************************/
 
     DictionarylistEntity findById(Integer id);

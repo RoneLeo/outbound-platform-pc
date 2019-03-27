@@ -17,12 +17,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,32 +37,58 @@ public class UserController {
 
     private static final String APPID = "wxa52fa9f12b8746d8";
     private static final String SECRET = "b2ed2f764ac0467733840008eda01954";
-
+    private static final Map<String, String> sessionList = new HashMap<String, String>();
     @Resource
     private UserReposity userReposity;
 
     @ApiOperation(value = "登录")
     @RequestMapping("/login")
-    public ApiResult<Object> login(@RequestParam @ApiParam(value = "用户名")String yhm, @RequestParam @ApiParam(value = "密码")String mm, HttpSession session) throws Exception{
+    public ApiResult<Object> login(@RequestParam @ApiParam(value = "用户名")String yhm,
+                                   @RequestParam @ApiParam(value = "密码")String mm,
+                                   HttpServletRequest request, HttpServletResponse response) throws Exception{
         System.out.print("用戶名："+yhm);
         if(StringUtil.isNull(yhm)||StringUtil.isNull(mm)){
             return ApiResult.FAILURE("用户名或密码不能为空");
         }
         mm = MD5Util.MD5(mm);
-        UserEntity userEntity = userReposity.findByYhmAndMm(yhm, mm);
-        if(userEntity == null){
-            return ApiResult.FAILURE("不存在该用户");
+        UserEntity userEntity = userReposity.findByYhm(yhm);
+        if (userEntity == null) {
+            return ApiResult.FAILURE("用户名不存在");
+        }
+        //UserEntity userEntity = userReposity.findByYhmAndMm(yhm, mm);
+        if(!mm.equals(userEntity.getMm())){
+            return ApiResult.FAILURE("密码错误");
+        }
+        HttpSession session=request.getSession();//创建session
+        String sessionId = session.getId();//获取sessionid
+        String userid = String.valueOf(userEntity.getId());//获取用户id
+        //通过sessionid查看有没有其他登录的
+        String key=getMapKey(sessionList,sessionId);
+//        System.out.print("key:"+key);
+//        System.out.print("userid:"+userid);
+        if(key!=null){
+        if(!key.equals(userid)){
+            sessionList.put(key,null);
+            System.out.print("22222222:");
+        }
+        }
+        String sessionValue = getMapValue(sessionList, userid);
+        if(sessionValue==null||sessionValue!=sessionId){
+            sessionList.put(userid,sessionId);
+        }else if(sessionValue==sessionId){
+            //已登录
+            return ApiResult.FAILURE("重复登录");
         }
         session.setAttribute("yhm", userEntity.getYhm());
         session.setAttribute("id", userEntity.getId());
         session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
         session.setAttribute("js", userEntity.getJs());
-        return ApiResult.SUCCESS(userEntity);
+        return null;
     }
 
     @ApiOperation(value = "微信小程序登录")
     @RequestMapping("/weLogin")
-    public ApiResult<Object> weLogin(@ApiParam(value = "授权码")String sqm,String encryptedData,String iv, String code, HttpServletResponse response){
+    public ApiResult<Object> weLogin(@ApiParam(value = "授权码")String sqm,String encryptedData,String iv, String code,HttpServletRequest request, HttpServletResponse response){
         Map<String, Object> map = weChatLogin(code,encryptedData,iv);
         if(map.get("status").toString()=="0"){
             return ApiResult.FAILURE(map.get("msg").toString());
@@ -106,11 +134,22 @@ public class UserController {
 
     @ApiOperation(value="添加用户")
     @RequestMapping("/add")
-    public ApiResult<Object> add(HttpSession session,UserEntity userEntity) throws Exception {
+    public ApiResult<Object> add(HttpServletRequest request,UserEntity userEntity) throws Exception {
         //判断是否登录
-
+        HttpSession session=request.getSession();
+        int isLogin=isLogin(session);
+        if(isLogin==0){
+            return ApiResult.FAILURE("未登录");
+        }else if(isLogin==2){
+            return ApiResult.FAILURE("该帐号在其他地方登录");
+        }else if(isLogin == 3){
+            return ApiResult.FAILURE("其他情况");
+        }
         //判断是否为管理员
-
+        String js = String.valueOf(session.getAttribute("id"));
+        if(!"1".equals(js)){
+            return ApiResult.FAILURE("没有权限添加用户");
+        }
         //判断用户名是否重复
         UserEntity oldUserEntity = userReposity.findByYhm(userEntity.getYhm());
         if (oldUserEntity != null) {
@@ -181,10 +220,21 @@ public class UserController {
 
     @ApiOperation(value="查询所有用户")
     @RequestMapping("/findAll")
-    public ApiResult<Object> findAll(@RequestParam int page, @RequestParam int size, HttpSession session){
+    public ApiResult<Object> findAll(@RequestParam int page, @RequestParam int pagesize, HttpServletRequest request){
         //判断是否登录
-
-        Pageable pageable = PageRequest.of(page-1,size,Sort.by(new Sort.Order(Sort.Direction.DESC, "cjsj")));
+        HttpSession session=request.getSession();
+        int isLogin=isLogin(session);
+        if(isLogin==0){
+            return ApiResult.FAILURE("未登录");
+        }else if(isLogin==2){
+            return ApiResult.FAILURE("该帐号在其他地方登录");
+        }else if(isLogin == 3){
+            return ApiResult.FAILURE("其他情况");
+        }
+        if(!request.getHeader("userid").equals(session.getAttribute("id"))){
+            return ApiResult.FAILURE("已登录其他帐号！退出该帐号");
+        }
+        Pageable pageable = PageRequest.of(page-1,pagesize,Sort.by(new Sort.Order(Sort.Direction.DESC, "cjsj")));
         Page<UserEntity> result;
         //判断用户权限
         String js = session.getAttribute("js").toString();
@@ -195,9 +245,9 @@ public class UserController {
             int a[] = {2,4};
             result = userReposity.findByJsInAndSzxzqdm(a,session.getAttribute("szxzqdm").toString(),pageable);
         }else {
-            return ApiPageResult.FAILURE("没有权限查看用户");
+            return ApiResult.FAILURE("没有权限查看用户");
         }
-        return ApiPageResult.SUCCESS(result.getContent(), page, size, result.getTotalElements(), result.getTotalPages());
+        return ApiPageResult.SUCCESS(result.getContent(), page, pagesize, result.getTotalElements(), result.getTotalPages());
     }
 
     public Map<String, Object> weChatLogin(String code, String encryptedData,String iv){
@@ -267,5 +317,46 @@ public class UserController {
             e.printStackTrace();
         }
         return map;
+    }
+
+    public int isLogin(HttpSession session){
+        String sessionId = session.getId();//获取sessionid
+        String id= String.valueOf(session.getAttribute("id"));//用户id，map的键值
+        String sessionValue = getMapValue(sessionList,id);
+        if(sessionValue==null){
+            return 0;//未登录
+        }else if(sessionValue!=sessionId){
+            return 2;//该帐号在其他地方登录
+        }else if(sessionValue==sessionId){
+            //已登录
+            return 1;//已登录
+        }
+        return 3;//其他情况
+    }
+    public String getMapValue(Map<String, String> sessionList,String key){
+        String result=null;
+        Iterator<Map.Entry<String, String>> iterator = sessionList.entrySet().iterator();
+        Map.Entry<String, String> entry;
+        while(iterator.hasNext()){
+            entry = iterator.next();
+            if(key.equals(entry.getKey())){
+                result = entry.getValue();
+            }
+        }
+        System.out.print("result_value:"+result);
+        return result;
+    }
+    public String getMapKey(Map<String, String> sessionList,String value){
+        String result=null;
+        Iterator<Map.Entry<String, String>> iterator = sessionList.entrySet().iterator();
+        Map.Entry<String, String> entry;
+        while(iterator.hasNext()){
+            entry = iterator.next();
+            if(value.equals(entry.getValue())){
+                result = entry.getKey();
+            }
+        }
+        System.out.print("result_key:"+result);
+        return result;
     }
 }

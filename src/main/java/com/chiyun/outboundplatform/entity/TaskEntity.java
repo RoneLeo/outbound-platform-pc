@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -15,7 +16,7 @@ public class TaskEntity {
     @ApiModelProperty(value = "任务名称")
     private String rwmc;
     @ApiModelProperty(value = "任务截止时间")
-    private Timestamp rwjzsj;
+    private Date rwjzsj;
     @ApiModelProperty(value = "任务佣金")
     private Double rwyj;
     @ApiModelProperty(value = "任务描述")
@@ -27,7 +28,7 @@ public class TaskEntity {
     @ApiModelProperty(value = "任务执行人")
     private Integer rwzxr;
     @ApiModelProperty(value = "任务完成时间")
-    private Timestamp rwwcsj;
+    private Date rwwcsj;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,11 +63,11 @@ public class TaskEntity {
 
     @Basic
     @Column(name = "task_time")
-    public Timestamp getRwjzsj() {
+    public Date getRwjzsj() {
         return rwjzsj;
     }
 
-    public void setRwjzsj(Timestamp rwjzsj) {
+    public void setRwjzsj(Date rwjzsj) {
         this.rwjzsj = rwjzsj;
     }
 
@@ -122,11 +123,11 @@ public class TaskEntity {
 
     @Basic
     @Column(name = "complate_time")
-    public Timestamp getRwwcsj() {
+    public Date getRwwcsj() {
         return rwwcsj;
     }
 
-    public void setRwwcsj(Timestamp rwwcsj) {
+    public void setRwwcsj(Date rwwcsj) {
         this.rwwcsj = rwwcsj;
     }
 

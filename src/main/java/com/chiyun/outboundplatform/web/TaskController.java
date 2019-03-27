@@ -38,7 +38,7 @@ public class TaskController {
 
     @ApiOperation("添加")
     @RequestMapping("/add")
-    @ApiImplicitParam(name = "ajid",value = "案件id",dataType = "Integer", paramType = "query")
+    @ApiImplicitParam(name = "ajid",value = "案件id",dataType = "int", paramType = "query")
     public ApiResult<Object> add(TaskEntity entity, Integer ajid) {
         if (ajid == null) {
             return ApiResult.FAILURE("案件id不能为空");

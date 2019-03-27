@@ -39,13 +39,16 @@ public interface IdictionaryListService {
     int   unCancellationDicListById(Integer id);
 
 
-    List<DictionarylistEntity> findByZdid(Integer zdid,String zxbz);
+    //List<DictionarylistEntity> findByZdid(Integer zdid,String zxbz);
 
-    List<DictionarylistEntity> findByCtdm(Integer zdid,Integer ctdm,String zxbz);
+   // List<DictionarylistEntity> findByCtdm(Integer zdid,Integer ctdm,String zxbz);
 
-    List<DictionarylistEntity> findByCtz(Integer zdid,String ctmc,String zxbz);
+   // List<DictionarylistEntity> findByCtz(Integer zdid,String ctmc,String zxbz);
 
-    List<DictionarylistEntity> findByCtdmAndCtz(Integer zdid,Integer ctdm,String ctmc ,String zxbz);
+   // List<DictionarylistEntity> findByCtdmAndCtz(Integer zdid,Integer ctdm,String ctmc ,String zxbz);
+
+    List<DictionarylistEntity> queryByEntity(DictionarylistEntity entity);
+
 
     /*****************************************给其它模块提供的接口***********************************************/
 

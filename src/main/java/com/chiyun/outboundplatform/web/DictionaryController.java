@@ -44,15 +44,20 @@ public class DictionaryController {
                                        @RequestParam(required = false) String zddm,
                                        @RequestParam(required = false) String zdmc) {
         List<DictionaryEntity> list;
-        if (StringUtil.isNull(zddm) && StringUtil.isNull(zdmc)) {
-            list = idictionaryService.findAll(zxbz);
-        } else if (!StringUtil.isNull(zddm) && StringUtil.isNull(zdmc)) {
-            list = idictionaryService.findDictByEng_NameAndZxbz(zddm, zxbz);
-        } else if (StringUtil.isNull(zddm) && !StringUtil.isNull(zdmc)) {
-            list = idictionaryService.findDictByNameAndZxbz(zdmc, zxbz);
-        } else {
-            list = idictionaryService. findByZdmcAndZddmAndZxbz(zdmc, zddm, zxbz);
-        }
+//        if (StringUtil.isNull(zddm) && StringUtil.isNull(zdmc)) {
+//            list = idictionaryService.findAll(zxbz);
+//        } else if (!StringUtil.isNull(zddm) && StringUtil.isNull(zdmc)) {
+//            list = idictionaryService.findDictByEng_NameAndZxbz(zddm, zxbz);
+//        } else if (StringUtil.isNull(zddm) && !StringUtil.isNull(zdmc)) {
+//            list = idictionaryService.findDictByNameAndZxbz(zdmc, zxbz);
+//        } else {
+//            list = idictionaryService. findByZdmcAndZddmAndZxbz(zdmc, zddm, zxbz);
+//        }
+          DictionaryEntity entity=new DictionaryEntity();
+             entity.setZddm(zddm);
+             entity.setZdmc(zdmc);
+             entity.setZxbz(zxbz);
+         list= idictionaryService.queryByEntity(entity);
 
         return ApiResult.SUCCESS(list);
 
@@ -119,24 +124,15 @@ public class DictionaryController {
             return ApiResult.FAILURE("主键不能为空！！");
         }
 
-        DictionaryEntity entity1 = idictionaryService.findById(id);
-        if (!(entity1 == null)) {
-            DictionaryEntity entity = new DictionaryEntity();
-            entity.setId(id);
-            if (StringUtil.isNull(zdmc)) {
-                entity.setZdmc(entity1.getZdmc());
-            } else {
-                entity.setZdmc(zdmc);
-            }
-            if (StringUtil.isNull(zddm)) {
-                entity.setZddm(entity1.getZddm());
-            } else {
-                entity.setZddm(zddm);
-            }
-            entity.setZxbz(entity1.getZxbz());
-
-
-            int cn = idictionaryService.update(entity);  //同时词条表也要同步更新才对
+        DictionaryEntity oldEntity = idictionaryService.findById(id);
+        if (!(oldEntity == null)) {
+            DictionaryEntity newEntity = new DictionaryEntity();
+            newEntity.setId(id);
+            newEntity.setZxbz(oldEntity.getZxbz());
+            newEntity.setZdmc(zdmc);
+            newEntity.setZddm(zddm);
+            newEntity=informationCompletionForEntity(oldEntity,newEntity);
+            int cn = idictionaryService.update(newEntity);  //同时词条表也要同步更新才对
 
             if (cn == 1) {
 
@@ -205,5 +201,16 @@ public class DictionaryController {
         }
     }
 
+
+    private  DictionaryEntity  informationCompletionForEntity(DictionaryEntity oldEntity ,DictionaryEntity newEntity){
+
+        if (StringUtil.isNull(newEntity.getZdmc())) {
+            newEntity.setZdmc(oldEntity.getZdmc());
+        }
+        if (StringUtil.isNull(newEntity.getZddm())) {
+            newEntity.setZddm(oldEntity.getZddm());
+        }
+        return newEntity;
+    }
 
 }

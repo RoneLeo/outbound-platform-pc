@@ -2,6 +2,9 @@ package com.chiyun.outboundplatform.repository;
 
 
 import com.chiyun.outboundplatform.entity.DictionarylistEntity;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -10,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 
-public interface DictionaryListRepository extends CrudRepository<DictionarylistEntity , Long> {
+public interface DictionaryListRepository extends CrudRepository<DictionarylistEntity , Long>,JpaSpecificationExecutor {
 
 
 
@@ -18,9 +21,10 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
     @Query(value = "select * from dictionarylist  ORDER BY FIELD (state,'0','1')", nativeQuery = true)
      List<DictionarylistEntity> findAll();
 
+    List<DictionarylistEntity> findAll(Specification querySpecifi, Sort sort);
 
 
-    @Query(value = "select * from dictionarylist where  dictid=?1 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
+   /* @Query(value = "select * from dictionarylist where  dictid=?1 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionarylistEntity> findByZdid(Integer zdid);
 
 
@@ -45,7 +49,7 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
 
     @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and entryvalue like concat('%',?3,'%') and state=?4 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionarylistEntity>  findByCtdmAndCtzAndZxbz(Integer zdid,Integer ctdm,String ctz ,String zxbz);
-
+*/
  /**
   *   词条查询是否已存在
   * @param ctdm

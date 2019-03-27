@@ -83,7 +83,7 @@ public class UserController {
         session.setAttribute("id", userEntity.getId());
         session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
         session.setAttribute("js", userEntity.getJs());
-        return null;
+        return ApiResult.SUCCESS(userEntity);
     }
 
     @ApiOperation(value = "微信小程序登录")
@@ -231,7 +231,11 @@ public class UserController {
         }else if(isLogin == 3){
             return ApiResult.FAILURE("其他情况");
         }
-        if(!request.getHeader("userid").equals(session.getAttribute("id"))){
+//        System.out.print("userid:"+request.getHeader("userid"));
+//        System.out.print("sessionUserid:"+session.getAttribute("id"));
+        String userid = request.getHeader("userid");
+        String sessionUserid = String.valueOf(session.getAttribute("id"));
+        if(!userid.equals(sessionUserid)){
             return ApiResult.FAILURE("已登录其他帐号！退出该帐号");
         }
         Pageable pageable = PageRequest.of(page-1,pagesize,Sort.by(new Sort.Order(Sort.Direction.DESC, "cjsj")));

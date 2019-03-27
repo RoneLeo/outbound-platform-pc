@@ -27,8 +27,8 @@
         data: function(){
             return {
                 ruleForm: {
-                    username: 'admin',
-                    password: 'admin'
+                    username: '1234',
+                    password: '666666'
                 },
                 rules: {
                     username: [
@@ -46,20 +46,20 @@
                     if (valid) {
                         let param = this.ruleForm;
                         localStorage.setItem('ms_username',param.username);
-                        this.$router.push('/homePage');
-                        /*
-                        this.$axios.post('/user/login', this.$qs.stringify({zh: param.username,mm: param.password})).then( (res) => {
+                        let loading = this.$loading('登录中');
+                        this.$axios.post('user/login', {yhm: param.username,mm: param.password}).then( (res) => {
+                            loading.close();
                             if(res.resCode == 200){
                                 let data = res.data;
-                                localStorage.setItem('ms_username',data.xm);
-                                localStorage.setItem('gsid',data.gsid);
-                                localStorage.setItem('uuid',data.uuid);
-                                this.$router.push('/company');
+                                //localStorage.setItem('ms_username',data.xm);
+                                //localStorage.setItem('gsid',data.gsid);
+                                //localStorage.setItem('uuid',data.uuid);
+                                this.$router.push('/homePage');
+
                             }else{
                                 this.$message.error(res.resMsg);
                             }
                         });
-                        */
                     } else {
                         return false;
                     }

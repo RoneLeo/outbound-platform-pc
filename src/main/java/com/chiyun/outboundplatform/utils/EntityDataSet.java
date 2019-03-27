@@ -16,8 +16,8 @@ public class EntityDataSet {
             case "个案序列号":
                 entity.setGaxlh(data);
                 break;
-            case "批次id":
-                entity.setPcid(data);
+            case "批次号":
+                entity.setPch(data);
                 break;
             case "案件名称":
                 entity.setAjmc(data);

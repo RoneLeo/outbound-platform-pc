@@ -2,6 +2,7 @@ package com.chiyun.outboundplatform.service.impl;
 
 
 import com.chiyun.outboundplatform.entity.DictionaryEntity;
+import com.chiyun.outboundplatform.repository.DictionaryListRepository;
 import com.chiyun.outboundplatform.repository.DictionaryRepository;
 import com.chiyun.outboundplatform.service.IdictionaryService;
 
@@ -24,6 +25,9 @@ public class DictionaryServiceImpl implements IdictionaryService {
 
     @Resource
     private DictionaryRepository dictionaryRepository;
+
+    @Resource
+    private DictionaryListRepository dictionaryListRepository;
 
     @Override
     public DictionaryEntity findById(Integer id) {
@@ -106,6 +110,7 @@ public class DictionaryServiceImpl implements IdictionaryService {
         }
 
         DictionaryEntity  entity1= dictionaryRepository.save(entity);
+        dictionaryListRepository.updateForDictnameAndDictengname(entity1.getZdmc(),entity1.getZddm(),entity1.getId());
           if(!(entity1==null)){
               return  1;
           }

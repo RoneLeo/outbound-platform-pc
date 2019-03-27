@@ -52,7 +52,7 @@ public class BatchController {
 
     @ApiOperation("添加")
     @RequestMapping("/add")
-    public ApiResult<Object> add(@RequestParam(required = false) @ApiParam("批次名称")String pcmc,@RequestParam(required = false) @ApiParam(value = "所选字段id组合，英文','分隔") String zdids) {
+    public ApiResult<Object> add(@RequestParam(required = false) @ApiParam("批次名称") String pcmc, @RequestParam(required = false) @ApiParam(value = "所选字段id组合，英文','分隔") String zdids) {
         long now = System.currentTimeMillis();
         // 循环字段ids，查询选取保存
         String[] str = zdids.split(",");
@@ -70,6 +70,7 @@ public class BatchController {
             BatchEntity entity = new BatchEntity();
             entity.setZdzwmc(fieldcasebaseEntity.getZdzwmc());
             entity.setZdywmc(fieldcasebaseEntity.getZdywmc());
+            entity.setPcmc(pcmc);
             entity.setJczdid(String.valueOf(fieldcasebaseEntity.getId()));
             entity.setSort(i + 1);
             entity.setPcid(String.valueOf(now));
@@ -121,7 +122,7 @@ public class BatchController {
 
     @ApiOperation("导入模板")
     @RequestMapping("/importExcel")
-    public ApiResult<Object> importExcel(String pcid, MultipartFile file, Integer ajqy, Integer ajlx) {
+    public ApiResult importExcel(String pcid, MultipartFile file, Integer ajqy, Integer ajlx) {
         //判断文件是否为空
         if (file == null) {
             return ApiResult.FAILURE("文件不能为空");
@@ -151,8 +152,7 @@ public class BatchController {
             return ApiResult.FAILURE("文件不能为空");
         }
         //批量导入
-        ApiResult message = ExcelImportUtils.batchImport(pcid, fileName, file, ibatchService, ajqy, ajlx);
-        return message;
+        return ExcelImportUtils.batchImport(pcid, fileName, file, ibatchService, ajqy, ajlx);
     }
 
 

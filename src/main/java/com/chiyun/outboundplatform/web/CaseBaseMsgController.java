@@ -8,9 +8,7 @@ import com.chiyun.outboundplatform.repository.BatchRepository;
 import com.chiyun.outboundplatform.repository.CasebasemessageRepository;
 import com.chiyun.outboundplatform.service.IcaseBaseService;
 import com.chiyun.outboundplatform.service.IdictionaryListService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -68,6 +66,7 @@ public class CaseBaseMsgController {
 
     @RequestMapping("/findAllByPchAndPage")
     @ApiOperation("根据批次号 分页获取案件信息")
+    @ApiImplicitParam(name = "pch",value = "批次号",dataType = "String", paramType = "query")
     public ApiResult<Object> findAllByPchAndPage(@RequestParam String pch, @RequestParam @ApiParam("页数,需大于1") int page, @RequestParam int pagesize, HttpSession session) {
         Pageable pageable = PageRequest.of(page - 1, pagesize);
         Page<CasebasemessageEntity> list = icaseBaseService.findAllByPchAndPage(pch, pageable);
@@ -85,7 +84,7 @@ public class CaseBaseMsgController {
         }
         // 批次id
         if (batchRepository.findAllByPcid(entity.getPcid()).size() < 1) {
-            return ApiResult.FAILURE("该批次id");
+            return ApiResult.FAILURE("该批次id不存在");
         }
         // 案件类型
         if (idictionaryListService.findById(entity.getAjlx()) == null) {
@@ -109,7 +108,7 @@ public class CaseBaseMsgController {
 
     @ApiOperation("删除")
     @RequestMapping("/delete")
-    public ApiResult<Object> delete(@ApiParam(value = "案件id") Integer id) {
+    public ApiResult<Object> delete(Integer id) {
         if (id == null) {
             return ApiResult.FAILURE("id不能为空");
         }
@@ -124,31 +123,25 @@ public class CaseBaseMsgController {
         return ApiResult.SUCCESS("删除成功");
     }
 
-//    @ApiOperation("分页查询")
-//    @RequestMapping("/findAllByPage")
-//    public ApiResult<Object> findAllByPage(int page, int size) {
-//        Pageable pageable = PageRequest.of(page - 1, size,  Sort.by(new Sort.Order(Sort.Direction.DESC, "id")));
-//        Page<CasebasemessageEntity> list = casebasemessageRepository.findAll(pageable);
-//        return ApiPageResult.SUCCESS(list, page, size, list.getTotalElements(), list.getTotalPages());
-//    }
-
     @ApiOperation("根据区域查询")
     @RequestMapping("/findAllByAjqy")
-    public ApiResult<Object> findAllByAjqy(@ApiParam(value = "案件区域") Integer ajqy, int page, int size) {
+    @ApiImplicitParam(name = "ajqy",value = "案件区域id",dataType = "Integer", paramType = "query")
+    public ApiResult<Object> findAllByAjqy(Integer ajqy, int page, int pagesize) {
         if (ajqy == null) {
             return ApiResult.FAILURE("未选择案件区域");
         }
         if (idictionaryListService.findById(ajqy) == null) {
             return ApiResult.FAILURE("该案件区域不存在");
         }
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(new Sort.Order(Sort.Direction.DESC, "id")));
+        Pageable pageable = PageRequest.of(page - 1, pagesize, Sort.by(new Sort.Order(Sort.Direction.DESC, "id")));
         Page<CasebasemessageEntity> list = casebasemessageRepository.findAllByAjqy(ajqy, pageable);
-        return ApiPageResult.SUCCESS(list, page, size, list.getTotalElements(), list.getTotalPages());
+        return ApiPageResult.SUCCESS(list, page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
     @ApiOperation("修改案件状态")
     @RequestMapping("/updateAjzt")
-    public ApiResult<Object> updateAjzt(@ApiParam(value = "案件id") Integer id, @ApiParam(value = "案件状态") Integer ajzt) {
+    @ApiImplicitParam(name = "ajzt",value = "案件状态id",dataType = "Integer", paramType = "query")
+    public ApiResult<Object> updateAjzt(Integer id, Integer ajzt) {
         if (id == null || ajzt == null) {
             return ApiResult.FAILURE("id和案件状态不能为空");
         }

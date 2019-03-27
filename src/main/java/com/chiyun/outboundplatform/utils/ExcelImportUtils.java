@@ -169,6 +169,7 @@ public class ExcelImportUtils {
             baseentity.setPcid(xmbh);
             baseentity.setAjqy(ajqy);
             baseentity.setAjlx(ajlx);
+            baseentity.setAjzt(1);
             baseentity.setDrsj(new Date());
 
             List<CardmessageEntity> cardmessageEntityList = new ArrayList<>();

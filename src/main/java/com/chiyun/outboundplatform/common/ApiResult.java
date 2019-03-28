@@ -80,4 +80,11 @@ public class ApiResult<T> implements Serializable {
         result.setResMsg("未登录或登陆失败，请重新登录");
         return result;
     }
+
+    public static ApiResult<Object> SEIZE() {
+        ApiResult<Object> result = new ApiResult<>();
+        result.setResCode(101);
+        result.setResMsg("该用户已在其他地方登录");
+        return result;
+    }
 }

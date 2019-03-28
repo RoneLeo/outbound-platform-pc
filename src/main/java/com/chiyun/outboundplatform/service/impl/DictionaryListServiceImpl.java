@@ -31,42 +31,42 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
 
 
 
-//    @Override
-//    public List<DictionarylistEntity> findByZdid(Integer did, String zxbz) {
-//        if (StringUtil.isNull(zxbz)) {
-//            return dictionaryListRepository.findByZdid(did);
-//        } else {
-//            return dictionaryListRepository.findByZdidAndZxbz(did, zxbz);
-//        }
-//
-//    }
-//
-//    @Override
-//    public List<DictionarylistEntity> findByCtdm(Integer did, Integer ctdm, String zxbz) {
-//        if (StringUtil.isNull(zxbz)) {
-//            return dictionaryListRepository.findByCtdm(did, ctdm);
-//        } else {
-//            return dictionaryListRepository.findByCtdmAndZxbz(did, ctdm, zxbz);
-//        }
-//    }
-//
-//    @Override
-//    public List<DictionarylistEntity> findByCtz(Integer did, String ctmc, String zxbz) {
-//        if (StringUtil.isNull(zxbz)) {
-//            return dictionaryListRepository.findByCtz(did, ctmc);
-//        } else {
-//            return dictionaryListRepository.findByCtzAndZxbz(did, ctmc, zxbz);
-//        }
-//    }
-//
-//    @Override
-//    public List<DictionarylistEntity> findByCtdmAndCtz(Integer did, Integer ctdm, String ctmc, String zxbz) {
-//        if (StringUtil.isNull(zxbz)) {
-//            return dictionaryListRepository.findByCtdmAndCtz(did, ctdm, ctmc);
-//        } else {
-//            return dictionaryListRepository.findByCtdmAndCtzAndZxbz(did, ctdm, ctmc, zxbz);
-//        }
-//    }
+    @Override
+    public List<DictionarylistEntity> findByZdid(Integer did, String zxbz) {
+        if (StringUtil.isNull(zxbz)) {
+            return dictionaryListRepository.findByZdid(did);
+        } else {
+            return dictionaryListRepository.findByZdidAndZxbz(did, zxbz);
+        }
+
+    }
+
+    @Override
+    public List<DictionarylistEntity> findByCtdm(Integer did, Integer ctdm, String zxbz) {
+        if (StringUtil.isNull(zxbz)) {
+            return dictionaryListRepository.findByCtdm(did, ctdm);
+        } else {
+            return dictionaryListRepository.findByCtdmAndZxbz(did, ctdm, zxbz);
+        }
+    }
+
+    @Override
+    public List<DictionarylistEntity> findByCtz(Integer did, String ctmc, String zxbz) {
+        if (StringUtil.isNull(zxbz)) {
+            return dictionaryListRepository.findByCtz(did, ctmc);
+        } else {
+            return dictionaryListRepository.findByCtzAndZxbz(did, ctmc, zxbz);
+        }
+    }
+
+    @Override
+    public List<DictionarylistEntity> findByCtdmAndCtz(Integer did, Integer ctdm, String ctmc, String zxbz) {
+        if (StringUtil.isNull(zxbz)) {
+            return dictionaryListRepository.findByCtdmAndCtz(did, ctdm, ctmc);
+        } else {
+            return dictionaryListRepository.findByCtdmAndCtzAndZxbz(did, ctdm, ctmc, zxbz);
+        }
+    }
 
     @Override
     public List<DictionarylistEntity> queryByEntity(DictionarylistEntity entity) {

@@ -24,7 +24,7 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
     List<DictionarylistEntity> findAll(Specification querySpecifi, Sort sort);
 
 
-   /* @Query(value = "select * from dictionarylist where  dictid=?1 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
+    @Query(value = "select * from dictionarylist where  dictid=?1 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionarylistEntity> findByZdid(Integer zdid);
 
 
@@ -49,7 +49,6 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
 
     @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and entryvalue like concat('%',?3,'%') and state=?4 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionarylistEntity>  findByCtdmAndCtzAndZxbz(Integer zdid,Integer ctdm,String ctz ,String zxbz);
-*/
  /**
   *   词条查询是否已存在
   * @param ctdm

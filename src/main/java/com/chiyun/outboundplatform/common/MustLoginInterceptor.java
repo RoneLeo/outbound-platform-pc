@@ -31,8 +31,7 @@ public class MustLoginInterceptor extends HandlerInterceptorAdapter {
                     return true;
                 }
             }
-            if (role == null) {
-
+            if (role == null || entity == null) {
                 MessageUtils.resultMsg(response, ApiResult.UNKNOWN());
             } else {
                 MessageUtils.resultMsg(response, ApiResult.FAILURE("您没有权限进行此操作"));

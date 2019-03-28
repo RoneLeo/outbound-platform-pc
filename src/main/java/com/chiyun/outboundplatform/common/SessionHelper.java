@@ -21,6 +21,10 @@ public class SessionHelper {
     public static Object getuser() {
         return getSession().getAttribute("id");
     }
+
+    public static Integer getrole() {
+        return (Integer) getSession().getAttribute("js");
+    }
 //    public static TCyMemberBasEntity getuser() {
 //        TCyMemberBasEntity entity = (TCyMemberBasEntity) getSession().getAttribute("user");
 //        return entity;

@@ -54,16 +54,21 @@ public class DictionaryListController {
         if (ctdm == null) {
             ctdm = 0;
         }
-        if ((ctdm == 0) && StringUtil.isNull(ctmc)) {
-            list = idictionaryListService.findByZdid(zdid, zxbz);
-        } else if (!(ctdm == 0) && StringUtil.isNull(ctmc)) {
-            list = idictionaryListService.findByCtdm(zdid, ctdm, zxbz);
-        } else if ((ctdm == 0) && !(StringUtil.isNull(ctmc))) {
-            list = idictionaryListService.findByCtz(zdid, ctmc, zxbz);
-        } else {
-            list = idictionaryListService.findByCtdmAndCtz(zdid, ctdm, ctmc, zxbz);
-        }
-
+//        if ((ctdm == 0) && StringUtil.isNull(ctmc)) {
+//            list = idictionaryListService.findByZdid(zdid, zxbz);
+//        } else if (!(ctdm == 0) && StringUtil.isNull(ctmc)) {
+//            list = idictionaryListService.findByCtdm(zdid, ctdm, zxbz);
+//        } else if ((ctdm == 0) && !(StringUtil.isNull(ctmc))) {
+//            list = idictionaryListService.findByCtz(zdid, ctmc, zxbz);
+//        } else {
+//            list = idictionaryListService.findByCtdmAndCtz(zdid, ctdm, ctmc, zxbz);
+//        }
+        DictionarylistEntity entity=new DictionarylistEntity();
+          entity.setZdid(zdid);
+          entity.setCtmc(ctmc);
+          entity.setCtdm(ctdm);
+          entity.setZxbz(zxbz);
+             list=idictionaryListService.queryByEntity(entity);
         return ApiResult.SUCCESS(list);
     }
 

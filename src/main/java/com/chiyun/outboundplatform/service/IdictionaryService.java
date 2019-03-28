@@ -14,71 +14,84 @@ import java.util.Map;
 public interface IdictionaryService {
 
     /**
-     *   通过id查询
+     * 通过id查询
+     *
      * @param id
      * @return
      */
-   DictionaryEntity findById(Integer id);
+    DictionaryEntity findById(Integer id);
 
     /**
-     *  通过 字典中文名查询
+     * 通过 字典中文名查询
+     *
      * @param zdmc
      * @return
      */
-     List<DictionaryEntity>  findDictByNameAndZxbz(String zdmc,String zxbz);
+    List<DictionaryEntity> findDictByNameAndZxbz(String zdmc, String zxbz);
 
     /**
-     *  通过 字典英文名查询
+     * 通过 字典英文名查询
+     *
      * @param zddm
      * @return
      */
-    List<DictionaryEntity>  findDictByEng_NameAndZxbz(String zddm ,String zxbz);
+    List<DictionaryEntity> findDictByEng_NameAndZxbz(String zddm, String zxbz);
+
     /**
      * 查询所有
+     *
      * @return
      */
-     List<DictionaryEntity> findAll(String zxbz);
+    List<DictionaryEntity> findAll(String zxbz);
 
-    List<DictionaryEntity>  findByZdmcAndZddmAndZxbz (String zdmc,String zddm ,String zxbz);
+    List<DictionaryEntity> findByZdmcAndZddmAndZxbz(String zdmc, String zddm, String zxbz);
 
     /**
-     *  新增//修改
+     * 新增//修改
+     *
      * @param entity
      * @return
      */
-      Map<String,Object> save(DictionaryEntity entity);
-
+    Map<String, Object> save(DictionaryEntity entity);
 
 
     /**
-     *  通过id删除
+     * 通过id删除
      */
-     int deleteById(Integer id);
+    int deleteById(Integer id);
 
     /**
-     *  更新字典
+     * 更新字典
+     *
      * @param entity
      * @return
      */
-   int update(DictionaryEntity entity);
+    int update(DictionaryEntity entity);
 
     /**
      * 注销字典
+     *
      * @param id
      * @return
      */
-   int   cancellationById(Integer id);
+    int cancellationById(Integer id);
 
     /**
      * 激活字典
+     *
      * @param id
      * @return
      */
-    int   unCancellationById(Integer id);
+    int unCancellationById(Integer id);
 
     /**
      * 通过id查询是否已存在
+     *
      * @return
      */
     Boolean existsById(Integer id);
+
+    List<DictionaryEntity> queryByEntity(DictionaryEntity entity);
+
+
 }

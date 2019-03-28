@@ -4,12 +4,18 @@ import com.chiyun.outboundplatform.entity.DictionarylistEntity;
 import com.chiyun.outboundplatform.repository.DictionaryListRepository;
 import com.chiyun.outboundplatform.service.IdictionaryListService;
 import com.chiyun.outboundplatform.utils.StringUtil;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +66,33 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
         } else {
             return dictionaryListRepository.findByCtdmAndCtzAndZxbz(did, ctdm, ctmc, zxbz);
         }
+    }
+
+    @Override
+    public List<DictionarylistEntity> queryByEntity(DictionarylistEntity entity) {
+
+        Specification querySpecifi= new Specification<DictionarylistEntity>() {
+            @Override
+            public Predicate toPredicate(Root<DictionarylistEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates=new ArrayList<>();
+                       if(entity.getCtdm()!=0){
+                           predicates.add(criteriaBuilder.equal(root.get("ctdm"),entity.getCtdm()));
+                       }
+                       if(StringUtil.isNotNull(entity.getCtmc())){
+                           predicates.add(criteriaBuilder.equal(root.get("ctmc"),entity.getCtmc()));
+                       }
+                       if(StringUtil.isNotNull(entity.getZxbz())){
+                           predicates.add(criteriaBuilder.equal(root.get("zxbz"),entity.getZxbz()));
+                       }
+                      if(entity.getZdid()!=0){
+                         predicates.add(criteriaBuilder.equal(root.get("zdid"),entity.getZdid()));
+                       }
+                return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            }
+        };
+        Sort  sort=new Sort(Sort.Direction.ASC,"zxbz");
+        List<DictionarylistEntity> list = dictionaryListRepository.findAll(querySpecifi,sort);
+        return list;
     }
 
 

@@ -1,13 +1,5 @@
 <template>
     <div class="table">
-        <div class="crumbs">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i> 用户信息</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
-        <div class="handle-box">
-
-        </div>
         <div class="container">
             <el-table :data="tableData" class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column prop="zh" label="账号"></el-table-column>
@@ -87,7 +79,7 @@
             }
         },
         created() {
-            this.getData();
+            this.getUserData();
         },
         computed: {
 
@@ -105,8 +97,8 @@
                 this.getData();
             },
             // 获取 easy-mock 的模拟数据
-            getData() {
-                this.$axios.post('/user/findAllByGsid').then((res) => {
+            getUserData() {
+                this.$axios.post('/user/findAll',{page:1,size:10}).then((res) => {
                     if(res.resCode == 200){
                         this.tableData = res.data;
                     }

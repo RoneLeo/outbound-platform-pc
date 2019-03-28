@@ -168,7 +168,7 @@ public class UserController {
             return ApiResult.FAILURE("其他情况");
         }
         //判断是否为管理员
-        String js = String.valueOf(session.getAttribute("id"));
+        String js = String.valueOf(session.getAttribute("js"));
         if(!"1".equals(js)||!"2".equals(js)){
             return ApiResult.FAILURE("没有权限添加用户");
         }
@@ -216,7 +216,7 @@ public class UserController {
             return ApiResult.FAILURE("其他情况");
         }
         //判断是否为管理员
-        String js = String.valueOf(session.getAttribute("id"));
+        String js = String.valueOf(session.getAttribute("js"));
         if(!"1".equals(js)||!"2".equals(js)){
             return ApiResult.FAILURE("没有权限删除用户");
         }
@@ -295,6 +295,53 @@ public class UserController {
             return ApiResult.FAILURE("没有权限查看用户");
         }
         return ApiPageResult.SUCCESS(result.getContent(), page, pagesize, result.getTotalElements(), result.getTotalPages());
+    }
+
+    @ApiOperation(value = "退出登录")
+    @RequestMapping("/outLogin")
+    public ApiResult<Object> outLogin(HttpServletRequest request,int id) throws Exception {
+        //判断是否登录
+        HttpSession session=request.getSession();
+        int isLogin=isLogin(session);
+        if(isLogin==0){
+            return ApiResult.UNKNOWN();
+        }else if(isLogin==2){
+            return ApiResult.SEIZE();
+        }else if(isLogin == 3){
+            return ApiResult.FAILURE("其他情况");
+        }
+        UserEntity oldUserEntity = userReposity.findById(id);
+        if (oldUserEntity == null) {
+            return ApiResult.FAILURE("没有该用户的信息");
+        }
+        //清掉session
+        sessionList.put(String.valueOf(id),null);
+        return ApiResult.SUCCESS();
+    }
+
+    @MustLogin(rolerequired = {1, 3})
+    @ApiOperation(value = "注销帐号")
+    @RequestMapping("/cancelAccount")
+    public ApiResult<Object> cancelAccount(HttpServletRequest request,int id) throws Exception {
+        //判断是否登录
+        HttpSession session=request.getSession();
+        int isLogin=isLogin(session);
+        if(isLogin==0){
+            return ApiResult.UNKNOWN();
+        }else if(isLogin==2){
+            return ApiResult.SEIZE();
+        }else if(isLogin == 3){
+            return ApiResult.FAILURE("其他情况");
+        }
+        UserEntity oldUserEntity = userReposity.findById(id);
+        if (oldUserEntity == null) {
+            return ApiResult.FAILURE("没有该用户的信息");
+        }
+        oldUserEntity.setZt(1);
+        //清掉session
+        sessionList.put(String.valueOf(id),null);
+        userReposity.save(oldUserEntity);
+        return ApiResult.SUCCESS();
     }
 
     public Map<String, Object> weChatLogin(String code, String encryptedData,String iv){

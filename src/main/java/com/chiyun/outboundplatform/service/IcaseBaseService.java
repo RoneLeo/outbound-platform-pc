@@ -5,6 +5,8 @@ import com.chiyun.outboundplatform.entity.CasebasemessageEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
+
 /**
  * Created by wazto on 2019/3/22.
  */
@@ -32,4 +34,9 @@ public interface IcaseBaseService {
      * @Param: [pch, pageable]
      */
     Page<CasebasemessageEntity> findAllByPchAndPage(String pch, Pageable pageable);
+
+    /**
+     * 多条件查询
+     */
+    Page<CasebasemessageEntity> findAllByCondition(String pcid, String ajmc, Integer ajlx, Integer ajzt, Integer ajqy, Date begin, Date end, Pageable pageable);
 }

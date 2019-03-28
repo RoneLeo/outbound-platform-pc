@@ -4,6 +4,9 @@ import com.chiyun.outboundplatform.entity.TaskEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
+
+
 public interface ItaskService {
 
     /**
@@ -22,7 +25,9 @@ public interface ItaskService {
     TaskEntity save(TaskEntity entity);
 
     /**
-     * 通过id删除
+     * 多条件查询:任务名称、任务截止时间、任务方式、任务状态、任务执行人、任务完成时间
      */
-    int deleteById(Integer id);
+    Page<TaskEntity> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj,
+                                        Integer rwfs, Integer rwzt, Integer rwzxr,
+                                        Date beginWcsj, Date endWcsj, Pageable pageable);
 }

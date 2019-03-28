@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -157,5 +158,22 @@ public class CaseBaseMsgController {
         return ApiResult.SUCCESS("修改成功");
     }
 
-
+    @ApiOperation("多条件查询：批次id、案件名称、案件类型、案件状态、案件区域、导入时间")
+    @RequestMapping("/findAllByCondition")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pcid", value = "批次id", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "ajmc", value = "案件名称", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "ajlx", value = "案件类型", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "ajzt", value = "案件状态", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "ajqy", value = "案件区域", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "begin", value = "导入开始时间", dataType = "Date", paramType = "query"),
+            @ApiImplicitParam(name = "end", value = "导入截止时间", dataType = "Date", paramType = "query")
+    })
+    public ApiResult<Object> findAllByCondition(String pcid, String ajmc,
+                                                Integer ajlx, Integer ajzt, Integer ajqy,
+                                                Date begin, Date end, int page, int pagesize) {
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
+        Page<CasebasemessageEntity> list = icaseBaseService.findAllByCondition(pcid, ajmc, ajlx, ajzt, ajqy, begin, end, pageable);
+        return ApiPageResult.SUCCESS(list, page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
 }

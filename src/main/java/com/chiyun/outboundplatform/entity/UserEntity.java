@@ -15,7 +15,7 @@ public class UserEntity {
     private String yhm;
     @ApiModelProperty(value="密码")
     private String mm;
-    @ApiModelProperty(value="类型（0-系统用户，1-小程序用户）")
+    @ApiModelProperty(value="类型（0-系统用户，1-小程序用户）",required = true)
     private int lx;
     @ApiModelProperty(value="名字")
     private String mz;

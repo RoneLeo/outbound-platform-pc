@@ -11,11 +11,16 @@ import com.chiyun.outboundplatform.repository.UserReposity;
 import com.chiyun.outboundplatform.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+//import net.sf.json.JSONException;
+//import net.sf.json.JSONObject;
+//import org.apache.commons.lang.StringUtils;
 import io.swagger.annotations.ApiParam;
+import io.swagger.models.auth.In;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -173,11 +178,11 @@ public class UserController {
         userEntity.setCjsj(new Date());
         userEntity.setZt(0);
         //判断添加的用户为什么网站用户还是微信小程序用户
-        if ("0".equals(userEntity.getLx())) {
+        if(0==userEntity.getLx()){
             //网站用户
             userEntity.setMm(MD5Util.MD5("666666"));
             result = userReposity.save(userEntity);
-        } else if ("1".equals(userEntity.getLx())) {
+        }else if(1==userEntity.getLx()){
             //微信小程序用户,
             result = userReposity.save(userEntity);
             String sqm = CodeUtil.toSerialCode(result.getId());
@@ -233,6 +238,28 @@ public class UserController {
         }
         return ApiResult.SUCCESS(result);
     }
+
+
+    @ApiOperation(value="修改密码")
+    @RequestMapping("/changePassword")
+    public ApiResult<Object> changePassword(int id, String mm) throws Exception {
+        //判断是否登录
+        HttpSession session = SessionHelper.getSession();
+        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
+        if (isLogin.getResCode() < 200) return isLogin;
+        //查询是否有该用户
+        UserEntity oldUserEntity = userReposity.findById(id);
+        if (oldUserEntity == null) {
+            return ApiResult.FAILURE("没有该用户的信息");
+        }
+        oldUserEntity.setMm(MD5Util.MD5(mm));
+        UserEntity result = userReposity.save(oldUserEntity);
+        if(result==null){
+            return ApiResult.FAILURE("修改失败");
+        }
+        return ApiResult.SUCCESS(result);
+    }
+
 
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "查询所有用户")

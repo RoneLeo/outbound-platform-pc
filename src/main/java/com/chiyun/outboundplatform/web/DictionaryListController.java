@@ -3,6 +3,7 @@ package com.chiyun.outboundplatform.web;
 
 import com.chiyun.outboundplatform.common.ApiResult;
 
+import com.chiyun.outboundplatform.common.MustLogin;
 import com.chiyun.outboundplatform.entity.DictionaryEntity;
 import com.chiyun.outboundplatform.entity.DictionarylistEntity;
 import com.chiyun.outboundplatform.service.IdictionaryListService;
@@ -113,6 +114,7 @@ public class DictionaryListController {
     }
 
     @ApiOperation("新增词条")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/addDictList", method = RequestMethod.POST)
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", name = "zdid", value = "字典ID", required = true, dataType = "Integer"),
@@ -152,6 +154,7 @@ public class DictionaryListController {
 
 
     @ApiOperation("更新词条")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/updateDictList", method = RequestMethod.POST)
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", name = "id", value = "ID", required = true, dataType = "Integer"),
@@ -182,6 +185,7 @@ public class DictionaryListController {
 
 
     @ApiOperation("根据ID注销词条")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/cancellationDicListById", method = RequestMethod.POST)
     @ApiImplicitParam(paramType = "query", name = "id", value = "ID", required = true, dataType = "Integer")
     public ApiResult<Object> cancellationDicListById(Integer id) {
@@ -198,6 +202,7 @@ public class DictionaryListController {
     }
 
     @ApiOperation("根据ID激活已注销词条")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/activationDicListById", method = RequestMethod.POST)
     @ApiImplicitParam(paramType = "query", name = "id", value = "ID", required = true, dataType = "Integer")
     public ApiResult<Object> activationDicListById(Integer id) {
@@ -289,6 +294,7 @@ public class DictionaryListController {
 
     //删除操作 在上线部署时需要去掉
     @ApiOperation("根据【ID】删除单个词条")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/deleteDictListById", method = RequestMethod.POST)
     @ApiImplicitParam(paramType = "query", name = "id", value = "主键", required = true, dataType = "Integer")
     public ApiResult<Object> deleteDictListById(Integer id) {
@@ -307,6 +313,7 @@ public class DictionaryListController {
 
     //删除操作 在上线部署时需要去掉
     @ApiOperation("根据[字典ID]批量删除词条")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/deleteDictListByDid", method = RequestMethod.POST)
     @ApiImplicitParam(paramType = "query", name = "zdid", value = "字典ID", required = true, dataType = "Integer")
     public ApiResult<Object> deleteDictListByDid(Integer zdid) {

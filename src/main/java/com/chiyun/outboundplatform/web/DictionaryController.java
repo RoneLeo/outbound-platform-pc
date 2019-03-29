@@ -1,6 +1,7 @@
 package com.chiyun.outboundplatform.web;
 
 import com.chiyun.outboundplatform.common.ApiResult;
+import com.chiyun.outboundplatform.common.MustLogin;
 import com.chiyun.outboundplatform.entity.DictionaryEntity;
 
 import com.chiyun.outboundplatform.service.IdictionaryListService;
@@ -79,6 +80,7 @@ public class DictionaryController {
 
 
     @ApiOperation("新增字典")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/addDict", method = RequestMethod.POST)
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", name = "zdmc", value = "字典名称", required = true, dataType = "String"),
@@ -110,6 +112,7 @@ public class DictionaryController {
     }
 
     @ApiOperation("更新字典")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/updateDict", method = RequestMethod.POST)
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", name = "id", value = "字典ID", required = true, dataType = "Integer"),
@@ -149,6 +152,7 @@ public class DictionaryController {
 
 
     @ApiOperation("根据id 注销字典")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/cancellationDictById", method = RequestMethod.POST)
     @ApiImplicitParam(paramType = "query", name = "id", value = "ID", required = true, dataType = "Integer")
     public ApiResult<Object> cancellationDictById(@RequestParam Integer id) {
@@ -167,6 +171,7 @@ public class DictionaryController {
     }
 
     @ApiOperation("根据id 激活字典")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/activationDictById", method = RequestMethod.POST)
     @ApiImplicitParam(paramType = "query", name = "id", value = "ID", required = true, dataType = "Integer")
     public ApiResult<Object> activationDictById(@RequestParam Integer id) {
@@ -186,6 +191,7 @@ public class DictionaryController {
 
     //前期开发使用，上线时需要注销掉这个方法
     @ApiOperation("根据id删除字典包括对应的字典项信息，数据不保留")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/deleteDictById", method = RequestMethod.POST)
     public ApiResult<Object> deleteDictById(@RequestParam @ApiParam(required = true, value = "ID") Integer id) {
 

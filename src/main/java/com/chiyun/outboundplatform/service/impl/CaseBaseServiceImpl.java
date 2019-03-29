@@ -43,8 +43,8 @@ public class CaseBaseServiceImpl implements IcaseBaseService {
     }
 
     @Override
-    public Page<CasebasemessageEntity> findAllByPchAndPage(String pch, Pageable pageable) {
-        return casebasemessageRepository.findAllByPch(pch, pageable);
+    public Page<CasebasemessageEntity> findAllByPcidAndPage(String pcid, Pageable pageable) {
+        return casebasemessageRepository.findAllByPcid(pcid, pageable);
     }
 
     @Override

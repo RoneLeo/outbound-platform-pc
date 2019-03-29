@@ -70,10 +70,14 @@ public class TaskController {
             if (userReposity.findById(entity.getRwzxr()) == null) {
                 return ApiResult.FAILURE("该执行人不存在");
             }
-            // 修改状态
+            // 修改状态-指派
             entity.setRwzt(2);
+            // 设置接单方式：2-指派
+            entity.setJdfs(2);
         } else {
+            // 设置任务状态：1-新建
             entity.setRwzt(1);
+
         }
         try {
             itaskService.save(entity);
@@ -211,6 +215,9 @@ public class TaskController {
         if (entity.getRwzt() != 1) {
             return ApiResult.FAILURE("该任务已接单");
         }
+        // 接单方式：1-自己接单
+        entity.setJdfs(1);
+        // 任务状态：3-接单
         entity.setRwzt(3);
         entity.setRwzxr(ywyid);
         try {

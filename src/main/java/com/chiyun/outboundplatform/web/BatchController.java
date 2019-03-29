@@ -82,6 +82,19 @@ public class BatchController {
         return ApiResult.SUCCESS("添加成功");
     }
 
+    @ApiOperation("删除")
+    @RequestMapping("/delete")
+    public ApiResult<Object> delete(String pcid) {
+        if (StringUtil.isNull(pcid)) {
+            return ApiResult.FAILURE("批次id不能为空");
+        }
+        int result = batchRepository.deleteByPcid(pcid);
+        if (result < 1) {
+            return ApiResult.FAILURE("删除失败");
+        }
+        return ApiResult.SUCCESS("删除成功");
+    }
+
     @ApiOperation("查询所有模版")
     @RequestMapping("/findAllPcid")
     public ApiResult<Object> findAll(int page, int pagesize, HttpSession session) {

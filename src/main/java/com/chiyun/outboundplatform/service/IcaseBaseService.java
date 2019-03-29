@@ -33,7 +33,7 @@ public interface IcaseBaseService {
      * @Desc: 根据批次号 分页获取案件信息
      * @Param: [pch, pageable]
      */
-    Page<CasebasemessageEntity> findAllByPchAndPage(String pch, Pageable pageable);
+    Page<CasebasemessageEntity> findAllByPcidAndPage(String pcid, Pageable pageable);
 
     /**
      * 多条件查询

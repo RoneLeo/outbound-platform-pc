@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface CasebasemessageRepository extends JpaRepository<CasebasemessageEntity, Integer> {
 
-    Page<CasebasemessageEntity> findAllByPch(String pch, Pageable pageable);
+    Page<CasebasemessageEntity> findAllByPcid(String pcid, Pageable pageable);
 
     /**
      *  查询所有

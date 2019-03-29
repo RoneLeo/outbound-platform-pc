@@ -66,11 +66,11 @@ public class CaseBaseMsgController {
     }
 
     @RequestMapping("/findAllByPchAndPage")
-    @ApiOperation("根据批次号 分页获取案件信息")
-    @ApiImplicitParam(name = "pch",value = "批次号",dataType = "String", paramType = "query")
-    public ApiResult<Object> findAllByPchAndPage(String pch, int page, int pagesize, HttpSession session) {
+    @ApiOperation("根据批次id 分页获取案件信息")
+    @ApiImplicitParam(name = "pcid",value = "批次id",dataType = "String", paramType = "query")
+    public ApiResult<Object> findAllByPchAndPage(String pcid, int page, int pagesize, HttpSession session) {
         Pageable pageable = PageRequest.of(page - 1, pagesize);
-        Page<CasebasemessageEntity> list = icaseBaseService.findAllByPchAndPage(pch, pageable);
+        Page<CasebasemessageEntity> list = icaseBaseService.findAllByPcidAndPage(pcid, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 

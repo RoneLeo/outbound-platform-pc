@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 //import net.sf.json.JSONObject;
 //import org.apache.commons.lang.StringUtils;
 import io.swagger.annotations.ApiParam;
+import io.swagger.models.auth.In;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -263,7 +264,9 @@ public class UserController {
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value="查询所有用户")
     @RequestMapping("/findAll")
-    public ApiResult<Object> findAll(@RequestParam int page, @RequestParam int pagesize, HttpServletRequest request){
+    public ApiResult<Object> findAll(@RequestParam(required = true) @ApiParam(value = "类型（0-系统用户、1-小程序用户）") int lx,
+                                     @RequestParam(required = false)@ApiParam(value = "状态（0-启用用户，1-注销用户,不传显示全部）") Integer zt,
+                                     @RequestParam int page, @RequestParam int pagesize, HttpServletRequest request){
         //判断是否登录
         HttpSession session=request.getSession();
         int isLogin=isLogin(session);
@@ -285,12 +288,19 @@ public class UserController {
         Page<UserEntity> result;
         //判断用户权限
         String js = session.getAttribute("js").toString();
+        List<Integer> ztList= new ArrayList<>();
+        if(zt==null){
+            ztList.add(0);
+            ztList.add(1);
+        }else{
+            ztList.add(zt);
+        }
         if("1".equals(js)){
-            result = userReposity.findAll(pageable);
+            result = userReposity.findByZtInAndLx(ztList, lx, pageable);
         }else if("2".equals(js)){
             //List<Integer> a=new ArrayList<>();
-            int a[] = {2,4};
-            result = userReposity.findByJsInAndSzxzqdm(a,session.getAttribute("szxzqdm").toString(),pageable);
+            int jsArray[] = {2,4};
+            result = userReposity.findByJsInAndZtInAndLxAndSzxzqdm(jsArray, ztList, lx, session.getAttribute("szxzqdm").toString(),pageable);
         }else {
             return ApiResult.FAILURE("没有权限查看用户");
         }

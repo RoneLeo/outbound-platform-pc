@@ -16,7 +16,7 @@ public class UserEntity {
     @ApiModelProperty(value="密码")
     private String mm;
     @ApiModelProperty(value="类型（0-系统用户，1-小程序用户）")
-    private String lx;
+    private int lx;
     @ApiModelProperty(value="名字")
     private String mz;
     @ApiModelProperty(value="联系电话")
@@ -85,11 +85,11 @@ public class UserEntity {
 
     @Basic
     @Column(name = "type")
-    public String getLx() {
+    public int getLx() {
         return lx;
     }
 
-    public void setLx(String lx) {
+    public void setLx(int lx) {
         this.lx = lx;
     }
 

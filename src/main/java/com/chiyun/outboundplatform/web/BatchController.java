@@ -2,6 +2,7 @@ package com.chiyun.outboundplatform.web;
 
 import com.chiyun.outboundplatform.common.ApiPageResult;
 import com.chiyun.outboundplatform.common.ApiResult;
+import com.chiyun.outboundplatform.common.MustLogin;
 import com.chiyun.outboundplatform.entity.BatchEntity;
 import com.chiyun.outboundplatform.entity.FieldcasebaseEntity;
 import com.chiyun.outboundplatform.repository.BasetypeRepository;
@@ -51,6 +52,7 @@ public class BatchController {
     private IdictionaryListService idictionaryListService;
 
     @ApiOperation("添加")
+    @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/add")
     public ApiResult<Object> add(@RequestParam(required = false) @ApiParam("批次名称") String pcmc, @RequestParam(required = false) @ApiParam(value = "所选字段id组合，英文','分隔") String zdids) {
         long now = System.currentTimeMillis();
@@ -82,15 +84,32 @@ public class BatchController {
         return ApiResult.SUCCESS("添加成功");
     }
 
+    @ApiOperation("删除")
+    @MustLogin(rolerequired = {1, 2})
+    @RequestMapping("/delete")
+    public ApiResult<Object> delete(String pcid) {
+        if (StringUtil.isNull(pcid)) {
+            return ApiResult.FAILURE("批次id不能为空");
+        }
+        batchRepository.deleteByPcid(pcid);
+        List<BatchEntity> list = batchRepository.findAllByPcidOrderBySort(pcid);
+        if (list.size() > 1) {
+            return ApiResult.FAILURE("删除失败");
+        }
+        return ApiResult.SUCCESS("删除成功");
+    }
+
+    @MustLogin(rolerequired = {1, 2})
     @ApiOperation("查询所有模版")
     @RequestMapping("/findAllPcid")
-    public ApiResult<Object> findAll(int page, int pagesize, HttpSession session) {
+    public ApiResult<Object> findAll(@RequestParam int page, @RequestParam int pagesize) {
         Pageable pageable = PageRequest.of(page - 1, pagesize);
         Page<Map<String, Object>> list = batchRepository.findAllPcid(pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
     @ApiOperation("导出模板")
+    @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/exportExcel")
     public ApiResult<Object> exportExcel(String pcid, HttpServletResponse response) throws IOException {
         if (StringUtil.isNull(pcid)) {
@@ -121,6 +140,7 @@ public class BatchController {
     }
 
     @ApiOperation("导入模板")
+    @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/importExcel")
     public ApiResult importExcel(String pcid, MultipartFile file, Integer ajqy, Integer ajlx) {
         //判断文件是否为空

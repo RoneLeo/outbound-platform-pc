@@ -4,6 +4,7 @@ import com.chiyun.outboundplatform.common.ApiPageResult;
 import com.chiyun.outboundplatform.common.ApiResult;
 import com.chiyun.outboundplatform.entity.CasebasemessageEntity;
 import com.chiyun.outboundplatform.entity.TaskEntity;
+import com.chiyun.outboundplatform.entity.UserEntity;
 import com.chiyun.outboundplatform.repository.TaskRepository;
 import com.chiyun.outboundplatform.repository.TaskstateRepository;
 import com.chiyun.outboundplatform.repository.UserReposity;
@@ -44,7 +45,7 @@ public class TaskController {
     private TaskRepository taskRepository;
 
 
-    @ApiOperation("添加")
+    @ApiOperation("区域管理员添加任务添加")
     @RequestMapping("/add")
     @ApiImplicitParam(name = "ajid",value = "案件id",dataType = "int", paramType = "query")
     public ApiResult<Object> add(TaskEntity entity, Integer ajid) {
@@ -69,10 +70,14 @@ public class TaskController {
             if (userReposity.findById(entity.getRwzxr()) == null) {
                 return ApiResult.FAILURE("该执行人不存在");
             }
-            // 修改状态
+            // 修改状态-指派
             entity.setRwzt(2);
+            // 设置接单方式：2-指派
+            entity.setJdfs(2);
         } else {
+            // 设置任务状态：1-新建
             entity.setRwzt(1);
+
         }
         try {
             itaskService.save(entity);
@@ -143,62 +148,100 @@ public class TaskController {
         return ApiResult.SUCCESS("删除任务成功");
     }
 
-//    @ApiOperation("修改任务状态")
-//    @RequestMapping("/updateZt")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "dqZt", value = "当前状态", dataType = "Integer", paramType = "query"),
-//            @ApiImplicitParam(name = "sxZt", value = "要修改成的状态", dataType = "Integer", paramType = "query")
-//    })
-//    public ApiResult<Object> updateZt(Integer id, Integer dqZt, Integer sxZt) {
-//        if (id == null) {
-//            return ApiResult.FAILURE("id不能为空");
-//        }
-//        if (dqZt == null || sxZt == null) {
-//            return ApiResult.FAILURE("参数不能为空");
-//        }
-//        if (taskstateRepository.findById(dqZt) == null || taskstateRepository.findById(sxZt) == null) {
-//            return ApiResult.FAILURE("该状态不存在");
-//        }
-//        TaskEntity entity = itaskService.findById(id);
-//        if (entity == null) {
-//            return ApiResult.FAILURE("该条数据不存在");
-//        }
-//        switch (dqZt) {
-//            case 1:
-//                entity.setRwzt(sxZt);
-//                break;
-//            case 2:
-//
-//                break;
-//            case 3:
-//
-//                break;
-//            case 4:
-//
-//                break;
-//        }
-//        return ApiResult.SUCCESS();
-//    }
-
-    @ApiOperation("修改任务完成状态")
-    @RequestMapping("/updateWczt")
-    @ApiImplicitParam(name = "rwzxr", value = "任务执行人id", dataType = "Integer", paramType = "query")
-    public ApiResult<Object> updateWczt(Integer id, Integer rwzxr) {
+    @ApiOperation("通过任务id查询")
+    @RequestMapping("/findById")
+    public ApiResult<Object> findById(Integer id) {
         if (id == null) {
             return ApiResult.FAILURE("id不能为空");
+        }
+        TaskEntity entity = itaskService.findById(id);
+        return ApiResult.SUCCESS(entity);
+    }
+
+    @ApiOperation("多条件查询:任务名称、任务截止时间、任务方式、任务状态、任务执行人、任务完成时间")
+    @RequestMapping("/findAllByCondition")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "rwmc", value = "任务名称", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "beginJzsj", value = "任务截止时间的开始时间", dataType = "Date", paramType = "query"),
+            @ApiImplicitParam(name = "endJzsj", value = "任务截止时间的结束时间", dataType = "Date", paramType = "query"),
+            @ApiImplicitParam(name = "rwfs", value = "任务方式id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "rwzt", value = "任务状态id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "rwzxr", value = "任务执行人id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "beginWcsj", value = "任务完成时间的开始时间", dataType = "Date", paramType = "query"),
+            @ApiImplicitParam(name = "endWcsj", value = "任务完成时间的开始时间", dataType = "Date", paramType = "query")
+    })
+    public ApiResult<Object> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj,
+                                                Integer rwfs, Integer rwzt, Integer shzt, Integer rwzxr,
+                                                Date beginWcsj, Date endWcsj, int page, int pagesize) {
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
+        Page<TaskEntity> list = itaskService.findAllByCondition(rwmc, beginJzsj, endJzsj, rwfs,
+                rwzt, shzt, rwzxr, beginWcsj, endWcsj, pageable);
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
+
+    @ApiOperation("业务员登录查询本区域的任务")
+    @RequestMapping("/findAllByYwyqy")
+    @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query")
+    public ApiResult<Object> findAllByYwyqy(Integer ywyid, int page, int pagesize) {
+        if (ywyid == null) {
+            return ApiResult.FAILURE("业务员id不能为空");
+        }
+        UserEntity entity = userReposity.findById(ywyid);
+        if (entity == null) {
+            return ApiResult.FAILURE("该业务员不存在");
+        }
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
+        Page<TaskEntity> list = itaskService.findAllByYwyqy(ywyid, pageable);
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
+
+    @ApiOperation("业务员接单")
+    @RequestMapping("/order")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "rwid", value = "任务id", dataType = "Integer", paramType = "query")
+    })
+    public ApiResult<Object> order(Integer ywyid, Integer rwid) {
+        if (ywyid == null || rwid == null) {
+            return ApiResult.FAILURE("业务员id不能为空和任务id不能为空");
+        }
+        if (userReposity.findById(ywyid) == null) {
+            return ApiResult.FAILURE("该业务员不存在");
+        }
+        TaskEntity entity = itaskService.findById(rwid);
+        if (entity == null) {
+            return ApiResult.FAILURE("该任务不存在");
+        }
+        if (entity.getRwzt() != 1) {
+            return ApiResult.FAILURE("该任务已接单");
+        }
+        // 接单方式：1-自己接单
+        entity.setJdfs(1);
+        // 任务状态：3-接单
+        entity.setRwzt(3);
+        entity.setRwzxr(ywyid);
+        try {
+            itaskService.save(entity);
+        } catch (Exception e) {
+            return ApiResult.FAILURE("接单失败");
+        }
+        return ApiResult.SUCCESS("接单成功");
+    }
+
+    @ApiOperation("区域管理员审核并修改任务信息")
+    @RequestMapping("/check")
+    public ApiResult<Object> check(Integer id, Integer shzt, String shbz, Double sjyj) {
+        if (id == null || shzt == null) {
+            return ApiResult.FAILURE("id和审核状态不能为空");
         }
         TaskEntity entity = itaskService.findById(id);
         if (entity == null) {
             return ApiResult.FAILURE("该任务不存在");
         }
-        if (rwzxr != null) {
-            if (userReposity.findById(id) == null) {
-                return ApiResult.FAILURE("该任务执行人不存在");
-            }
-            entity.setRwzxr(rwzxr);
-        }
-        entity.setRwzt(4);
-        entity.setRwwcsj(new Date());
+        entity.setRwzt(5);
+        entity.setShzt(shzt);
+        entity.setShbz(shbz);
+        entity.setSjyj(sjyj);
         try {
             itaskService.save(entity);
         } catch (Exception e) {
@@ -207,16 +250,6 @@ public class TaskController {
         return ApiResult.SUCCESS("修改成功");
     }
 
-    @ApiOperation("多条件查询:任务名称、任务截止时间、任务方式、任务状态、任务执行人、任务完成时间")
-    @RequestMapping("/findAllByCondition")
-    public ApiResult<Object> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj,
-                                                Integer rwfs, Integer rwzt, Integer rwzxr,
-                                                Date beginWcsj, Date endWcsj, int page, int pagesize) {
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
-        Page<TaskEntity> list = itaskService.findAllByCondition(rwmc, beginJzsj, endJzsj, rwfs,
-                rwzt, rwzxr, beginWcsj, endWcsj, pageable);
-        return ApiPageResult.SUCCESS(list, page, pagesize, list.getTotalElements(), list.getTotalPages());
-    }
 
     @ApiOperation("查询所有任务状态")
     @RequestMapping("/findAllRwzt")

@@ -51,9 +51,9 @@ public interface BatchRepository extends CrudRepository<BatchEntity, Long> {
     /**
      * 通过id删除
      */
-    @Query(value = "delete from batch where id = ?1", nativeQuery = true)
+    @Query(value = "delete from batch where  batch_id = ?1", nativeQuery = true)
     @Modifying
     @Transactional
-    int deleteById(Integer id);
+    int deleteByPcid(String pcid);
 
 }

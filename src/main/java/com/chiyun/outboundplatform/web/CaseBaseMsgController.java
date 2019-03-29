@@ -66,11 +66,11 @@ public class CaseBaseMsgController {
     }
 
     @RequestMapping("/findAllByPchAndPage")
-    @ApiOperation("根据批次号 分页获取案件信息")
-    @ApiImplicitParam(name = "pch",value = "批次号",dataType = "String", paramType = "query")
-    public ApiResult<Object> findAllByPchAndPage(@RequestParam String pch, @RequestParam @ApiParam("页数,需大于1") int page, @RequestParam int pagesize, HttpSession session) {
+    @ApiOperation("根据批次id 分页获取案件信息")
+    @ApiImplicitParam(name = "pcid",value = "批次id",dataType = "String", paramType = "query")
+    public ApiResult<Object> findAllByPchAndPage(String pcid, int page, int pagesize, HttpSession session) {
         Pageable pageable = PageRequest.of(page - 1, pagesize);
-        Page<CasebasemessageEntity> list = icaseBaseService.findAllByPchAndPage(pch, pageable);
+        Page<CasebasemessageEntity> list = icaseBaseService.findAllByPcidAndPage(pcid, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
@@ -136,7 +136,7 @@ public class CaseBaseMsgController {
         }
         Pageable pageable = PageRequest.of(page - 1, pagesize, Sort.by(new Sort.Order(Sort.Direction.DESC, "id")));
         Page<CasebasemessageEntity> list = casebasemessageRepository.findAllByAjqy(ajqy, pageable);
-        return ApiPageResult.SUCCESS(list, page, pagesize, list.getTotalElements(), list.getTotalPages());
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
     @ApiOperation("修改案件状态")
@@ -174,6 +174,6 @@ public class CaseBaseMsgController {
                                                 Date begin, Date end, int page, int pagesize) {
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
         Page<CasebasemessageEntity> list = icaseBaseService.findAllByCondition(pcid, ajmc, ajlx, ajzt, ajqy, begin, end, pageable);
-        return ApiPageResult.SUCCESS(list, page, pagesize, list.getTotalElements(), list.getTotalPages());
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 }

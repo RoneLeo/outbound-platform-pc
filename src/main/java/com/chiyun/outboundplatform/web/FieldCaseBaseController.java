@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Api(description = "基础信息字段管理")
 @RestController
@@ -39,7 +42,18 @@ public class FieldCaseBaseController {
     @ApiOperation("查询所有")
     @RequestMapping("/findAll")
     public ApiResult<Object> findAll() {
-        List<FieldcasebaseEntity> list = fieldCaseBaseRepository.findAll();
-        return ApiResult.SUCCESS(list);
+        List<List<Map<String, Object>>> result = new ArrayList<>();
+        for (int jcxxlx = 0; jcxxlx < 10; jcxxlx ++) {
+            List<FieldcasebaseEntity> list = fieldCaseBaseRepository.findAllByJcxxlx(jcxxlx);
+            List<Map<String, Object>> list1 = new ArrayList<>();
+            for (FieldcasebaseEntity entity : list) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", entity.getId());
+                map.put("name", entity.getZdzwmc());
+                list1.add(map);
+            }
+            result.add(list1);
+        }
+        return ApiResult.SUCCESS(result);
     }
 }

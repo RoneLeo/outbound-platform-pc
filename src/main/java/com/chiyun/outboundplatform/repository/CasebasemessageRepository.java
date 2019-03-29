@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface CasebasemessageRepository extends JpaRepository<CasebasemessageEntity, Integer> {
 
-    Page<CasebasemessageEntity> findAllByPch(String pch, Pageable pageable);
+    Page<CasebasemessageEntity> findAllByPcid(String pcid, Pageable pageable);
 
     /**
      *  查询所有
@@ -36,6 +36,21 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
      *  通过区域查询
      */
     Page<CasebasemessageEntity> findAllByAjqy(Integer ajqy, Pageable pageable);
+
+    /**
+     *  通过区域查询案件id
+     */
+    @Query(value = "select distinct id from casebasemessage where area_id = ?1", nativeQuery = true)
+    List<Integer> findIdsByAjqy(Integer ajqy);
+
+    /**
+     *  获取最早和最晚的时间
+     */
+    @Query(value = "select import_time from casebasemessage order by import_time asc limit 1", nativeQuery = true)
+    Date getEarliestTime();
+
+    @Query(value = "select import_time from casebasemessage order by import_time desc limit 1", nativeQuery = true)
+    Date getLatestTime();
 
     /**
      * 多条件查询：批次id、案件名称、案件类型、案件状态、案件区域、导入时间

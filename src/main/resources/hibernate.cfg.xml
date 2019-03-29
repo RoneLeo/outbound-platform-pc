@@ -32,6 +32,7 @@
     <mapping class="com.chiyun.outboundplatform.entity.CaseanduserEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.TaskEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.TaskstateEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.FeedbackEntity"/>
 
 
       <!-- <property name="connection.username"/> -->

@@ -43,8 +43,8 @@ public class CaseBaseServiceImpl implements IcaseBaseService {
     }
 
     @Override
-    public Page<CasebasemessageEntity> findAllByPchAndPage(String pch, Pageable pageable) {
-        return casebasemessageRepository.findAllByPch(pch, pageable);
+    public Page<CasebasemessageEntity> findAllByPcidAndPage(String pcid, Pageable pageable) {
+        return casebasemessageRepository.findAllByPcid(pcid, pageable);
     }
 
     @Override
@@ -57,8 +57,11 @@ public class CaseBaseServiceImpl implements IcaseBaseService {
         if (begin == null && end == null) {
             return casebasemessageRepository.findAllByCondition(pcid, ajmc, ajlx, ajzt, ajqy, pageable);
         } else {
-            begin = DateUtils.getDayTime(begin, end, 0);
-            end = DateUtils.getDayTime(begin, end,1);
+            if (begin == null && end != null) {
+                begin = casebasemessageRepository.getEarliestTime();
+            } else if (begin != null && end == null) {
+                end = casebasemessageRepository.getLatestTime();
+            }
             return casebasemessageRepository.findAllByConditionAndDrsjBetween(pcid, ajmc, ajlx, ajzt, ajqy, begin, end, pageable);
         }
     }

@@ -169,7 +169,7 @@ public class UserController {
         }
         //判断是否为管理员
         String js = String.valueOf(session.getAttribute("js"));
-        if(!"1".equals(js)||!"2".equals(js)){
+        if("1".equals(js)||"2".equals(js)){
             return ApiResult.FAILURE("没有权限添加用户");
         }
         //判断用户名是否重复
@@ -217,7 +217,7 @@ public class UserController {
         }
         //判断是否为管理员
         String js = String.valueOf(session.getAttribute("js"));
-        if(!"1".equals(js)||!"2".equals(js)){
+        if("1".equals(js)||"2".equals(js)){
             return ApiResult.FAILURE("没有权限删除用户");
         }
         /* 删除用户 */

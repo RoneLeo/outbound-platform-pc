@@ -29,7 +29,7 @@ public class RoleController {
     public ApiResult<Object> add(RoleEntity roleEntity, HttpSession session) {
         String js = session.getAttribute("js").toString();
         if (js.equals("1")) {
-            RoleEntity result = roleReposity.save(roleEntity);
+             roleReposity.save(roleEntity);
             return ApiResult.SUCCESS("添加成功");
         } else {
             return ApiResult.FAILURE("没有权限添加用户");
@@ -57,7 +57,7 @@ public class RoleController {
     public ApiResult<Object> update(RoleEntity roleEntity, HttpSession session) {
         String js = session.getAttribute("js").toString();
         if (js.equals("1")) {
-            RoleEntity result = roleReposity.save(roleEntity);
+            roleReposity.save(roleEntity);
             return ApiResult.SUCCESS("修改成功");
         } else {
             return ApiResult.FAILURE("没有权限修改用户");

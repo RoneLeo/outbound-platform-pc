@@ -14,6 +14,15 @@ public class StringUtil {
         return false;
     }
 
+    public static boolean isNotNull(String str) {
+        if ("".equals(str) || str == null) {
+            return false;
+        }
+        return true;
+    }
+
+
+
     public static double getMoneyDouble(Double d) {
         double value = new BigDecimal(d).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         return value;

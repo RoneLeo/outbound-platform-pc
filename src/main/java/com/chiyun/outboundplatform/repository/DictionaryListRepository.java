@@ -2,6 +2,9 @@ package com.chiyun.outboundplatform.repository;
 
 
 import com.chiyun.outboundplatform.entity.DictionarylistEntity;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -10,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 
-public interface DictionaryListRepository extends CrudRepository<DictionarylistEntity , Long> {
+public interface DictionaryListRepository extends CrudRepository<DictionarylistEntity , Long>,JpaSpecificationExecutor {
 
 
 
@@ -18,6 +21,9 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
     @Query(value = "select * from dictionarylist  ORDER BY FIELD (state,'0','1')", nativeQuery = true)
      List<DictionarylistEntity> findAll();
 
+    List<DictionarylistEntity> findAll(Specification querySpecifi, Sort sort);
+
+    List<DictionarylistEntity> findAll(Specification querySpecifi);
 
 
     @Query(value = "select * from dictionarylist where  dictid=?1 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
@@ -45,7 +51,6 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
 
     @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and entryvalue like concat('%',?3,'%') and state=?4 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionarylistEntity>  findByCtdmAndCtzAndZxbz(Integer zdid,Integer ctdm,String ctz ,String zxbz);
-
  /**
   *   词条查询是否已存在
   * @param ctdm
@@ -68,7 +73,7 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
      * @param id
      * @return
      */
-    @Query(value = "update dictionarylist   set state='1' where id=?1 and state='0'" , nativeQuery = true)
+    @Query(value = "update dictionarylist   set state='1' where entrycode=?1 and state='0'" , nativeQuery = true)
     @Modifying
     @Transactional
      int    cancellationDicListById(Integer id);
@@ -78,13 +83,19 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
      * @param id
      * @return
      */
-    @Query(value = "update dictionarylist   set state='0' where id=?1 and state='1'" , nativeQuery = true)
+    @Query(value = "update dictionarylist   set state='0' where entrycode=?1 and state='1'" , nativeQuery = true)
     @Modifying
     @Transactional
     int   unCancellationDicListById(Integer id);
 
-    /**************************************给其它模块提供的功能方法********************************************************/
 
+    @Query(value = "update dictionarylist   set dictname=?1, dicteng_name=?2 where dictid=?3" , nativeQuery = true)
+    @Modifying
+    @Transactional
+    void  updateForDictnameAndDictengname (String dictName,String dictdm,int dictId);
+
+    /**************************************给其它模块提供的功能方法********************************************************/
+    @Query(value = "select * from dictionarylist where  entrycode=?1",nativeQuery = true)
     DictionarylistEntity findById(Integer id);
 
     /**
@@ -113,7 +124,7 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
 
     /*********************便于开发调试提供的方法-在后期上线时需要删除掉****************************************************/
 
-    @Query(value = "delete from dictionarylist where id = ?1", nativeQuery = true)
+    @Query(value = "delete from dictionarylist where entrycode = ?1", nativeQuery = true)
     @Modifying
     @Transactional
     int deleteById(Integer id);

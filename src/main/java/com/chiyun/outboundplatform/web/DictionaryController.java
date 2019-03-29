@@ -1,6 +1,7 @@
 package com.chiyun.outboundplatform.web;
 
 import com.chiyun.outboundplatform.common.ApiResult;
+import com.chiyun.outboundplatform.common.MustLogin;
 import com.chiyun.outboundplatform.entity.DictionaryEntity;
 
 import com.chiyun.outboundplatform.service.IdictionaryListService;
@@ -44,15 +45,20 @@ public class DictionaryController {
                                        @RequestParam(required = false) String zddm,
                                        @RequestParam(required = false) String zdmc) {
         List<DictionaryEntity> list;
-        if (StringUtil.isNull(zddm) && StringUtil.isNull(zdmc)) {
-            list = idictionaryService.findAll(zxbz);
-        } else if (!StringUtil.isNull(zddm) && StringUtil.isNull(zdmc)) {
-            list = idictionaryService.findDictByEng_NameAndZxbz(zddm, zxbz);
-        } else if (StringUtil.isNull(zddm) && !StringUtil.isNull(zdmc)) {
-            list = idictionaryService.findDictByNameAndZxbz(zdmc, zxbz);
-        } else {
-            list = idictionaryService. findByZdmcAndZddmAndZxbz(zdmc, zddm, zxbz);
-        }
+//        if (StringUtil.isNull(zddm) && StringUtil.isNull(zdmc)) {
+//            list = idictionaryService.findAll(zxbz);
+//        } else if (!StringUtil.isNull(zddm) && StringUtil.isNull(zdmc)) {
+//            list = idictionaryService.findDictByEng_NameAndZxbz(zddm, zxbz);
+//        } else if (StringUtil.isNull(zddm) && !StringUtil.isNull(zdmc)) {
+//            list = idictionaryService.findDictByNameAndZxbz(zdmc, zxbz);
+//        } else {
+//            list = idictionaryService. findByZdmcAndZddmAndZxbz(zdmc, zddm, zxbz);
+//        }
+          DictionaryEntity entity=new DictionaryEntity();
+             entity.setZddm(zddm);
+             entity.setZdmc(zdmc);
+             entity.setZxbz(zxbz);
+         list= idictionaryService.queryByEntity(entity);
 
         return ApiResult.SUCCESS(list);
 
@@ -74,6 +80,7 @@ public class DictionaryController {
 
 
     @ApiOperation("新增字典")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/addDict", method = RequestMethod.POST)
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", name = "zdmc", value = "字典名称", required = true, dataType = "String"),
@@ -105,6 +112,7 @@ public class DictionaryController {
     }
 
     @ApiOperation("更新字典")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/updateDict", method = RequestMethod.POST)
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", name = "id", value = "字典ID", required = true, dataType = "Integer"),
@@ -119,24 +127,16 @@ public class DictionaryController {
             return ApiResult.FAILURE("主键不能为空！！");
         }
 
-        DictionaryEntity entity1 = idictionaryService.findById(id);
-        if (!(entity1 == null)) {
-            DictionaryEntity entity = new DictionaryEntity();
-            entity.setId(id);
-            if (StringUtil.isNull(zdmc)) {
-                entity.setZdmc(entity1.getZdmc());
-            } else {
-                entity.setZdmc(zdmc);
-            }
-            if (StringUtil.isNull(zddm)) {
-                entity.setZddm(entity1.getZddm());
-            } else {
-                entity.setZddm(zddm);
-            }
-            entity.setZxbz(entity1.getZxbz());
+        DictionaryEntity oldEntity = idictionaryService.findById(id);
+        if (!(oldEntity == null)) {
+            DictionaryEntity newEntity = new DictionaryEntity();
+            newEntity.setId(id);
+            newEntity.setZxbz(oldEntity.getZxbz());
+            newEntity.setZdmc(zdmc);
+            newEntity.setZddm(zddm);
+            newEntity=informationCompletionForEntity(oldEntity,newEntity);
+            int cn = idictionaryService.update(newEntity);  //同时词条表也要同步更新才对
 
-
-            int cn = idictionaryService.update(entity);
             if (cn == 1) {
 
                 return ApiResult.SUCCESS("更新成功");
@@ -152,6 +152,7 @@ public class DictionaryController {
 
 
     @ApiOperation("根据id 注销字典")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/cancellationDictById", method = RequestMethod.POST)
     @ApiImplicitParam(paramType = "query", name = "id", value = "ID", required = true, dataType = "Integer")
     public ApiResult<Object> cancellationDictById(@RequestParam Integer id) {
@@ -170,6 +171,7 @@ public class DictionaryController {
     }
 
     @ApiOperation("根据id 激活字典")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/activationDictById", method = RequestMethod.POST)
     @ApiImplicitParam(paramType = "query", name = "id", value = "ID", required = true, dataType = "Integer")
     public ApiResult<Object> activationDictById(@RequestParam Integer id) {
@@ -189,6 +191,7 @@ public class DictionaryController {
 
     //前期开发使用，上线时需要注销掉这个方法
     @ApiOperation("根据id删除字典包括对应的字典项信息，数据不保留")
+    @MustLogin(rolerequired = {1})
     @RequestMapping(value = "/deleteDictById", method = RequestMethod.POST)
     public ApiResult<Object> deleteDictById(@RequestParam @ApiParam(required = true, value = "ID") Integer id) {
 
@@ -204,5 +207,16 @@ public class DictionaryController {
         }
     }
 
+
+    private  DictionaryEntity  informationCompletionForEntity(DictionaryEntity oldEntity ,DictionaryEntity newEntity){
+
+        if (StringUtil.isNull(newEntity.getZdmc())) {
+            newEntity.setZdmc(oldEntity.getZdmc());
+        }
+        if (StringUtil.isNull(newEntity.getZddm())) {
+            newEntity.setZddm(oldEntity.getZddm());
+        }
+        return newEntity;
+    }
 
 }

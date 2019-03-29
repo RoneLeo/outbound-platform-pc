@@ -79,12 +79,12 @@
                         title: '案件管理',
                         subs: [
                             {
-                                index: 'cases',
-                                title: '案件信息'
+                                index: 'templates',
+                                title: '批次管理'
                             },
                             {
-                                index: 'template',
-                                title: '模板管理'
+                                index: 'cases',
+                                title: '案件信息'
                             }
                         ]
                     },
@@ -118,7 +118,7 @@
                                     {
                                         index: 'markdown',
                                         title: 'markdown编辑器'
-                                    },
+                                    }
                                 ]
                             },
                             {
@@ -137,11 +137,11 @@
                         index: 'charts',
                         title: 'schart图表'
                     },
-                    {
+                    /*{
                         icon: 'el-icon-rank',
                         index: 'drag',
                         title: '拖拽列表'
-                    },
+                    },*/
                     {
                         icon: 'el-icon-lx-warn',
                         index: '6',

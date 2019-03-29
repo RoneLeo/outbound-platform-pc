@@ -8,29 +8,20 @@ import io.swagger.annotations.ApiModelProperty;
 @Entity
 @Table(name = "dictionarylist", schema = "ajjcxx", catalog = "")
 public class DictionarylistEntity {
-    private int id;
+
     @ApiModelProperty(value = "字典ID")
-    private int zdid;
+    private Integer zdid;
     @ApiModelProperty(value = "字典名称")
     private String zdmc;
     @ApiModelProperty(value = "字典代码")
     private String zddm;
     @ApiModelProperty(value = "注销标志【0：未注销，1：已注销】")
     private String zxbz;
-    @ApiModelProperty(value = "词条代码")
-    private Integer ctdm;
+
+    private int ctdm;
     @ApiModelProperty(value = "词条名称")
     private String ctmc;
 
-    @Basic
-    @Column(name = "id")
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     @Basic
     @Column(name = "dictid")
@@ -75,11 +66,11 @@ public class DictionarylistEntity {
     @Id
     @Column(name = "entrycode")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer getCtdm() {
+    public int getCtdm() {
         return ctdm;
     }
 
-    public void setCtdm(Integer ctdm) {
+    public void setCtdm(int ctdm) {
         this.ctdm = ctdm;
     }
 
@@ -93,7 +84,6 @@ public class DictionarylistEntity {
         this.ctmc = ctmc;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -101,23 +91,21 @@ public class DictionarylistEntity {
 
         DictionarylistEntity that = (DictionarylistEntity) o;
 
-        if (id != that.id) return false;
-        if (zdid != that.zdid) return false;
+        if (ctdm != that.ctdm) return false;
+        if (!zdid.equals(that.zdid)) return false;
         if (!zdmc.equals(that.zdmc)) return false;
         if (!zddm.equals(that.zddm)) return false;
         if (!zxbz.equals(that.zxbz)) return false;
-        if (!ctdm.equals(that.ctdm)) return false;
         return ctmc.equals(that.ctmc);
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + zdid;
+        int result = zdid.hashCode();
         result = 31 * result + zdmc.hashCode();
         result = 31 * result + zddm.hashCode();
         result = 31 * result + zxbz.hashCode();
-        result = 31 * result + ctdm.hashCode();
+        result = 31 * result + ctdm;
         result = 31 * result + ctmc.hashCode();
         return result;
     }
@@ -125,13 +113,12 @@ public class DictionarylistEntity {
     @Override
     public String toString() {
         return "DictionarylistEntity{" +
-                "id=" + id +
-                ", zdid=" + zdid +
+                "zdid=" + zdid +
                 ", zdmc='" + zdmc + '\'' +
                 ", zddm='" + zddm + '\'' +
                 ", zxbz='" + zxbz + '\'' +
-                ", ctdm='" + ctdm + '\'' +
-                ", ctz='" + ctmc + '\'' +
+                ", ctdm=" + ctdm +
+                ", ctmc='" + ctmc + '\'' +
                 '}';
     }
 }

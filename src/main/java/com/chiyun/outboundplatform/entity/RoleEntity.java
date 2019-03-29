@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "roler", schema = "ajjcxx", catalog = "")
+@Table(name = "role", schema = "ajjcxx", catalog = "")
 public class RoleEntity {
     private int id;
     @ApiModelProperty(value="角色名")

@@ -1,6 +1,9 @@
 package com.chiyun.outboundplatform.repository;
 
 import com.chiyun.outboundplatform.entity.DictionaryEntity;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -9,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 
-public interface DictionaryRepository extends CrudRepository<DictionaryEntity, Long> {
+public interface DictionaryRepository extends CrudRepository<DictionaryEntity, Long>,JpaSpecificationExecutor {
 
 
     DictionaryEntity save(DictionaryEntity entity);
@@ -24,14 +27,15 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
      * @param
      * @return
      */
-    @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  ORDER BY FIELD (state,'0','1')", nativeQuery = true)
+   @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionaryEntity>  findByZdmc(String zdmc);
+
     /**
      *   通过字典中文名和字典状态赛选来查询字典
      * @param
      * @return
      */
-    @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  and state=?2 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
+   @Query(value = "select * from dictionary where name like  concat('%',?1,'%')  and state=?2 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionaryEntity>  findByZdmcAndZxbz(String zdmc,String zxbz);
 
     /**
@@ -41,6 +45,7 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
      */
     @Query(value = "select * from dictionary where eng_name like  concat('%',?1,'%') ORDER BY FIELD (state,'0','1') ", nativeQuery = true)
     List<DictionaryEntity>  findByZddm(String zddm);
+
     /**
      *   通过字典代码和注销标志赛选查询字典
      * @param
@@ -73,6 +78,7 @@ public interface DictionaryRepository extends CrudRepository<DictionaryEntity, L
     @Query(value = "select * from dictionary where state=?1 ORDER BY FIELD (state,'0','1')",nativeQuery = true)
     List<DictionaryEntity> findAllByZxbz(String zxbz);
 
+    List<DictionaryEntity> findAll(Specification querySpecifi, Sort sort);
 
     /**
      *  注销字典

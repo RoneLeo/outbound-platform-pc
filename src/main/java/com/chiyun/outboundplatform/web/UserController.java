@@ -2,7 +2,10 @@ package com.chiyun.outboundplatform.web;
 
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.chiyun.outboundplatform.common.ApiPageResult;
 import com.chiyun.outboundplatform.common.ApiResult;
+import com.chiyun.outboundplatform.common.MustLogin;
+import com.chiyun.outboundplatform.common.SessionHelper;
 import com.chiyun.outboundplatform.entity.UserEntity;
 import com.chiyun.outboundplatform.repository.UserReposity;
 import com.chiyun.outboundplatform.utils.*;
@@ -12,9 +15,12 @@ import io.swagger.annotations.ApiOperation;
 //import net.sf.json.JSONObject;
 //import org.apache.commons.lang.StringUtils;
 import io.swagger.annotations.ApiParam;
+import io.swagger.models.auth.In;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,10 +30,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 
 @Api(description = "用户管理")
 @RestController
@@ -36,20 +40,46 @@ public class UserController {
 
     private static final String APPID = "wxa52fa9f12b8746d8";
     private static final String SECRET = "b2ed2f764ac0467733840008eda01954";
-
     @Resource
     private UserReposity userReposity;
 
     @ApiOperation(value = "登录")
     @RequestMapping("/login")
-    public ApiResult<Object> login(@RequestParam @ApiParam(value = "用户名")String yhm, @RequestParam @ApiParam(value = "密码")String mm, HttpSession session) throws Exception{
-        if(StringUtil.isNull(yhm)||StringUtil.isNull(mm)){
+    public ApiResult<Object> login(@RequestParam @ApiParam(value = "用户名") String yhm,
+                                   @RequestParam @ApiParam(value = "密码") String mm,
+                                   HttpServletRequest request, HttpServletResponse response) throws Exception {
+        System.out.print("用戶名：" + yhm);
+        if (StringUtil.isNull(yhm) || StringUtil.isNull(mm)) {
             return ApiResult.FAILURE("用户名或密码不能为空");
         }
         mm = MD5Util.MD5(mm);
-        UserEntity userEntity = userReposity.findByYhmAndMm(yhm, mm);
-        if(userEntity == null){
-            return ApiResult.FAILURE("用户名或密码为空");
+        UserEntity userEntity = userReposity.findByYhm(yhm);
+        if (userEntity == null) {
+            return ApiResult.FAILURE("用户名不存在");
+        }
+        //UserEntity userEntity = userReposity.findByYhmAndMm(yhm, mm);
+        if (!mm.equals(userEntity.getMm())) {
+            return ApiResult.FAILURE("密码错误");
+        }
+        HttpSession session = request.getSession();//创建session
+        String sessionId = session.getId();//获取sessionid
+        String userid = String.valueOf(userEntity.getId());//获取用户id
+        //通过sessionid查看有没有其他登录的
+        String key = SessionUtil.getMapKey(sessionId);
+//        System.out.print("key:"+key);
+//        System.out.print("userid:"+userid);
+        if (key != null) {
+            if (!key.equals(userid)) {
+                SessionUtil.put(key, null);
+                System.out.print("22222222:");
+            }
+        }
+        String sessionValue = SessionUtil.getMapValue(userid);
+        if (sessionValue == null || !sessionValue.equals(sessionId)) {
+            SessionUtil.put(userid, sessionId);
+        } else if (sessionValue.equals(sessionId)) {
+            //已登录
+            return ApiResult.FAILURE("重复登录");
         }
         session.setAttribute("yhm", userEntity.getYhm());
         session.setAttribute("id", userEntity.getId());
@@ -60,107 +90,138 @@ public class UserController {
 
     @ApiOperation(value = "微信小程序登录")
     @RequestMapping("/weLogin")
-    public ApiResult<Object> weLogin(@ApiParam(value = "授权码")String sqm,String encryptedData,String iv, String code, HttpServletResponse response){
-        Map<String, Object> map = weChatLogin(code,encryptedData,iv);
-        if(map.get("status").toString()=="0"){
+    public ApiResult<Object> weLogin(@ApiParam(value = "授权码") String sqm, String encryptedData, String iv, String code, HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> map = weChatLogin(code, encryptedData, iv);
+        if (map.get("status").toString() == "0") {
             return ApiResult.FAILURE(map.get("msg").toString());
         }
+        HttpSession session = request.getSession();//创建session
+        String sessionId = session.getId();//获取sessionid
         UserEntity userEntity = userReposity.findByOpenid(map.get("openid").toString());
-        if(userEntity==null&&StringUtil.isNull(sqm)){
+        if (userEntity == null) {
+            //数据库中没有openid数据
+            if (StringUtil.isNull(sqm)) {
+                //授权码为空
             return ApiResult.FAILURE("数据库中没有您的信息，请出示您的授权码");
-        }else{
-            //userEntity为空，sqm不为空
-            if(!StringUtil.isNull(sqm)){
+            }else{
+                //授权码不为空
                 UserEntity userEntity1 = userReposity.findBySqm(sqm);
-                if(userEntity1==null){
+                if (userEntity1 == null) {
                     //数据库找不到邀请码信息
                     return ApiResult.FAILURE("数据库没有该授权码");
-                }else if(userEntity1.getOpenid()!=null){
-                    //邀请码查询出来的数据有人绑定
+                } else if (userEntity1.getOpenid() != null) {
+                    //授权码查询出来的数据有人绑定
                     return ApiResult.FAILURE("授权码已有人使用，请核实");
                 }
+                //使用授权码绑定帐号
                 userEntity1.setOpenid(map.get("openid").toString());
-               // userEntity1.setUnionid(map.get("unionid").toString());
+                // userEntity1.setUnionid(map.get("unionid").toString());
                 userEntity1.setSk(map.get("session_key").toString());
                 userEntity1.setSkcjsj(new Date());
                 userEntity1.setBdsj(new Date());
                 UserEntity result = userReposity.save(userEntity1);
-                if (result==null){
+                if (result == null) {
                     return ApiResult.FAILURE("数据添加失败");
                 }
-                return ApiResult.SUCCESS(result);
+            }
+        }
+            //通过openid在数据库中查询出了数据，登录成功
+            /*String userid = String.valueOf(userEntity.getId());//获取用户id
+            String sessionValue = SessionUtil.getMapValue(userid);
+            if (sessionValue == null || !sessionValue.equals(sessionId)) {
+                SessionUtil.put(userid, sessionId);
+            } else if (Objects.equals(sessionValue, sessionId)) {
+                //已登录
+                return ApiResult.FAILURE("重复登录");
+            }*/
+            SessionUtil.put(String.valueOf(userEntity.getId()), sessionId);
+            session.setAttribute("id", userEntity.getId());
+            session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
+            session.setAttribute("js", userEntity.getJs());
+            return ApiResult.SUCCESS(userEntity);
 
-            }
-            //userEntity不为空，数据库有openid的信息，不需要授权码，登录成功
-            //保存本次session_key
-            userEntity.setSk(map.get("session_key").toString());
-            userEntity.setSkcjsj(new Date());
-            UserEntity result = userReposity.save(userEntity);
-            if (result==null){
-                return ApiResult.FAILURE("数据添加失败");
-            }
-            return ApiResult.SUCCESS(result);
+//            //userEntity不为空，数据库有openid的信息，不需要授权码，登录成功
+//            //保存本次session_key
+//            userEntity.setSk(map.get("session_key").toString());
+//            userEntity.setSkcjsj(new Date());
+//            UserEntity result = userReposity.save(userEntity);
+//            if (result == null) {
+//                return ApiResult.FAILURE("数据添加失败");
+//            }
         }
 
-    }
 
-    @ApiOperation(value="添加用户")
+    @MustLogin(rolerequired = {1, 3})
+    @ApiOperation(value = "添加用户")
     @RequestMapping("/add")
-    public ApiResult<Object> add(HttpSession session,UserEntity userEntity) throws Exception {
+    public ApiResult<Object> add(UserEntity userEntity) throws Exception {
         //判断是否登录
-
+        HttpSession session = SessionHelper.getSession();
+        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
+        if (isLogin.getResCode() < 200) return isLogin;
         //判断是否为管理员
-
+        String js = String.valueOf(session.getAttribute("js"));
+        if (!"1".equals(js) && !"3".equals(js)) {
+            return ApiResult.FAILURE("没有权限添加用户");
+        }
+        //判断用户名是否重复
+        UserEntity oldUserEntity = userReposity.findByYhm(userEntity.getYhm());
+        if (oldUserEntity != null) {
+            return ApiResult.FAILURE("该用户名已存在！");
+        }
         /* 添加用户 */
-        UserEntity result=null;
+        UserEntity result = null;
         userEntity.setCjsj(new Date());
         userEntity.setZt(0);
         //判断添加的用户为什么网站用户还是微信小程序用户
-        if("0".equals(userEntity.getLx())){
+        if(0==userEntity.getLx()){
             //网站用户
             userEntity.setMm(MD5Util.MD5("666666"));
             result = userReposity.save(userEntity);
-        }else if("1".equals(userEntity.getLx())){
-            //微信小程序用户
+        }else if(1==userEntity.getLx()){
+            //微信小程序用户,
             result = userReposity.save(userEntity);
-            String sqm=CodeUtil.toSerialCode(result.getId());
+            String sqm = CodeUtil.toSerialCode(result.getId());
             result.setSqm(sqm);
             result = userReposity.save(result);
-        }else{
+        } else {
             return ApiResult.FAILURE("添加用户类型错误");
         }
-        if(result==null){
+        if (result == null) {
             return ApiResult.FAILURE("添加失败");
         }
         return ApiResult.SUCCESS(result);
     }
 
-    @ApiOperation(value="删除用户")
+    @MustLogin(rolerequired = {1, 3})
+    @ApiOperation(value = "删除用户")
     @RequestMapping("/delete")
-    public ApiResult<Object> delete(HttpSession session,int id) throws Exception {
+    public ApiResult<Object> delete(int id) {
         //判断是否登录
-
-        //判断是否为管理员
-
+        HttpSession session = SessionHelper.getSession();
+        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
+        if (isLogin.getResCode() < 200) return isLogin;
         /* 删除用户 */
         UserEntity oldUserEntity = userReposity.findById(id);
         if (oldUserEntity == null) {
             return ApiResult.FAILURE("没有该用户的信息");
         }
         int result = userReposity.deleteById(id);
-        if(result==0){
+        if (result == 0) {
             return ApiResult.FAILURE("删除失败");
         }
         return ApiResult.SUCCESS("删除成功");
     }
 
-    @ApiOperation(value="修改用户")
+    @MustLogin(rolerequired = {1, 3})
+    @ApiOperation(value = "修改用户")
     @RequestMapping("/update")
-    public ApiResult<Object> update(HttpSession session,UserEntity userEntity) throws Exception {
+    public ApiResult<Object> update(UserEntity userEntity) {
         //判断是否登录
-
-        //判断是否为管理员
-
+        HttpSession session = SessionHelper.getSession();
+        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
+        if (isLogin.getResCode() < 200) return isLogin;
+        //判断权限搜索用户再修改
         /* 修改用户 */
         UserEntity oldUserEntity = userReposity.findById(userEntity.getId());
         if (oldUserEntity == null) {
@@ -168,42 +229,120 @@ public class UserController {
         }
         userEntity.setCjsj(oldUserEntity.getCjsj());
         UserEntity result = userReposity.save(userEntity);
+        if (result == null) {
+            return ApiResult.FAILURE("修改失败");
+        }
+        return ApiResult.SUCCESS(result);
+    }
+
+
+    @ApiOperation(value="修改密码")
+    @RequestMapping("/changePassword")
+    public ApiResult<Object> changePassword(int id, String mm) throws Exception {
+        //判断是否登录
+        HttpSession session = SessionHelper.getSession();
+        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
+        if (isLogin.getResCode() < 200) return isLogin;
+        //查询是否有该用户
+        UserEntity oldUserEntity = userReposity.findById(id);
+        if (oldUserEntity == null) {
+            return ApiResult.FAILURE("没有该用户的信息");
+        }
+        oldUserEntity.setMm(MD5Util.MD5(mm));
+        UserEntity result = userReposity.save(oldUserEntity);
         if(result==null){
             return ApiResult.FAILURE("修改失败");
         }
         return ApiResult.SUCCESS(result);
     }
 
-    @ApiOperation(value="查询所有用户")
-    @RequestMapping("/findAll")
-    public ApiResult<Object> findAll(@RequestParam int page, @RequestParam int size,HttpSession session){
-        //判断是否登录
 
+    @MustLogin(rolerequired = {1, 3})
+    @ApiOperation(value = "查询所有用户")
+    @RequestMapping("/findAll")
+    public ApiResult<Object> findAll(@RequestParam @ApiParam(value = "类型（0-系统用户、1-小程序用户）", required = true) int lx,
+                                     @RequestParam(required = false) @ApiParam(value = "状态（0-启用用户，1-注销用户,不传显示全部）") Integer zt,
+                                     @RequestParam int page, @RequestParam int pagesize) {
+        //判断是否登录
+        HttpSession session = SessionHelper.getSession();
+        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
+        if (isLogin.getResCode() < 200) return isLogin;
+//        System.out.print("userid:"+request.getHeader("userid"));
+//        System.out.print("sessionUserid:"+session.getAttribute("id"));
+//        String userid = request.getHeader("userid");
+//        String sessionUserid = String.valueOf(session.getAttribute("id"));
+//        if(!userid.equals(sessionUserid)){
+//            return ApiResult.FAILURE("已登录其他帐号！退出该帐号");
+//        }
+        Pageable pageable = PageRequest.of(page - 1, pagesize, Sort.by(new Sort.Order(Sort.Direction.DESC, "cjsj")));
         Page<UserEntity> result;
         //判断用户权限
         String js = session.getAttribute("js").toString();
-        if("1".equals(js)){
-            result = userReposity.findAll(PageRequest.of(page - 1, size, Sort.by(new Sort.Order(Sort.Direction.DESC, "cjsj"))));
-        }else if("2".equals(js)){
-            int a[]={2,4};
-            result = userReposity.findByJsAndSzxzqdm(a,session.getAttribute("szxzqdm").toString(),PageRequest.of(page - 1, size, Sort.by(new Sort.Order(Sort.Direction.DESC, "create_time"))));
-        }else {
+        List<Integer> ztList = new ArrayList<>();
+        if (zt == null) {
+            ztList.add(0);
+            ztList.add(1);
+        } else {
+            ztList.add(zt);
+        }
+        if ("1".equals(js)) {
+            result = userReposity.findByZtInAndLx(ztList, lx, pageable);
+        } else if ("2".equals(js)) {
+            //List<Integer> a=new ArrayList<>();
+            int jsArray[] = {2, 4};
+            result = userReposity.findByJsInAndZtInAndLxAndSzxzqdm(jsArray, ztList, lx, session.getAttribute("szxzqdm").toString(), pageable);
+        } else {
             return ApiResult.FAILURE("没有权限查看用户");
         }
-        return ApiResult.SUCCESS(result);
+        return ApiPageResult.SUCCESS(result.getContent(), page, pagesize, result.getTotalElements(), result.getTotalPages());
     }
 
-    public Map<String, Object> weChatLogin(String code, String encryptedData,String iv){
+    @ApiOperation(value = "退出登录")
+    @RequestMapping("/outLogin")
+    public ApiResult<Object> outLogin(int id) throws Exception {
+        //判断是否登录
+        HttpSession session = SessionHelper.getSession();
+        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
+        if (isLogin.getResCode() < 200) return isLogin;
+        UserEntity oldUserEntity = userReposity.findById(id);
+        if (oldUserEntity == null) {
+            return ApiResult.FAILURE("没有该用户的信息");
+        }
+        //清掉session
+        SessionUtil.put(String.valueOf(id), null);
+        return ApiResult.SUCCESS();
+    }
+
+    @MustLogin(rolerequired = {1, 3})
+    @ApiOperation(value = "注销帐号")
+    @RequestMapping("/cancelAccount")
+    public ApiResult<Object> cancelAccount(int id) {
+        //判断是否登录
+        HttpSession session = SessionHelper.getSession();
+        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
+        if (isLogin.getResCode() < 200) return isLogin;
+        UserEntity oldUserEntity = userReposity.findById(id);
+        if (oldUserEntity == null) {
+            return ApiResult.FAILURE("没有该用户的信息");
+        }
+        oldUserEntity.setZt(1);
+        //清掉session
+        SessionUtil.put(String.valueOf(id), null);
+        userReposity.save(oldUserEntity);
+        return ApiResult.SUCCESS();
+    }
+
+    public Map<String, Object> weChatLogin(String code, String encryptedData, String iv) {
         Map<String, Object> map = new HashMap<String, Object>();
         String status = "1";
         String msg = "ok";
         String WX_URL = "https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code";
         try {
 //            String code = request.getParameter("code");
-            if(StringUtil.isNull(code)){
+            if (StringUtil.isNull(code)) {
                 status = "0";//失败状态
                 msg = "code为空";
-            }else {
+            } else {
                 String requestUrl = WX_URL.replace("APPID", APPID).
                         replace("SECRET", SECRET).replace("JSCODE", code);
                 //logger.info(requestUrl);
@@ -213,14 +352,14 @@ public class UserController {
                     try {
                         map.put("openid", jsonObject.getString("openid"));
                         map.put("session_key", jsonObject.getString("session_key"));
-                        Map<String, Object> map1 = decrypt(encryptedData,iv, jsonObject.getString("session_key"));
-                        map.put("unionID",map1.get("unionId"));
+                        Map<String, Object> map1 = decrypt(encryptedData, iv, jsonObject.getString("session_key"));
+                        map.put("unionID", map1.get("unionId"));
                     } catch (JSONException e) {
                         // 获取token失败
                         status = "0";
                         msg = "code无效";
                     }
-                }else {
+                } else {
                     status = "0";
                     msg = "code无效";
                 }
@@ -234,7 +373,7 @@ public class UserController {
         return map;
     }
 
-    public Map<String, Object> decrypt(String encryptedData,String iv, String session_key){
+    public Map<String, Object> decrypt(String encryptedData, String iv, String session_key) {
 //对encryptedData加密数据进行AES解密
         Map map = new HashMap();
         try {
@@ -261,4 +400,6 @@ public class UserController {
         }
         return map;
     }
+
+
 }

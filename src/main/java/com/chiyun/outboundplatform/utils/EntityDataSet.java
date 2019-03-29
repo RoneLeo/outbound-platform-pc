@@ -16,8 +16,8 @@ public class EntityDataSet {
             case "个案序列号":
                 entity.setGaxlh(data);
                 break;
-            case "批次id":
-                entity.setPcid(data);
+            case "批次号":
+                entity.setPch(data);
                 break;
             case "案件名称":
                 entity.setAjmc(data);
@@ -151,7 +151,7 @@ public class EntityDataSet {
                 entity.setDxnl(Integer.valueOf(data));
                 break;
             case "对象性别":
-                entity.setDxxb(Integer.valueOf(data));
+                entity.setDxxb(data);
                 break;
             case "地址":
                 entity.setDxdz(data);
@@ -224,7 +224,7 @@ public class EntityDataSet {
                 entity.setArmc(data);
                 break;
             case "案人性别":
-                entity.setArxb(Integer.valueOf(data));
+                entity.setArxb(data);
                 break;
             case "单位名称":
                 entity.setDwmc(data);
@@ -326,20 +326,11 @@ public class EntityDataSet {
             case "信用额度":
                 entity.setXyed(data);
                 break;
-            case "信贷分类":
-                entity.setXdfl(Integer.valueOf(data));
-                break;
             case "信贷分类名称":
                 entity.setXdflmc(data);
                 break;
-            case "催收分类":
-                entity.setCslx(Integer.valueOf(data));
-                break;
             case "催收分类名称":
                 entity.setCslxmc(data);
-                break;
-            case "拖欠级别":
-                entity.setTqjb(Integer.valueOf(data));
                 break;
             case "拖欠级别名称":
                 entity.setTqjbmc(data);

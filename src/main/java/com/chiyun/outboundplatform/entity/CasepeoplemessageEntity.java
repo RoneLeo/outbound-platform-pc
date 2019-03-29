@@ -17,7 +17,7 @@ public class CasepeoplemessageEntity {
     @ApiModelProperty(value = "案人名称")
     private String armc;
     @ApiModelProperty(value = "案人性别")
-    private Integer arxb;
+    private String arxb;
     @ApiModelProperty(value = "单位名称")
     private String dwmc;
     @ApiModelProperty(value = "单位地址")
@@ -91,11 +91,11 @@ public class CasepeoplemessageEntity {
 
     @Basic
     @Column(name = "cSex")
-    public Integer getArxb() {
+    public String getArxb() {
         return arxb;
     }
 
-    public void setArxb(Integer arxb) {
+    public void setArxb(String arxb) {
         this.arxb = arxb;
     }
 

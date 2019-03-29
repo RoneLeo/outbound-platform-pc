@@ -16,7 +16,7 @@ public class UsermessageEntity {
     @ApiModelProperty(value = "对象年龄")
     private Integer dxnl;
     @ApiModelProperty(value = "对象性别")
-    private Integer dxxb;
+    private String dxxb;
     @ApiModelProperty(value = "地址")
     private String dxdz;
     @ApiModelProperty(value = "地址类型")
@@ -65,16 +65,16 @@ public class UsermessageEntity {
 
     @Basic
     @Column(name = "sex")
-    public Integer getDxxb() {
+    public String getDxxb() {
         return dxxb;
     }
 
-    public void setDxxb(Integer dxxb) {
+    public void setDxxb(String dxxb) {
         this.dxxb = dxxb;
     }
 
     @Basic
-    @Column(name = "add")
+    @Column(name = "addr")
     public String getDxdz() {
         return dxdz;
     }

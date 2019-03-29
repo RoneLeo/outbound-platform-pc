@@ -15,8 +15,8 @@ public class UserEntity {
     private String yhm;
     @ApiModelProperty(value="密码")
     private String mm;
-    @ApiModelProperty(value="类型")
-    private String lx;
+    @ApiModelProperty(value="类型（0-系统用户，1-小程序用户）",required = true)
+    private int lx;
     @ApiModelProperty(value="名字")
     private String mz;
     @ApiModelProperty(value="联系电话")
@@ -31,7 +31,7 @@ public class UserEntity {
     private String dz;
     @ApiModelProperty(value="所在行政区代码",required = true)
     private String szxzqdm;
-    @ApiModelProperty(value="状态")
+    @ApiModelProperty(value="状态（0-启动，1-注销）")
     private Integer zt;
     @ApiModelProperty(value="角色id",required = true)
     private Integer js;
@@ -85,11 +85,11 @@ public class UserEntity {
 
     @Basic
     @Column(name = "type")
-    public String getLx() {
+    public int getLx() {
         return lx;
     }
 
-    public void setLx(String lx) {
+    public void setLx(int lx) {
         this.lx = lx;
     }
 

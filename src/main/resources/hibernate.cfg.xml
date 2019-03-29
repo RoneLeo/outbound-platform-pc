@@ -6,7 +6,7 @@
   <session-factory>
     <property name="connection.url">jdbc:mysql://182.151.22.247:3306/ajjcxx</property>
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-    <mapping class="com.chiyun.outboundplatform.entity.BasetypeEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.BasetypeEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.BatchEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.CardmessageEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.CasepeoplemessageEntity"/>
@@ -29,6 +29,10 @@
     <!--用户和权限管理使用到的表-->
       <mapping class="com.chiyun.outboundplatform.entity.RoleEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.UserEntity"/>
+    <mapping class="com.chiyun.outboundplatform.entity.CaseanduserEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.TaskEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.TaskstateEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.FeedbackEntity"/>
 
 
       <!-- <property name="connection.username"/> -->

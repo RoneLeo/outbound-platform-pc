@@ -61,20 +61,20 @@ export default new Router({
                     path: '/cases',
                     name: 'cases',
                     component: resolve => require(['../components/page/Cases.vue'], resolve),
-                    meta: { title: '案件管理'}
+                    meta: { title: '案件管理',keepAlive: true}
                 },
                 {
-                    path: '/template',
-                    name: 'template',
-                    component: resolve => require(['../components/page/Template.vue'], resolve),
-                    meta: { title: '模板管理'}
+                    path: '/templates',
+                    name: 'templates',
+                    component: resolve => require(['../components/page/Templates.vue'], resolve),
+                    meta: { title: '模板批次',keepAlive: true}
                 },
                 ///**/
                 {
                     path: '/order',
                     name: 'order',
                     component: resolve => require(['../components/page/Order.vue'], resolve),
-                    meta: { title: '案件-派单'}
+                    meta: { title: '案件-派单',keepAlive: true}
                 },
                 {
                     path: '/orders',

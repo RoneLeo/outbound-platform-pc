@@ -27,16 +27,15 @@ axios.interceptors.request.use(
                 config.data = qs.stringify(config.data); //处理参数格式
             }
         }
-
         //
         // console.log(config.data)
         // config.headers = {
         //     'Content-Type': 'application/x-www-form-urlencoded', //参数格式设置
         // };
-        // if (uuid) {
-        //     config.headers.Authorization = "Token"; //携带权限参数
-        //     config.headers.uuid = uuid; //用户id
-        // }
+        if (uuid) {
+            config.headers.Authorization = "Token"; //携带权限参数
+            config.headers.uuid = uuid; //用户id
+        }
         return config;
     },
     error => {
@@ -53,9 +52,7 @@ axios.interceptors.response.use(
             if(data.resCode == -1){
                 Message.error(data.resMsg);
             }
-            else if(data.resCode == 100){
-                router.push('/login')
-            }else {
+            else{
                 return response.data;
             }
         }else{

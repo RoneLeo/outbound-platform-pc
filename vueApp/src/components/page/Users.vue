@@ -120,8 +120,10 @@
         </div>
     </div>
 </template>
+
 <script>
     export default {
+        name: 'basetable',
         data() {
             return {
                 dictType: '0',
@@ -259,6 +261,7 @@
             }
         }
     }
+
 </script>
 <style>
     .userForm .el-form-item {

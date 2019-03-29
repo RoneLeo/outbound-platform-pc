@@ -101,11 +101,18 @@ public class BatchController {
 
     @MustLogin(rolerequired = {1, 2})
     @ApiOperation("查询所有模版")
-    @RequestMapping("/findAllPcid")
-    public ApiResult<Object> findAll(@RequestParam int page, @RequestParam int pagesize) {
+    @RequestMapping("/findAllPcidByPage")
+    public ApiResult<Object> findAllPcidByPage(@RequestParam int page, @RequestParam int pagesize) {
         Pageable pageable = PageRequest.of(page - 1, pagesize);
-        Page<Map<String, Object>> list = batchRepository.findAllPcid(pageable);
+        Page<Map<String, Object>> list = batchRepository.findAllPcidByPage(pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
+
+//    @MustLogin(rolerequired = {1, 2})
+    @ApiOperation("查询所有批次id")
+    @RequestMapping("/findAllPcid")
+    public ApiResult<Object> findAllPcid() {
+        return ApiResult.SUCCESS(batchRepository.findAllPcid());
     }
 
     @ApiOperation("导出模板")

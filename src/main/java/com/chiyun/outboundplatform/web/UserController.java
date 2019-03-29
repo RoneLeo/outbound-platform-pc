@@ -98,62 +98,58 @@ public class UserController {
         HttpSession session = request.getSession();//创建session
         String sessionId = session.getId();//获取sessionid
         UserEntity userEntity = userReposity.findByOpenid(map.get("openid").toString());
-        if (userEntity == null && StringUtil.isNull(sqm)) {
+        if (userEntity == null) {
+            //数据库中没有openid数据
+            if (StringUtil.isNull(sqm)) {
+                //授权码为空
             return ApiResult.FAILURE("数据库中没有您的信息，请出示您的授权码");
-        } else {
-            //userEntity为空，sqm不为空
-            if (!StringUtil.isNull(sqm)) {
-                if (userEntity == null && !StringUtil.isNull(sqm)) {
-                    UserEntity userEntity1 = userReposity.findBySqm(sqm);
-                    if (userEntity1 == null) {
-                        //数据库找不到邀请码信息
-                        return ApiResult.FAILURE("数据库没有该授权码");
-                    } else if (userEntity1.getOpenid() != null) {
-                        //邀请码查询出来的数据有人绑定
-                    } else if (userEntity1.getOpenid() != null) {
-                        //授权码查询出来的数据有人绑定
-                        return ApiResult.FAILURE("授权码已有人使用，请核实");
-                    }
-                    //使用授权码绑定帐号
-                    userEntity1.setOpenid(map.get("openid").toString());
-                    // userEntity1.setUnionid(map.get("unionid").toString());
-                    userEntity1.setSk(map.get("session_key").toString());
-                    userEntity1.setSkcjsj(new Date());
-                    userEntity1.setBdsj(new Date());
-                    UserEntity result = userReposity.save(userEntity1);
-                    if (result == null) {
-                        return ApiResult.FAILURE("数据添加失败");
-                    }
-                    return ApiResult.SUCCESS(result);
-                } else if (userEntity != null) {
-                    //通过openid在数据库中查询出了数据，登录成功
-                    String userid = String.valueOf(userEntity.getId());//获取用户id
-                    String sessionValue = SessionUtil.getMapValue(userid);
-                    if (sessionValue == null || !sessionValue.equals(sessionId)) {
-                        SessionUtil.put(userid, sessionId);
-                    } else if (Objects.equals(sessionValue, sessionId)) {
-                        //已登录
-                        return ApiResult.FAILURE("重复登录");
-                    }
-                    session.setAttribute("yhm", userEntity.getYhm());
-                    session.setAttribute("id", userEntity.getId());
-                    session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
-                    session.setAttribute("js", userEntity.getJs());
-                    return ApiResult.SUCCESS(userEntity);
+            }else{
+                //授权码不为空
+                UserEntity userEntity1 = userReposity.findBySqm(sqm);
+                if (userEntity1 == null) {
+                    //数据库找不到邀请码信息
+                    return ApiResult.FAILURE("数据库没有该授权码");
+                } else if (userEntity1.getOpenid() != null) {
+                    //授权码查询出来的数据有人绑定
+                    return ApiResult.FAILURE("授权码已有人使用，请核实");
+                }
+                //使用授权码绑定帐号
+                userEntity1.setOpenid(map.get("openid").toString());
+                // userEntity1.setUnionid(map.get("unionid").toString());
+                userEntity1.setSk(map.get("session_key").toString());
+                userEntity1.setSkcjsj(new Date());
+                userEntity1.setBdsj(new Date());
+                UserEntity result = userReposity.save(userEntity1);
+                if (result == null) {
+                    return ApiResult.FAILURE("数据添加失败");
                 }
             }
-            //userEntity不为空，数据库有openid的信息，不需要授权码，登录成功
-            //保存本次session_key
-            userEntity.setSk(map.get("session_key").toString());
-            userEntity.setSkcjsj(new Date());
-            UserEntity result = userReposity.save(userEntity);
-            if (result == null) {
-                return ApiResult.FAILURE("数据添加失败");
-            }
-            return ApiResult.SUCCESS(result);
+        }
+            //通过openid在数据库中查询出了数据，登录成功
+            /*String userid = String.valueOf(userEntity.getId());//获取用户id
+            String sessionValue = SessionUtil.getMapValue(userid);
+            if (sessionValue == null || !sessionValue.equals(sessionId)) {
+                SessionUtil.put(userid, sessionId);
+            } else if (Objects.equals(sessionValue, sessionId)) {
+                //已登录
+                return ApiResult.FAILURE("重复登录");
+            }*/
+            SessionUtil.put(String.valueOf(userEntity.getId()), sessionId);
+            session.setAttribute("id", userEntity.getId());
+            session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
+            session.setAttribute("js", userEntity.getJs());
+            return ApiResult.SUCCESS(userEntity);
+
+//            //userEntity不为空，数据库有openid的信息，不需要授权码，登录成功
+//            //保存本次session_key
+//            userEntity.setSk(map.get("session_key").toString());
+//            userEntity.setSkcjsj(new Date());
+//            UserEntity result = userReposity.save(userEntity);
+//            if (result == null) {
+//                return ApiResult.FAILURE("数据添加失败");
+//            }
         }
 
-    }
 
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "添加用户")

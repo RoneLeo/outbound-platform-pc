@@ -1,14 +1,11 @@
 package com.chiyun.outboundplatform.common;
 
-import com.alibaba.fastjson.JSONObject;
 import com.chiyun.outboundplatform.utils.MessageUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 
 public class MustLoginInterceptor extends HandlerInterceptorAdapter {

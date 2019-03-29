@@ -183,11 +183,11 @@ public class UserController {
         userEntity.setCjsj(new Date());
         userEntity.setZt(0);
         //判断添加的用户为什么网站用户还是微信小程序用户
-        if("0".equals(userEntity.getLx())){
+        if(0==userEntity.getLx()){
             //网站用户
             userEntity.setMm(MD5Util.MD5("666666"));
             result = userReposity.save(userEntity);
-        }else if("1".equals(userEntity.getLx())){
+        }else if(1==userEntity.getLx()){
             //微信小程序用户,
             result = userReposity.save(userEntity);
             String sqm=CodeUtil.toSerialCode(result.getId());
@@ -260,6 +260,34 @@ public class UserController {
         }
         return ApiResult.SUCCESS(result);
     }
+
+
+    @ApiOperation(value="修改密码")
+    @RequestMapping("/changePassword")
+    public ApiResult<Object> changePassword(HttpServletRequest request,int id, String mm) throws Exception {
+        //判断是否登录
+        HttpSession session=request.getSession();
+        int isLogin=isLogin(session);
+        if(isLogin==0){
+            return ApiResult.UNKNOWN();
+        }else if(isLogin==2){
+            return ApiResult.SEIZE();
+        }else if(isLogin == 3){
+            return ApiResult.FAILURE("其他情况");
+        }
+        //查询是否有该用户
+        UserEntity oldUserEntity = userReposity.findById(id);
+        if (oldUserEntity == null) {
+            return ApiResult.FAILURE("没有该用户的信息");
+        }
+        oldUserEntity.setMm(MD5Util.MD5(mm));
+        UserEntity result = userReposity.save(oldUserEntity);
+        if(result==null){
+            return ApiResult.FAILURE("修改失败");
+        }
+        return ApiResult.SUCCESS(result);
+    }
+
 
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value="查询所有用户")

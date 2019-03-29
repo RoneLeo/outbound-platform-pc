@@ -11,7 +11,6 @@ import java.util.List;
 
 public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
-
     /**
      *  保存
      */
@@ -28,6 +27,16 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     Page<TaskEntity> findAllByAjidIn(List<Integer> ajids, Pageable pageable);
 
     /**
+     *  通过接单方式查询
+     */
+    Page<TaskEntity> findAllByJdfsAndRwzxrOrderByIdDesc(Integer jdfs, Integer rwzxr, Pageable pageable);
+
+    /**
+     *  业务员查询所有
+     */
+    Page<TaskEntity> findAllByRwzxrOrderByIdDesc(Integer rwzxr, Pageable pageable);
+
+    /**
      *  获取最早的任务截止时间和任务完成时间
      */
     @Query(value = "select task_time from task order by task_time asc limit 1", nativeQuery = true)
@@ -41,6 +50,19 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
     @Query(value = "select complate_time from task order by complate_time desc limit 1", nativeQuery = true)
     Date getLatestRwwcsj();
+
+    /**
+     *  统计业务员 已接收、已处理案件数、应得佣金及实际佣金
+     */
+    @Query(value = "select count(id) from task where task_people = ?1 and task_state = ?2", nativeQuery = true)
+    int countAllByRwzxrAndRwzt(Integer rwzxr, Integer rwzt);
+
+    @Query(value = "select sum(task_money) from task where task_people = ?1", nativeQuery = true)
+    Double sumAllRwyjByRwzxr(Integer rwzxr);
+
+    @Query(value = "select sum(actual_money) from task where task_people = ?1", nativeQuery = true)
+    Double sumAllSjyjByRwzxr(Integer rwzxr);
+
 
     /**
      * 多条件查询:任务名称、任务截止时间、任务方式、任务状态、审核状态、任务执行人、任务完成时间

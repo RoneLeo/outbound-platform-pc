@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.Map;
 
 @Api(description = "任务管理")
 @RequestMapping(value = "/task", method = {RequestMethod.POST, RequestMethod.GET})
@@ -226,6 +227,32 @@ public class TaskController {
             return ApiResult.FAILURE("接单失败");
         }
         return ApiResult.SUCCESS("接单成功");
+    }
+
+    @ApiOperation("业务员通过接单方式查询")
+    @RequestMapping("/findAllByJdfs")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "jdfs", value = "接单方式 1-自己接单 2-管理员派发", dataType = "Integer", paramType = "query")
+    })
+    public ApiResult<Object> findAllByJdfs(Integer rwzxr, Integer jdfs, int page, int pagesize) {
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
+        if (rwzxr == null) {
+            return ApiResult.FAILURE("业务员id不能为空");
+        }
+        Page<TaskEntity> list = itaskService.findAllByJdfs(jdfs, rwzxr, pageable);
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
+
+    @ApiOperation("统计业务员 已接收、已处理案件数、应得佣金及实际佣金")
+    @RequestMapping("/countYwyRwxx")
+    @ApiImplicitParam(name = "rwzxr", value = "业务员id", dataType = "Integer", paramType = "query")
+    public ApiResult<Object> countYwyRwxx(Integer rwzxr) {
+        if (rwzxr == null) {
+            return ApiResult.FAILURE("业务员id不能为空");
+        }
+        Map<String, Object> map = itaskService.countYwyRwxx(rwzxr);
+        return ApiResult.SUCCESS(map);
     }
 
     @ApiOperation("区域管理员审核并修改任务信息")

@@ -1,6 +1,7 @@
 package com.chiyun.outboundplatform.service.impl;
 
 import com.chiyun.outboundplatform.entity.TaskEntity;
+import com.chiyun.outboundplatform.repository.CasebasemessageRepository;
 import com.chiyun.outboundplatform.repository.TaskRepository;
 import com.chiyun.outboundplatform.service.ItaskService;
 import com.chiyun.outboundplatform.utils.DateUtils;
@@ -11,12 +12,15 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class TaskServiceImpl implements ItaskService {
 
     @Resource
     private TaskRepository taskRepository;
+    @Resource
+    private CasebasemessageRepository casebasemessageRepository;
 
     @Override
     public TaskEntity findById(Integer id) {
@@ -35,35 +39,76 @@ public class TaskServiceImpl implements ItaskService {
 
     @Override
     public Page<TaskEntity> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj, Integer rwfs,
-                                               Integer rwzt, Integer rwzxr, Date beginWcsj, Date endWcsj, Pageable pageable) {
+                                               Integer rwzt, Integer shzt, Integer rwzxr, Date beginWcsj, Date endWcsj, Pageable pageable) {
         if (StringUtil.isNull(rwmc)) {
             rwmc = "%%";
         } else {
             rwmc = "%" + rwmc + "%";
         }
         if (beginJzsj == null && endJzsj == null && beginWcsj == null && endWcsj == null) {
-            return taskRepository.findAllByCondition(rwmc, rwfs, rwzt, rwzxr, pageable);
+            return taskRepository.findAllByCondition(rwmc, rwfs, rwzt, shzt, rwzxr, pageable);
         } else {
             if ((beginJzsj != null || endJzsj != null) && (beginWcsj == null && endWcsj == null)) {
-                beginJzsj = DateUtils.getDayTime(beginJzsj, endJzsj,0);
-                endJzsj = DateUtils.getDayTime(beginJzsj, endJzsj,1);
+                beginJzsj = getTime(beginJzsj, endJzsj, 1, 1);
+                endJzsj = getTime(beginJzsj, endJzsj, 1, 2);
                 return taskRepository.findAllByConditionAndRwjzsjBetween(rwmc, beginJzsj, endJzsj,
-                        rwfs, rwzt, rwzxr, pageable);
+                        rwfs, rwzt, shzt, rwzxr, pageable);
             } else if ((beginJzsj == null && endJzsj == null) && (beginWcsj != null || endWcsj != null)) {
-                beginWcsj = DateUtils.getDayTime(beginWcsj, endWcsj, 0);
-                endWcsj = DateUtils.getDayTime(beginWcsj, endWcsj, 1);
-                return taskRepository.findAllByConditionAndRwwcsjBetween(rwmc, rwfs, rwzt, rwzxr,
+                beginWcsj = getTime(beginWcsj, endWcsj, 2, 1);
+                endWcsj = getTime(beginWcsj, endWcsj, 2,2);
+                return taskRepository.findAllByConditionAndRwwcsjBetween(rwmc, rwfs, rwzt, shzt, rwzxr,
                         beginWcsj, endWcsj, pageable);
             } else {
-                beginJzsj = DateUtils.getDayTime(beginJzsj, endJzsj,0);
-                endJzsj = DateUtils.getDayTime(beginJzsj, endJzsj,1);
-                beginWcsj = DateUtils.getDayTime(beginWcsj, endWcsj, 0);
-                endWcsj = DateUtils.getDayTime(beginWcsj, endWcsj, 1);
+                beginJzsj = getTime(beginJzsj, endJzsj, 1, 1);
+                endJzsj = getTime(beginJzsj, endJzsj, 1, 2);
+                beginWcsj = getTime(beginWcsj, endWcsj, 2, 1);
+                endWcsj = getTime(beginWcsj, endWcsj, 2,2);
                 return taskRepository.findAllByConditionAndRwjzsjBetweenAndRwwcsjBetween(rwmc, beginJzsj, endJzsj,
-                        rwfs, rwzt, rwzxr, beginWcsj, endWcsj, pageable);
+                        rwfs, rwzt, shzt, rwzxr, beginWcsj, endWcsj, pageable);
             }
         }
 
+    }
+
+    /**
+     * @param begin
+     * @param end
+     * @param flag 1-任务截止时间 2-任务完成时间
+     * @param flag2 1-返回begin 2-返回end
+     * @return
+     */
+    public Date getTime(Date begin, Date end, int flag, int flag2) {
+        if (flag == 1) {
+            // 任务截止时间
+            if (begin == null && end != null) {
+                begin = taskRepository.getEarliestRwjzsj();
+            } else if (begin != null && end == null) {
+                end = taskRepository.getLatestRwjzsj();
+            }
+        } else {
+            // 任务完成时间
+            if (begin == null && end != null) {
+                begin = taskRepository.getEarliestRwwcsj();
+            } else if (begin != null && end == null) {
+                end = taskRepository.getLatestRwwcsj();
+            }
+        }
+        if (flag2 == 1) {
+            // begin
+            return begin;
+        } else {
+            return end;
+        }
+    }
+
+
+    @Override
+    public Page<TaskEntity> findAllByYwyqy(Integer qy, Pageable pageable) {
+        // 获取该区域所有案件id
+        List<Integer> ajids = casebasemessageRepository.findIdsByAjqy(qy);
+        // 获取所有任务
+        Page<TaskEntity> list = taskRepository.findAllByAjidIn(ajids, pageable);
+        return list;
     }
 
 }

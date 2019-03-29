@@ -25,6 +25,12 @@ public class TaskEntity {
     private Integer rwfs;
     @ApiModelProperty(value = "任务状态")
     private Integer rwzt;
+    @ApiModelProperty(value = "审核状态 1-通过 2-未通过")
+    private Integer shzt;
+    @ApiModelProperty(value = "审核备注")
+    private String shbz;
+    @ApiModelProperty(value = "实际佣金")
+    private Double sjyj;
     @ApiModelProperty(value = "任务执行人")
     private Integer rwzxr;
     @ApiModelProperty(value = "任务完成时间")
@@ -112,6 +118,36 @@ public class TaskEntity {
     }
 
     @Basic
+    @Column(name = "check_state")
+    public Integer getShzt() {
+        return shzt;
+    }
+
+    public void setShzt(Integer shzt) {
+        this.shzt = shzt;
+    }
+
+    @Basic
+    @Column(name = "check_remark")
+    public String getShbz() {
+        return shbz;
+    }
+
+    public void setShbz(String shbz) {
+        this.shbz = shbz;
+    }
+
+    @Basic
+    @Column(name = "actual_money")
+    public Double getSjyj() {
+        return sjyj;
+    }
+
+    public void setSjyj(Double sjyj) {
+        this.sjyj = sjyj;
+    }
+
+    @Basic
     @Column(name = "task_people")
     public Integer getRwzxr() {
         return rwzxr;
@@ -134,22 +170,25 @@ public class TaskEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TaskEntity that = (TaskEntity) o;
-        return id == that.id &&
-                Objects.equals(ajid, that.ajid) &&
-                Objects.equals(rwmc, that.rwmc) &&
-                Objects.equals(rwjzsj, that.rwjzsj) &&
-                Objects.equals(rwyj, that.rwyj) &&
-                Objects.equals(rwms, that.rwms) &&
-                Objects.equals(rwfs, that.rwfs) &&
-                Objects.equals(rwzt, that.rwzt) &&
-                Objects.equals(rwzxr, that.rwzxr) &&
-                Objects.equals(rwwcsj, that.rwwcsj);
+        if (!(o instanceof TaskEntity)) return false;
+        TaskEntity entity = (TaskEntity) o;
+        return Objects.equals(id, entity.id) &&
+                Objects.equals(ajid, entity.ajid) &&
+                Objects.equals(rwmc, entity.rwmc) &&
+                Objects.equals(rwjzsj, entity.rwjzsj) &&
+                Objects.equals(rwyj, entity.rwyj) &&
+                Objects.equals(rwms, entity.rwms) &&
+                Objects.equals(rwfs, entity.rwfs) &&
+                Objects.equals(rwzt, entity.rwzt) &&
+                Objects.equals(shzt, entity.shzt) &&
+                Objects.equals(shbz, entity.shbz) &&
+                Objects.equals(sjyj, entity.sjyj) &&
+                Objects.equals(rwzxr, entity.rwzxr) &&
+                Objects.equals(rwwcsj, entity.rwwcsj);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, rwfs, rwzt, rwzxr, rwwcsj);
+        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, rwfs, rwzt, shzt, shbz, sjyj, rwzxr, rwwcsj);
     }
 }

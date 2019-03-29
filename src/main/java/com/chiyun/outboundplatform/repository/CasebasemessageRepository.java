@@ -38,6 +38,21 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
     Page<CasebasemessageEntity> findAllByAjqy(Integer ajqy, Pageable pageable);
 
     /**
+     *  通过区域查询案件id
+     */
+    @Query(value = "select distinct id from casebasemessage where area_id = ?1", nativeQuery = true)
+    List<Integer> findIdsByAjqy(Integer ajqy);
+
+    /**
+     *  获取最早和最晚的时间
+     */
+    @Query(value = "select import_time from casebasemessage order by import_time asc limit 1", nativeQuery = true)
+    Date getEarliestTime();
+
+    @Query(value = "select import_time from casebasemessage order by import_time desc limit 1", nativeQuery = true)
+    Date getLatestTime();
+
+    /**
      * 多条件查询：批次id、案件名称、案件类型、案件状态、案件区域、导入时间
      */
     @Query(value = "select * from casebasemessage where IF(?1 != '', batch_id = ?1, 1=1) and case_name like ?2 and if(?3 is not null, case_type = ?3, 1 = 1) and if(?4 is not null, case_state = ?4, 1 = 1) and if(?5 is not null, area_id = ?5, 1 = 1) and import_time between ?6 and ?7", nativeQuery = true)

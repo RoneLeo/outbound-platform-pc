@@ -40,6 +40,7 @@ public class SessionUtil {
             entry = iterator.next();
             if (key.equals(entry.getKey())) {
                 result = entry.getValue();
+                break;
             }
         }
         System.out.print("result_value:" + result);
@@ -54,6 +55,7 @@ public class SessionUtil {
             entry = iterator.next();
             if (value.equals(entry.getValue())) {
                 result = entry.getKey();
+                break;
             }
         }
         System.out.print("result_key:" + result);

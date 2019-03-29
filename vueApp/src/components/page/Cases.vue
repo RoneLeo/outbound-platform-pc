@@ -6,13 +6,11 @@
             </el-breadcrumb>
         </div>
         <div class="handle-box container">
-            <el-button size="mini" type="success" @click="add">导入案件</el-button>
+            <el-button size="mini" type="success" @click="importCase">导入案件</el-button>
             <el-button size="mini" type="primary" @click="add">添加案件</el-button>
         </div>
-
         <div class="container">
             <el-table :data="tableData" class="table" ref="multipleTable" @selection-change="handleSelectionChange">
-
                 <el-table-column prop="ajly" label="案件来源"></el-table-column>
                 <el-table-column prop="fj" label="附件"></el-table-column>
                 <el-table-column prop="dxxm" label="对象姓名"></el-table-column>
@@ -23,13 +21,11 @@
                 <el-table-column prop="wtje" label="委案金额"></el-table-column>
                 <el-table-column prop="hkje" label="已还款"></el-table-column>
                 <el-table-column prop="csy" label="催收员"></el-table-column>
-                <!--<el-table-column prop="csdz" label="催收地址"></el-table-column>-->
                 <el-table-column prop="csdq" label="催收地区"></el-table-column>
                 <el-table-column prop="wfcs" label="外访期次"></el-table-column>
                 <el-table-column prop="wfyy" label="外访原因"></el-table-column>
                 <el-table-column prop="yq" label="要求"></el-table-column>
                 <el-table-column prop="sqsj" label="申请时间"></el-table-column>
-                <!--<el-table-column prop="bz" label="备注"></el-table-column>-->
                 <el-table-column prop="wtf" label="委托方"></el-table-column>
 
                 <el-table-column label="操作" width="180">
@@ -41,7 +37,42 @@
                 </el-table-column>
             </el-table>
         </div>
-
+        <el-dialog title="导入案件" :visible.sync="importModelVisible" width="50%"
+                   :close-on-click-modal="false" @closed="closeClear">
+            <el-form class="clearfix" ref="importForm" :model="importForm" label-width="100px">
+                <el-form-item label="批次id">
+                    <el-input v-model="importForm.pcid" placeholder="请选择"></el-input>
+                </el-form-item>
+                <el-form-item label="案件区域">
+                    <el-select v-model="importForm.ajqy" placeholder="请选择">
+                        <el-option
+                                v-for="item in qys"
+                                :key="item.ctdm"
+                                :label="item.ctmc"
+                                :value="item.ctdm" >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="案件类型">
+                    <el-select v-model="importForm.ajlx" placeholder="请选择">
+                        <el-option
+                                v-for="item in ajlxs"
+                                :key="item.ctdm"
+                                :label="item.ctmc"
+                                :value="item.ctdm" >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="文件">
+                    <!--<input @change="fileImage" type="file" accept="image/jpeg,image/x-png,image/gif" id="" value="" />-->
+                    <input type="file" id="myFile" class="inputfile" @change="handlerUpload"></input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="importModelVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveImport">导 入</el-button>
+            </span>
+        </el-dialog>
         <!-- 弹出框 -->
         <el-dialog :title="modelTitle" :visible.sync="modelVisible" width="50%"
                    :close-on-click-modal="false" @closed="closeClear">
@@ -88,7 +119,6 @@
                 <el-form-item class="el-form-1" label="备注">
                     <el-input v-model="form.bz" type="textarea"></el-input>
                 </el-form-item>
-
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="modelVisible = false">取 消</el-button>
@@ -114,24 +144,60 @@
                 is_search: false,
                 modelVisible: false,
                 delVisible: false,
-                form: {
+                form: {},
 
-                },
-                idx: -1,
-                dict: this.$dict
+                dict: this.$dict,
+                importForm: {},
+                file: {},
+                importModelVisible: false,
+                qys: [],
+                ajlxs: [],
             }
         },
         created() {
+            this.$axios.post('/dict/findDictListByZddm', {zddm: 'D_SYS_AJQYDM', zxbz: 0}).then((res) => {
+                if(res.resCode == 200){
+                    this.qys = res.data;
+                }else if(res.resCode == 100) {
+                    this.$router.push('/login');
+                }
+            });
+            this.$axios.post('/dict/findDictListByZddm', {zddm: 'D_SYS_AJLXDM', zxbz: 0}).then((res) => {
+                if(res.resCode == 200){
+                    this.ajlxs = res.data;
+                }else if(res.resCode == 100) {
+                    this.$router.push('/login');
+                }
+            });
             this.getData();
         },
         computed: {
 
         },
         methods: {
-//            formatterGS(row) {
-//                return this.$common.dictParse(row.gsid, this.dict.company);
-//            },
+            saveImport( ){
+                let param = new FormData();
+                param.append('pcid', this.importForm.pcid)
+                param.append('ajqy', this.importForm.ajqy)
+                param.append('ajlx', this.importForm.ajlx)
+                param.append('file', this.file)
+                let config = {
+                    headers:{'Content-Type':'multipart/form-data'}
+                }
+                console.log(param.get("file"))
+                this.$axios.post('/batch/importExcel', param, config ).then(res => {
+                    console.log(res)
+                })
+            },
+            handlerUpload(e) {
+                this.file = e.target.files[0];
+            },
+            importCase() {
+                this.importModelVisible = true;
+                this.importForm = {}
+            },
             closeClear() {
+                this.$refs.importForm.resetFields()
                 this.$refs.form.resetFields()
             },
             // 分页导航
@@ -141,11 +207,7 @@
             },
             // 获取 easy-mock 的模拟数据
             getData() {
-                this.$axios.get(this.url).then((res) => {
-                    //if(res.resCode == 200){
-                        this.tableData = res;
-                    //}
-                });
+
             },
             search() {
                 this.is_search = true;

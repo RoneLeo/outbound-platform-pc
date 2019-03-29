@@ -1,292 +1,220 @@
 <template>
-    <div class="table">
+    <div>
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i> 新闻管理</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i> 批次管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
-        <div class="container" v-loading="loading">
-            <el-tabs v-model="activeName" @tab-click="handleClick">
-                <el-tab-pane label="公司新闻" name="first">
-                    <el-table :data="tableData" class="table" :show-header="false" ref="multipleTable">
-                        <el-table-column prop="xwbt" label="新闻标题"></el-table-column>
-
-                        <el-table-column prop="xwnr" label="新闻内容" :show-overflow-tooltip="true"></el-table-column>
-
-                        <el-table-column prop="cjsj" label="创建时间" width="160"></el-table-column>
-                        <el-table-column label="操作" align="center" width="160">
-                            <template slot-scope="scope">
-                                <el-button type="text" icon="el-icon-lx-edit"
-                                           @click="editFile(scope.$index, scope.row)">编辑
-                                </el-button>
-                                <el-button type="text" icon="el-icon-delete" class="red"
-                                           @click="delFile(scope.$index, scope.row)">删除
-                                </el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                    <div style="padding: 28px 8px">
-                        <el-button type="primary" @click="add" style="float: left">上传新闻</el-button>
-                        <el-pagination
-                                style="float: right;"
-                                @current-change="handleCurrentChange"
-                                :current-page="page"
-                                :page-size="size"
-                                layout="prev, pager, next"
-                                :total="totalElements">
-                        </el-pagination>
-                    </div>
-                </el-tab-pane>
-                <el-tab-pane label="行业新闻" name="second">
-                    <el-table :data="tableData1" class="table" :show-header="false" ref="multipleTable">
-                        <el-table-column prop="xwbt" label="新闻标题"></el-table-column>
-                        <el-table-column prop="xwnr" label="新闻内容" :show-overflow-tooltip="true"></el-table-column>
-                        <el-table-column prop="cjsj" label="创建时间" width="160"></el-table-column>
-                        <el-table-column label="操作" align="center" width="160">
-                            <template slot-scope="scope">
-                                <el-button type="text" icon="el-icon-lx-edit"
-                                           @click="editFile(scope.$index, scope.row)">编辑
-                                </el-button>
-                                <el-button type="text" icon="el-icon-delete" class="red"
-                                           @click="delFile(scope.$index, scope.row)">删除
-                                </el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                    <div style="padding: 28px 8px">
-                        <el-button type="primary" @click="add" style="float: left">上传新闻</el-button>
-                        <el-pagination
-                                style="float: right;"
-                                @current-change="handleCurrentChange1"
-                                :current-page="page1"
-                                :page-size="size1"
-                                layout="prev, pager, next"
-                                :total="totalElements1">
-                        </el-pagination>
-                    </div>
-                </el-tab-pane>
-            </el-tabs>
-
+        <div class="container">
+            <el-button size="mini" type="success" @click="handleAdd">新增批次</el-button>
+            <!--<el-radio-group v-model="dictType" @change="changeType" size="mini">-->
+                <!--<el-radio-button label="">全部</el-radio-button>-->
+                <!--<el-radio-button label="0">已激活</el-radio-button>-->
+                <!--<el-radio-button label="1">已注销</el-radio-button>-->
+            <!--</el-radio-group>-->
         </div>
+        <div class="container">
+            <el-table :data="datavalues" :border="true"
+                      size="mini"
+                      :stripe="false" style="width: 100%;overflow: auto; font-size: 14px;">
+                <el-table-column type="index" width="35" fixed></el-table-column>
+                <el-table-column prop="pcid" label="批次id" :show-overflow-tooltip="false"  fixed
+                                 :sortable="false" align="center"></el-table-column>
+                <el-table-column prop="pcmc" label="批次名称" :show-overflow-tooltip="false" fixed :sortable="false"
+                                 align="center"></el-table-column>
+                <el-table-column label="操作" align="center" >
+                    <template slot-scope="scope">
+                        <!--<el-button type="text" size="mini" @click="handleEdit(scope.$index, scope.row)">编辑-->
+                        <!--</el-button>-->
+                        <a :href="`http://182.151.22.247:8083/batch/exportExcel?pcid=${scope.row.pcid}`" target="_blank">
+                            <el-button type="text" size="mini"  style="color: green;">导出</el-button>
+                        </a>
+                        <el-button type="text" size="mini" @click="handleDel(scope.$index, scope.row)" style="color: #ff0000;">删除</el-button>
 
-        <!-- 弹出框 -->
-        <el-dialog :title="modelTitle" :visible.sync="modelVisible" width="60%"
-                   :close-on-click-modal="false" @closed="closeClear">
-            <el-form ref="addForm" :model="addForm" label-width="100px">
-                <el-form-item label="新闻标题"
-                              prop="xwbt"
-                              :rules="[{ required: true, message: '新闻标题不能为空', trigger: 'blur' }]">
-                    <el-input v-model="addForm.xwbt"></el-input>
-                </el-form-item>
-
-                <el-form-item label="新闻内容"
-                              prop="xwnr"
-                              :rules="[{ required: true, message: '新闻内容不能为空', trigger: 'blur' }]">
-                    <el-input v-model="addForm.xwnr" type="textarea" :autosize="{ minRows: 5, maxRows: 18}"></el-input>
-                </el-form-item>
-                <el-form-item label="新闻类型"
-                              prop="xwlx"
-                              :rules="[{ required: true, message: '新闻类型不能为空', trigger: 'blur' }]">
-                    <el-select v-model="addForm.xwlx" placeholder="请选择新闻类型">
-                        <el-option v-for="item in this.$dict.newType" :key="item.id*2.0395" :label="item.name"
-                                   :value="item.id"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="新闻图片"
-                              v-if="!addForm.id || !addForm.xwtp">
-                    <input id="fileInput" ref="pathClear" type="file" @change="getFile($event)" accept="image/*"/>
-                </el-form-item>
-                <el-form-item label="新闻图片"
-                              v-if="addForm.xwtp">
-                    <div style="position: relative;display: inline-block;width: auto;height: auto;">
-                        <img :src="`http://47.96.85.104:80${addForm.xwtp}`" alt="" class="image">
-                        <i v-if="addForm.xwtp" class="el-icon-error image-icon" @click="deleteTP"></i>
-                    </div>
-
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="modelVisible = false">取 消</el-button>
-                <el-button type="primary" :loading="addLoading" @click="saveEdit(addForm)">确 定</el-button>
-            </span>
-        </el-dialog>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <div class="block">
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                               :current-page.sync="currentPage" :page-sizes="[5, 10, 20, 30, 50]" :page-size="pageSize"
+                               layout="sizes, prev, pager, next" :total="total">
+                </el-pagination>
+            </div>
+            <el-dialog title="弹框信息" width="55%" :visible.sync="addFormVisible" :close-on-click-modal="false"
+                       @closed="clear">
+                <el-form class="baseCaseForm" :model="addForm" label-width="120px" ref="addForm">
+                    <el-form-item label="批次名称" prop="pcmc"
+                                  :rules="[{ required: true, message: '输入不能为空', trigger: 'blur' }]">
+                        <el-input v-model="addForm.pcmc"></el-input>
+                    </el-form-item>
+                    <el-form-item :label="type" v-for="(type, index) in baseType" :key="index">
+                        <template v-if="type == '联系人信息'">
+                            <el-checkbox-group v-model="zdidArr[index]">
+                                <el-checkbox v-for="item in fieldCases[index]" :label="item.id" :key="item.id">{{item.name}}</el-checkbox>
+                            </el-checkbox-group>
+                            联系人个数<el-input-number v-if="!addForm.pcid" v-model="lxrnum" :min="1" :max="10" size="mini" label="描述文字" style="margin-left: 10px"></el-input-number>
+                        </template>
+                        <template v-else="">
+                            <el-checkbox-group v-model="zdidArr[index]">
+                                <el-checkbox v-for="item in fieldCases[index]" :label="item.id" :key="item.id">{{item.name}}</el-checkbox>
+                            </el-checkbox-group>
+                        </template>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="addFormVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="submit">确 定</el-button>
+                </div>
+            </el-dialog>
+        </div>
     </div>
 </template>
-
 <script>
-
     export default {
-        name: 'basetable',
         data() {
             return {
-                activeName: 'first',
-                modelTitle: '新闻详情',
-                tableData: [],
-                tableData1: [],
-                modelVisible: false,
+                dictType: '',
+                datavalues: [],
+                addFormVisible: false,
                 addForm: {},
-                file: {},
-                size: 10,
-                page: 1,
-                totalElements: 0,
-                size1: 10,
-                page1: 1,
-                totalElements1: 0,
-                loading: true,
-                addLoading: false
+                currentPage: 1,
+                pageSize: 5,
+                total: 0,
+                zdidArr: [],
+                baseType: [],
+                fieldCases: [],
+                lxrnum: 1
             }
         },
-        created() {
-            this.getData(1, this.page, this.size);
+        created(){
+            this.$axios.get('/baseType/findAll').then(res => {
+                if(res.resCode == 200) {
+                    let data = res.data;
+                    if(data && data.length) {
+                        this.baseType = [];
+                        this.zdidArr = [];
+                        data.forEach(item => {
+                            this.zdidArr.push([])
+                            this.baseType.push(item.name);
+                        })
+                    }
+                }
+            })
+            this.$axios.get('/fieldCaseBase/findAll').then(res => {
+                if(res.resCode == 200) {
+                    let data = res.data;
+                    this.fieldCases = data;
+                }
+            })
+            this.getData();
         },
-        computed: {},
         methods: {
-            deleteTP() {
-                this.addForm.xwtp = '';
-                this.file = {};
+            handleExport(index, row) {
+                this.$axios.post('/batch/exportExcel', {pcid: row.pcic}).then(res => {
+
+                })
             },
-            getFile(event) {
-                this.file = event.target.files[0];
-                this.addForm.xwtp = this.file;
+            changeType(){
+                this.getData();
             },
-            closeClear() {
-                this.$refs.addForm.resetFields()
-                if(this.$refs.pathClear) {
-                    this.$refs.pathClear.value =''
-                }
+            submit() {
+                this.$refs.addForm.validate((valid) => {
+                    if (valid) {
+                        console.log(this.addForm, this.zdidArr)
+                        let zdids = [];
+                        this.zdidArr.forEach((arr,index) => {
+                            if(index == 7) {  //联系人信息的时候，判断联系人数量
+                                for(let i= 0; i< this.lxrnum; i++) {
+                                    arr.forEach(item => {
+                                        zdids.push(item)
+                                    })
+                                }
+                            }else {
+                                arr.forEach(item => {
+                                    zdids.push(item)
+                                })
+                            }
+                        })
+                        console.log(zdids)
+                        let url = '/batch/add';
+                        if(this.addForm.id) {
+                            url = '/batch/update'
+                        }
+                        this.$axios.post(url, {pcmc: this.addForm.pcmc, zdids: zdids.join(',')}).then( (res) => {
+                            if(res.resCode == 200){
+                                this.addFormVisible = false;
+                                this.getData();
+                            }else{
+                                this.$message.error(res.resMsg);
+                            }
+                        });
+                    } else {
+                        return false;
+                    }
+                });
             },
-            handleClick(tab, event) {
-                if(tab.name === 'first'){
-                    this.getData(1, this.page, this.size);
-                }else {
-                    this.getData(2, this.page1, this.size1);
-                }
+            JsFormatter(row) {
+                return this.$common.dictParse(row.js, this.roles);
             },
-            delFile(index, row) {
-                this.$confirm('是否确定删除该新闻?', '提示', {
+            getData() {
+                this.$axios.post('/batch/findAllPcid', {page: this.currentPage, pagesize: this.pageSize}).then((res) => {
+                    if(res.resCode == 200){
+                        this.datavalues = res.data;
+                        this.total = res.counts;
+                    }else if(res.resCode == 100) {
+                        this.$router.push('/login');
+                    }
+                });
+            },
+            clear() {
+                this.$refs.addForm.resetFields();
+            },
+            handleAdd: function () {
+                this.addFormVisible = true;
+                this.addForm = {};
+                this.lxrnum = 1;
+            },
+            handleEdit: function (index, row) {
+                this.addForm = Object.assign({}, row);
+                this.addFormVisible = true;
+            },
+
+            //del
+            handleDel: function (index, row) {
+                this.$confirm('此操作将永久删除该批次模板, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.$axios.post('/news/delete', this.$qs.stringify({id: row.id})).then((res) => {
-                        this.$message.success('已删除！');
-                        if(this.activeName == 'first') {
-                            this.getData(1, this.page, this.size);
-                        }else {
-                            this.getData(2, this.page1, this.size1);
+                    this.$axios.post('/batch/delete', {pcid: row.pcid}).then(res => {
+                        if(res.resCode == 200) {
+                            this.getData();
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
                         }
-                    });
+                    })
                 }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
                 });
             },
-            formatterWjlx(row) {
-                return this.$common.dictParse(row.wjlx, this.$dict.fileType);
+            handleSizeChange(val) {
+                this.pageSize = val;
+                this.getData();
             },
-            editFile(index, row) {
-                this.addForm = Object.assign({}, row);
-                this.file = {};
-                this.modelVisible = true;
-            },
-            modelClose(addForm) {
-                this.$refs[addForm].resetFields();
-            },
-            getFile(event) {
-                this.file = event.target.files[0];
-                this.addForm.file = this.file;
-            },
-            // 分页导航
             handleCurrentChange(val) {
-                this.page = val;
-                this.getData(1,this.page, this.size);
-            },
-            handleCurrentChange1(val) {
-                this.page1 = val;
-                this.getData(2, this.page1, this.size1);
-            },
-            getData(type,page,size) {
-                this.loading = true;
-                this.$axios.post('/news/findAllByGsidByPage', this.$qs.stringify({
-                    xwlx: type,
-                    page: page,
-                    size: size
-                })).then((res) => {
-                    if (res.resCode == 200) {
-                        this.loading = false;
-                        if(type === 1) {
-                            this.tableData = res.data.content;
-                            this.totalElements = res.data.totalElements
-                        }else {
-                            this.tableData1 = res.data.content;
-                            this.totalElements1 = res.data.totalElements
-                        }
-                    }
-                });
-            },
-            add(){
-                this.addForm = {};
-                this.modelVisible = true;
-                this.file = {};
-            },
-            // 保存编辑
-            saveEdit(addForm) {
-                this.$refs.addForm.validate((valid) => {
-                    if (valid) {
-                        this.addLoading = true;
-                        let url = '/news/add';
-                        if(this.addForm.id) {
-                            url = '/news/update'
-                        }
-                        let formData = new FormData();
-                        for (let key in this.addForm) {
-                            formData.append(key, this.addForm[key]);
-                        }
-                        let config = {
-                            headers: {
-                                'Content-Type': 'multipart/form-data'
-                            }
-                        };
-                        this.$axios.post(url, formData, config).then(res => {
-                            this.addLoading = false
-                            this.modelVisible = false;
-                            if(this.activeName == 'first') {
-                                this.getData(1, this.page, this.size);
-                            }else {
-                                this.getData(2, this.page1, this.size1);
-                            }
-                        })
-                    }
-                })
-            },
+                this.currentPage = val;
+                this.getData()
+            }
         }
     }
-
 </script>
-
-<style scoped>
-    .handle-box {
-        margin-bottom: 20px;
-    }
-
-    .handle-select {
-        width: 120px;
-    }
-
-    .handle-input {
-        width: 300px;
-        display: inline-block;
-    }
-
-    .del-dialog-cnt {
-        font-size: 16px;
-        text-align: center
-    }
-
-    .table {
-        width: 100%;
-        font-size: 14px;
-    }
-
-    .red {
-        color: #ff0000;
+<style>
+    .el-pagination {
+        text-align: right;
     }
 </style>

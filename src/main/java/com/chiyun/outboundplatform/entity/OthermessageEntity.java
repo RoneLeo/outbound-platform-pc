@@ -18,16 +18,10 @@ public class OthermessageEntity {
     private Date hkqx;
     @ApiModelProperty(value = "信用额度")
     private String xyed;
-    @ApiModelProperty(value = "信贷分类")
-    private Integer xdfl;
     @ApiModelProperty(value = "信贷分类名称")
     private String xdflmc;
-    @ApiModelProperty(value = "催收分类")
-    private Integer cslx;
     @ApiModelProperty(value = "催收分类名称")
     private String cslxmc;
-    @ApiModelProperty(value = "拖欠级别")
-    private Integer tqjb;
     @ApiModelProperty(value = "拖欠级别名称")
     private String tqjbmc;
     @ApiModelProperty(value = "保证金")
@@ -120,16 +114,6 @@ public class OthermessageEntity {
     }
 
     @Basic
-    @Column(name = "loanType")
-    public Integer getXdfl() {
-        return xdfl;
-    }
-
-    public void setXdfl(Integer xdfl) {
-        this.xdfl = xdfl;
-    }
-
-    @Basic
     @Column(name = "loanTypeName")
     public String getXdflmc() {
         return xdflmc;
@@ -140,15 +124,6 @@ public class OthermessageEntity {
     }
 
     @Basic
-    @Column(name = "collType")
-    public Integer getCslx() {
-        return cslx;
-    }
-    public void setCslx(Integer cslx) {
-        this.cslx = cslx;
-    }
-
-    @Basic
     @Column(name = "collTypeName")
     public String getCslxmc() {
         return cslxmc;
@@ -156,16 +131,6 @@ public class OthermessageEntity {
 
     public void setCslxmc(String cslxmc) {
         this.cslxmc = cslxmc;
-    }
-
-    @Basic
-    @Column(name = "delayLv")
-    public Integer getTqjb() {
-        return tqjb;
-    }
-
-    public void setTqjb(Integer tqjb) {
-        this.tqjb = tqjb;
     }
 
     @Basic
@@ -368,11 +333,8 @@ public class OthermessageEntity {
                 Objects.equals(yqzl, that.yqzl) &&
                 Objects.equals(hkqx, that.hkqx) &&
                 Objects.equals(xyed, that.xyed) &&
-                Objects.equals(xdfl, that.xdfl) &&
                 Objects.equals(xdflmc, that.xdflmc) &&
-                Objects.equals(cslx, that.cslx) &&
                 Objects.equals(cslxmc, that.cslxmc) &&
-                Objects.equals(tqjb, that.tqjb) &&
                 Objects.equals(tqjbmc, that.tqjbmc) &&
                 Objects.equals(bzj, that.bzj) &&
                 Objects.equals(kkr, that.kkr) &&
@@ -396,6 +358,6 @@ public class OthermessageEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, yqzl, hkqx, xyed, xdfl, xdflmc, cslx, cslxmc, tqjb, tqjbmc, bzj, kkr, zhhkr, zhhke, zhxfr, zhtxr, tkr, zdr, rmb, usd, gb, waqs, yqts, sybj, yqqs, yhqs, sp, sh);
+        return Objects.hash(id, ajid, yqzl, hkqx, xyed, xdflmc, cslxmc, tqjbmc, bzj, kkr, zhhkr, zhhke, zhxfr, zhtxr, tkr, zdr, rmb, usd, gb, waqs, yqts, sybj, yqqs, yhqs, sp, sh);
     }
 }

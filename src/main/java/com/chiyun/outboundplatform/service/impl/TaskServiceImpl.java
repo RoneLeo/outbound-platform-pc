@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TaskServiceImpl implements ItaskService {
@@ -109,6 +111,32 @@ public class TaskServiceImpl implements ItaskService {
         // 获取所有任务
         Page<TaskEntity> list = taskRepository.findAllByAjidIn(ajids, pageable);
         return list;
+    }
+
+    @Override
+    public Page<TaskEntity> findAllByJdfs(Integer jdfs, Integer rwzxr, Pageable pageable) {
+        if (jdfs == null) {
+            return taskRepository.findAllByRwzxrOrderByIdDesc(rwzxr, pageable);
+        }
+        return taskRepository.findAllByJdfsAndRwzxrOrderByIdDesc(jdfs, rwzxr, pageable);
+    }
+
+    @Override
+    public Map<String, Object> countYwyRwxx(Integer rwzxr) {
+        Map<String, Object> map = new HashMap<>();
+        // 已接收数量
+        int yjsNum = taskRepository.countAllByRwzxrAndRwzt(rwzxr, 3);
+        // 已处理数量
+        int yclNum = taskRepository.countAllByRwzxrAndRwzt(rwzxr, 4);
+        // 应得佣金
+        double ydMoney = taskRepository.sumAllRwyjByRwzxr(rwzxr);
+        // 实际佣金
+        double sjMoney = taskRepository.sumAllSjyjByRwzxr(rwzxr);
+        map.put("yjsNum", yjsNum);
+        map.put("yclNum", yclNum);
+        map.put("ydMoney", ydMoney);
+        map.put("sjMoney", sjMoney);
+        return map;
     }
 
 }

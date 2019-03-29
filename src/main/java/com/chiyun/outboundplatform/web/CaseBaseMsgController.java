@@ -75,8 +75,8 @@ public class CaseBaseMsgController {
     }
 
     @ApiOperation("修改")
-    @RequestMapping("/add")
-    public ApiResult<Object> add(CasebasemessageEntity entity) {
+    @RequestMapping("/update")
+    public ApiResult<Object> update(CasebasemessageEntity entity) {
         if (casebasemessageRepository.findById(entity.getId()) == null) {
             return ApiResult.FAILURE("该案件不存在");
         }

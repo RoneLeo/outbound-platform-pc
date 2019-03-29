@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
+import java.util.Map;
 
 
 public interface ItaskService {
@@ -35,4 +36,15 @@ public interface ItaskService {
      *  查询业务员本区域的任务
      */
     Page<TaskEntity> findAllByYwyqy(Integer qy, Pageable pageable);
+
+    /**
+     * 根据接单方式查询
+     */
+    Page<TaskEntity> findAllByJdfs(Integer jdfs, Integer rwzxr, Pageable pageable);
+
+    /**
+     *  统计业务员 已接收、已处理案件数、应得佣金及实际佣金
+     */
+    Map<String, Object> countYwyRwxx(Integer rwzxr);
+
 }

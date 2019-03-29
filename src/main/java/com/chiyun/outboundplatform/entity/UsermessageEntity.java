@@ -74,7 +74,7 @@ public class UsermessageEntity {
     }
 
     @Basic
-    @Column(name = "add")
+    @Column(name = "addr")
     public String getDxdz() {
         return dxdz;
     }

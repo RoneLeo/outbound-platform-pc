@@ -23,6 +23,8 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
 
     List<DictionarylistEntity> findAll(Specification querySpecifi, Sort sort);
 
+    List<DictionarylistEntity> findAll(Specification querySpecifi);
+
 
     @Query(value = "select * from dictionarylist where  dictid=?1 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
     List<DictionarylistEntity> findByZdid(Integer zdid);
@@ -71,7 +73,7 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
      * @param id
      * @return
      */
-    @Query(value = "update dictionarylist   set state='1' where id=?1 and state='0'" , nativeQuery = true)
+    @Query(value = "update dictionarylist   set state='1' where entrycode=?1 and state='0'" , nativeQuery = true)
     @Modifying
     @Transactional
      int    cancellationDicListById(Integer id);
@@ -81,7 +83,7 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
      * @param id
      * @return
      */
-    @Query(value = "update dictionarylist   set state='0' where id=?1 and state='1'" , nativeQuery = true)
+    @Query(value = "update dictionarylist   set state='0' where entrycode=?1 and state='1'" , nativeQuery = true)
     @Modifying
     @Transactional
     int   unCancellationDicListById(Integer id);
@@ -93,7 +95,7 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
     void  updateForDictnameAndDictengname (String dictName,String dictdm,int dictId);
 
     /**************************************给其它模块提供的功能方法********************************************************/
-
+    @Query(value = "select * from dictionarylist where  entrycode=?1",nativeQuery = true)
     DictionarylistEntity findById(Integer id);
 
     /**
@@ -122,7 +124,7 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
 
     /*********************便于开发调试提供的方法-在后期上线时需要删除掉****************************************************/
 
-    @Query(value = "delete from dictionarylist where id = ?1", nativeQuery = true)
+    @Query(value = "delete from dictionarylist where entrycode = ?1", nativeQuery = true)
     @Modifying
     @Transactional
     int deleteById(Integer id);

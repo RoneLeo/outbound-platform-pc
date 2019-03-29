@@ -47,7 +47,7 @@ public interface IdictionaryListService {
 
     List<DictionarylistEntity> findByCtdmAndCtz(Integer zdid,Integer ctdm,String ctmc ,String zxbz);
 
-    List<DictionarylistEntity> queryByEntity(DictionarylistEntity entity);
+    List<DictionarylistEntity> queryByEntity(DictionarylistEntity entity,boolean isSort);
 
 
     /*****************************************给其它模块提供的接口***********************************************/

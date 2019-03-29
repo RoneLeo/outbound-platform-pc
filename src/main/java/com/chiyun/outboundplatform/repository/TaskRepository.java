@@ -11,10 +11,6 @@ import java.util.List;
 
 public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
-    /**
-     *  查询所有
-     */
-    List<TaskEntity> findAll();
 
     /**
      *  保存

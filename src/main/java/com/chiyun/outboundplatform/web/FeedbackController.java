@@ -104,9 +104,9 @@ public class FeedbackController {
     }
 
     @ApiOperation("根据反馈状态查询")
-    @RequestMapping("/find")
+    @RequestMapping("/findAllByFkzt")
     @ApiImplicitParam(name = "fkzt", value = "反馈状态 1-未处理 2-已处理 不传查询未处理的", dataType = "Integer", paramType = "query")
-    public ApiResult<Object> find(Integer fkzt, int page, int pagesize) {
+    public ApiResult<Object> findAllByFkzt(Integer fkzt, int page, int pagesize) {
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "fksj"));
         Page<FeedbackEntity> list = null;
         if (fkzt == null) {

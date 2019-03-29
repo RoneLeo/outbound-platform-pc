@@ -15,27 +15,9 @@ public interface BasetypeRepository extends CrudRepository<BasetypeEntity, Long>
     BasetypeEntity findById(Integer id);
 
     /**
-     *  通过类型查询名称
-     */
-    @Query(value = "select name from basetype where type = ?1", nativeQuery = true)
-    String findNameByType(Integer type);
-
-    /**
      *  查询所有
      */
     List<BasetypeEntity> findAll();
 
-    /**
-     *  保存
-     */
-    BasetypeEntity save(BasetypeEntity entity);
-
-    /**
-     *  通过id删除
-     */
-    @Query(value = "delete from basetype where id = ?1", nativeQuery = true)
-    @Modifying
-    @Transactional
-    int deleteById(Integer id);
 
 }

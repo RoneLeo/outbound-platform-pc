@@ -35,6 +35,7 @@ public class EntityDataSet {
      * @Date:2019/3/20
      */
     public static void carddataset(String data, String tagart, CardmessageEntity card) {
+        card.setXszt(1);
         switch (tagart) {
             case "账号":
                 card.setZh(data);
@@ -73,6 +74,7 @@ public class EntityDataSet {
      * @Date:2019/3/20
      */
     public static void empdataset(String data, String tagart, EmpmessageEntity emp) {
+        emp.setXszt(1);
         switch (tagart) {
             case "催收员手机":
                 emp.setCsysj(data);
@@ -99,6 +101,7 @@ public class EntityDataSet {
      * @Date:2019/3/20
      */
     public static void loandataset(String data, String tagart, LoanmessageEntity entity) {
+        entity.setXszt(1);
         switch (tagart) {
             case "欠款":
                 entity.setQk(StringUtil.getMoneyDouble(Double.valueOf(data)));
@@ -110,7 +113,7 @@ public class EntityDataSet {
                 entity.setPcp(StringUtil.getMoneyDouble(Double.valueOf(data)));
                 break;
             case "最新欠款":
-                entity.setZxhk(StringUtil.getMoneyDouble(Double.valueOf(data)));
+                entity.setZxqk(StringUtil.getMoneyDouble(Double.valueOf(data)));
                 break;
             case "利息":
                 entity.setLx(StringUtil.getMoneyDouble(Double.valueOf(data)));
@@ -143,6 +146,7 @@ public class EntityDataSet {
      * @Date:2019/3/20
      */
     public static void userdataset(String data, String tagart, UsermessageEntity entity) {
+        entity.setXszt(1);
         switch (tagart) {
             case "对象姓名":
                 entity.setDxxm(data);
@@ -169,6 +173,7 @@ public class EntityDataSet {
      * @Date:2019/3/20
      */
     public static void outbdataset(String data, String tagart, OutboundmessageEntity entity) {
+        entity.setXszt(1);
         switch (tagart) {
             case "外访省份":
                 entity.setWfsf(data);
@@ -216,6 +221,7 @@ public class EntityDataSet {
      * @Date:2019/3/20
      */
     public static void casepdataset(String data, String tagart, CasepeoplemessageEntity entity) {
+        entity.setXszt(1);
         switch (tagart) {
             case "委托方名称":
                 entity.setWtfmc(data);
@@ -281,6 +287,7 @@ public class EntityDataSet {
      * @Date:2019/3/20
      */
     public static void linkdataset(String data, String tagart, LinkmanmessageEntity entity) {
+        entity.setXszt(1);
         switch (tagart) {
             case "联系人姓名":
                 entity.setLxrxm(data);
@@ -316,6 +323,7 @@ public class EntityDataSet {
      * @Date:2019/3/20
      */
     public static void otherdataset(String data, String tagart, OthermessageEntity entity) {
+        entity.setXszt(1);
         switch (tagart) {
             case "逾期账龄":
                 entity.setYqzl(data);
@@ -326,14 +334,14 @@ public class EntityDataSet {
             case "信用额度":
                 entity.setXyed(data);
                 break;
-            case "信贷分类名称":
-                entity.setXdflmc(data);
+            case "信贷分类":
+                entity.setXdfl(data);
                 break;
-            case "催收分类名称":
-                entity.setCslxmc(data);
+            case "催收分类":
+                entity.setCslx(data);
                 break;
-            case "拖欠级别名称":
-                entity.setTqjbmc(data);
+            case "拖欠级别":
+                entity.setTqjb(data);
                 break;
             case "保证金":
                 entity.setBzj(StringUtil.getMoneyDouble(Double.valueOf(data)));
@@ -399,6 +407,7 @@ public class EntityDataSet {
      * @Date:2019/3/20
      */
     public static void remarkdataset(String data, String tagart, RemarkmsgEntity entity) {
+        entity.setXszt(1);
         if (tagart.equals("备注")) {
             entity.setRemark(data);
         }

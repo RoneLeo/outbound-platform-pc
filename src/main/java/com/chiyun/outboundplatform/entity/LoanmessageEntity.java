@@ -23,7 +23,7 @@ public class LoanmessageEntity {
     @ApiModelProperty(value = " 欠款")
     private Double qk;
     @ApiModelProperty(value = "最新欠款")
-    private Double zxhk;
+    private Double zxqk;
     @ApiModelProperty(value = "本金")
     private Double pcp;
     @ApiModelProperty(value = "利息")
@@ -34,6 +34,8 @@ public class LoanmessageEntity {
     private Double yhk;
     @ApiModelProperty(value = "最低还款")
     private Double zdhk;
+    @ApiModelProperty(value = "显示状态 1-显示 2-不显示")
+    private Integer xszt;
 
 
     @Id
@@ -109,12 +111,12 @@ public class LoanmessageEntity {
 
     @Basic
     @Column(name = "lastDebt")
-    public Double getZxhk() {
-        return zxhk;
+    public Double getZxqk() {
+        return zxqk;
     }
 
-    public void setZxhk(Double zxhk) {
-        this.zxhk = zxhk;
+    public void setZxqk(Double zxqk) {
+        this.zxqk = zxqk;
     }
 
     @Basic
@@ -167,6 +169,16 @@ public class LoanmessageEntity {
         this.zdhk = zdhk;
     }
 
+    @Basic
+    @Column(name = "show_state")
+    public Integer getXszt() {
+        return xszt;
+    }
+
+    public void setXszt(Integer xszt) {
+        this.xszt = xszt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -179,16 +191,17 @@ public class LoanmessageEntity {
                 Objects.equals(waje, that.waje) &&
                 Objects.equals(yjtar, that.yjtar) &&
                 Objects.equals(qk, that.qk) &&
-                Objects.equals(zxhk, that.zxhk) &&
+                Objects.equals(zxqk, that.zxqk) &&
                 Objects.equals(pcp, that.pcp) &&
                 Objects.equals(lx, that.lx) &&
                 Objects.equals(znj, that.znj) &&
                 Objects.equals(yhk, that.yhk) &&
-                Objects.equals(zdhk, that.zdhk);
+                Objects.equals(zdhk, that.zdhk) &&
+                Objects.equals(xszt, that.xszt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, warq, dkrq, waje, yjtar, qk, zxhk, pcp, lx, znj, yhk, zdhk);
+        return Objects.hash(id, ajid, warq, dkrq, waje, yjtar, qk, zxqk, pcp, lx, znj, yhk, zdhk, xszt);
     }
 }

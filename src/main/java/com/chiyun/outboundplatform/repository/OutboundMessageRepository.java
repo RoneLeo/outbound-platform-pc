@@ -12,4 +12,6 @@ import java.util.List;
 
 public interface OutboundMessageRepository extends JpaRepository<OutboundmessageEntity, Integer> {
 
+    @Query(value = "update outboundmessage set show_state = 1 where case_id = ?1", nativeQuery = true)
+    void setXszt(Integer ajid);
 }

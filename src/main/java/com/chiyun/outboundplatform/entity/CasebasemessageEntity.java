@@ -27,6 +27,8 @@ public class CasebasemessageEntity {
     private Double ajyj;
     @ApiModelProperty(value = "导入时间")
     private Date drsj;
+    @ApiModelProperty(value = "显示状态 1-显示 2-不显示")
+    private Integer xszt;
 
 
 
@@ -131,6 +133,16 @@ public class CasebasemessageEntity {
         this.drsj = drsj;
     }
 
+    @Basic
+    @Column(name = "show_state")
+    public Integer getXszt() {
+        return xszt;
+    }
+
+    public void setXszt(Integer xszt) {
+        this.xszt = xszt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -145,11 +157,12 @@ public class CasebasemessageEntity {
                 Objects.equals(ajzt, that.ajzt) &&
                 Objects.equals(ajqy, that.ajqy) &&
                 Objects.equals(ajyj, that.ajyj) &&
-                Objects.equals(drsj, that.drsj);
+                Objects.equals(drsj, that.drsj) &&
+                Objects.equals(xszt, that.xszt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, pcid, gaxlh, pch, ajmc, ajlx, ajzt, ajqy, ajyj, drsj);
+        return Objects.hash(id, pcid, gaxlh, pch, ajmc, ajlx, ajzt, ajqy, ajyj, drsj, xszt);
     }
 }

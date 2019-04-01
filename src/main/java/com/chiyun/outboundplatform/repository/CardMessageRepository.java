@@ -12,5 +12,7 @@ import java.util.List;
 
 public interface CardMessageRepository extends JpaRepository<CardmessageEntity, Integer> {
 
+    @Query(value = "update cardmessage set show_state = 1 where case_id = ?1", nativeQuery = true)
+    void setXszt(Integer ajid);
 
 }

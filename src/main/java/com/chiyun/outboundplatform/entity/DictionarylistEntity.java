@@ -17,19 +17,34 @@ public class DictionarylistEntity {
     private String zddm;
     @ApiModelProperty(value = "注销标志【0：未注销，1：已注销】")
     private String zxbz;
-
+    @ApiModelProperty(value = "词条代码")
     private int ctdm;
     @ApiModelProperty(value = "词条名称")
     private String ctmc;
 
+    @ApiModelProperty(value = "词条类型")
+    private  String ctlx;
+
+    private  Integer id;
+
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     @Basic
     @Column(name = "dictid")
-    public int getZdid() {
+    public Integer getZdid() {
         return zdid;
     }
 
-    public void setZdid(int zdid) {
+    public void setZdid(Integer zdid) {
         this.zdid = zdid;
     }
 
@@ -63,9 +78,8 @@ public class DictionarylistEntity {
         this.zxbz = zxbz;
     }
 
-    @Id
+    @Basic
     @Column(name = "entrycode")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getCtdm() {
         return ctdm;
     }
@@ -84,6 +98,16 @@ public class DictionarylistEntity {
         this.ctmc = ctmc;
     }
 
+    @Basic
+    @Column(name = "type")
+    public String getCtlx() {
+        return ctlx;
+    }
+
+    public void setCtlx(String ctlx) {
+        this.ctlx = ctlx;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -96,7 +120,9 @@ public class DictionarylistEntity {
         if (!zdmc.equals(that.zdmc)) return false;
         if (!zddm.equals(that.zddm)) return false;
         if (!zxbz.equals(that.zxbz)) return false;
-        return ctmc.equals(that.ctmc);
+        if (!ctmc.equals(that.ctmc)) return false;
+        if (!ctlx.equals(that.ctlx)) return false;
+        return id.equals(that.id);
     }
 
     @Override
@@ -107,6 +133,8 @@ public class DictionarylistEntity {
         result = 31 * result + zxbz.hashCode();
         result = 31 * result + ctdm;
         result = 31 * result + ctmc.hashCode();
+        result = 31 * result + ctlx.hashCode();
+        result = 31 * result + id.hashCode();
         return result;
     }
 
@@ -119,6 +147,8 @@ public class DictionarylistEntity {
                 ", zxbz='" + zxbz + '\'' +
                 ", ctdm=" + ctdm +
                 ", ctmc='" + ctmc + '\'' +
+                ", ctlx='" + ctlx + '\'' +
+                ", id=" + id +
                 '}';
     }
 }

@@ -157,6 +157,10 @@ public class DictionaryServiceImpl implements IdictionaryService {
                 if(StringUtil.isNotNull(entity.getZxbz())){
                     predicates.add(cb.equal(root.get("zxbz"),entity.getZxbz()));
                 }
+                if(StringUtil.isNotNull(entity.getZdlx())){
+                    predicates.add(cb.equal(root.get("zdlx"),entity.getZdlx()));
+                }
+
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         };

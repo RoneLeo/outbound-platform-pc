@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-@Api(description = "批次管理")
+@Api(description = "模板管理")
 @RestController
 @RequestMapping(value = "/batch", method = {RequestMethod.GET, RequestMethod.POST})
 public class BatchController {
@@ -49,7 +49,7 @@ public class BatchController {
     @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/add")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pcmc", value = "批次名称", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "pcmc", value = "模板名称", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "zdids", value = "所选字段id组合，英文','分隔", dataType = "String", paramType = "query")
     })
     public ApiResult<Object> add(String pcmc, String zdids) {
@@ -86,7 +86,7 @@ public class BatchController {
     @ApiOperation("删除")
     @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/delete")
-    @ApiImplicitParam(name = "pcid", value = "批次id", dataType = "String", paramType = "query")
+    @ApiImplicitParam(name = "pcid", value = "模板id", dataType = "String", paramType = "query")
     public ApiResult<Object> delete(String pcid) {
         if (StringUtil.isNull(pcid)) {
             return ApiResult.FAILURE("批次id不能为空");
@@ -108,17 +108,17 @@ public class BatchController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
-//    @MustLogin(rolerequired = {1, 2})
-    @ApiOperation("查询所有批次id")
+    @MustLogin(rolerequired = {1, 2})
+    @ApiOperation("查询所有模板id")
     @RequestMapping("/findAllPcid")
     public ApiResult<Object> findAllPcid() {
-        return ApiResult.SUCCESS(batchRepository.findAllPcid());
+        return ApiResult.SUCCESS(batchRepository.findAllPcidAndPcmc());
     }
 
     @ApiOperation("导出模板")
     @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/exportExcel")
-    @ApiImplicitParam(name = "pcid", value = "批次id", dataType = "String", paramType = "query")
+    @ApiImplicitParam(name = "pcid", value = "模板id", dataType = "String", paramType = "query")
     public ApiResult<Object> exportExcel(String pcid, HttpServletResponse response) throws IOException {
         if (StringUtil.isNull(pcid)) {
             return ApiResult.FAILURE("批次id不能为空");
@@ -188,6 +188,7 @@ public class BatchController {
         //批量导入
         return ExcelImportUtils.batchImport(pcid, fileName, file, ibatchService, ajqy, ajlx);
     }
+
 
 
 }

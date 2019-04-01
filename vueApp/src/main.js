@@ -24,7 +24,6 @@ axios.interceptors.request.use(
         // const uuid = localStorage.getItem("uuid"); //获取存储在本地的token
 
         if(!config.headers.hasOwnProperty('Content-Type')) {
-            console.log(config.data)
             if(config.data){
                 config.data = qs.stringify(config.data); //处理参数格式
             }

@@ -21,6 +21,8 @@ public class EmpmessageEntity {
     private String csygh;
     @ApiModelProperty(value = "催收部门")
     private String csbm;
+    @ApiModelProperty(value = "显示状态 1-显示 2-不显示")
+    private Integer xszt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -93,6 +95,16 @@ public class EmpmessageEntity {
         this.csbm = csbm;
     }
 
+    @Basic
+    @Column(name = "show_state")
+    public Integer getXszt() {
+        return xszt;
+    }
+
+    public void setXszt(Integer xszt) {
+        this.xszt = xszt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -104,11 +116,12 @@ public class EmpmessageEntity {
                 Objects.equals(csysj, that.csysj) &&
                 Objects.equals(csyxm, that.csyxm) &&
                 Objects.equals(csygh, that.csygh) &&
-                Objects.equals(csbm, that.csbm);
+                Objects.equals(csbm, that.csbm) &&
+                Objects.equals(xszt, that.xszt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, csybgdh, csysj, csyxm, csygh, csbm);
+        return Objects.hash(id, ajid, csybgdh, csysj, csyxm, csygh, csbm, xszt);
     }
 }

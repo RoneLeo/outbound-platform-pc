@@ -27,6 +27,8 @@ public class LinkmanmessageEntity {
     private String lxrdz;
     @ApiModelProperty(value = "联系人单位")
     private String lxrdw;
+    @ApiModelProperty(value = "显示状态 1-显示 2-不显示")
+    private Integer xszt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -129,6 +131,16 @@ public class LinkmanmessageEntity {
         this.lxrdw = lxrdw;
     }
 
+    @Basic
+    @Column(name = "show_state")
+    public Integer getXszt() {
+        return xszt;
+    }
+
+    public void setXszt(Integer xszt) {
+        this.xszt = xszt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -143,11 +155,12 @@ public class LinkmanmessageEntity {
                 Objects.equals(lxrdwdh, that.lxrdwdh) &&
                 Objects.equals(lxrsj, that.lxrsj) &&
                 Objects.equals(lxrdz, that.lxrdz) &&
-                Objects.equals(lxrdw, that.lxrdw);
+                Objects.equals(lxrdw, that.lxrdw) &&
+                Objects.equals(xszt, that.xszt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, lxrxm, lxrzjh, lxrgx, lxrjtdh, lxrdwdh, lxrsj, lxrdz, lxrdw);
+        return Objects.hash(id, ajid, lxrxm, lxrzjh, lxrgx, lxrjtdh, lxrdwdh, lxrsj, lxrdz, lxrdw, xszt);
     }
 }

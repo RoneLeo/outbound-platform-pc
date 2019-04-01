@@ -106,7 +106,9 @@
 
                 },
                 idx: -1,
-                dict: this.$dict
+                dict: this.$dict,
+
+                ajid: 1,
             }
         },
         created() {
@@ -122,7 +124,8 @@
             },
             getParams(){
                 let params = this.$route.params;
-                let ajxh = params.ajxh
+                console.log(params)
+                this.ajid = params.id
                 this.caseNo = ajxh;
                 if(ajxh){
                     this.isCaseNo = true;

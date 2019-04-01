@@ -157,7 +157,7 @@
                 return this.$common.dictParse(row.js, this.roles);
             },
             getData() {
-                this.$axios.post('/batch/findAllPcid', {page: this.currentPage, pagesize: this.pageSize}).then((res) => {
+                this.$axios.post('/batch/findAllPcidByPage', {page: this.currentPage, pagesize: this.pageSize}).then((res) => {
                     if(res.resCode == 200){
                         this.datavalues = res.data;
                         this.total = res.counts;

@@ -2,7 +2,7 @@ import Vue from 'vue';
 import App from './App';
 import router from './router';
 import axios from 'axios';
-import common from './components/common/commonFn';
+import util from './components/common/util.js';
 import qs from 'qs';
 import ElementUI from 'element-ui';
 import { Message } from 'element-ui';
@@ -22,7 +22,9 @@ axios.defaults.withCredentials = true;
 axios.interceptors.request.use(
     config => {
         // const uuid = localStorage.getItem("uuid"); //获取存储在本地的token
+
         if(!config.headers.hasOwnProperty('Content-Type')) {
+            console.log(config.data)
             if(config.data){
                 config.data = qs.stringify(config.data); //处理参数格式
             }
@@ -32,10 +34,10 @@ axios.interceptors.request.use(
         // config.headers = {
         //     'Content-Type': 'application/x-www-form-urlencoded', //参数格式设置
         // };
-        if (uuid) {
-            config.headers.Authorization = "Token"; //携带权限参数
-            config.headers.uuid = uuid; //用户id
-        }
+        // if (uuid) {
+        //     config.headers.Authorization = "Token"; //携带权限参数
+        //     config.headers.uuid = uuid; //用户id
+        // }
         return config;
     },
     error => {
@@ -70,7 +72,7 @@ axios.interceptors.response.use(
 Vue.use(ElementUI, { size: 'small' });
 Vue.prototype.$axios = axios;
 Vue.prototype.$qs = qs;
-Vue.prototype.$common = common;
+Vue.prototype.$common = util;
 
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {

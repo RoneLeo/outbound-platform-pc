@@ -45,10 +45,10 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         let param = this.ruleForm;
+
                         this.$axios.post('/user/login', {yhm: param.username,mm: param.password}).then( (res) => {
                             if(res.resCode == 200){
                                 let data = res.data;
-                                console.log(res.data)
                                 localStorage.setItem('ms_username',data.mz);
 //                                localStorage.setItem('gsid',data.gsid);
                                 localStorage.setItem('uuid',data.id);
@@ -57,7 +57,6 @@
                                 this.$message.error(res.resMsg);
                             }
                         });
-                        */
                     } else {
                         return false;
                     }

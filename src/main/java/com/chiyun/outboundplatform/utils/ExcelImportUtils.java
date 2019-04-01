@@ -211,7 +211,7 @@ public class ExcelImportUtils {
         int end = Integer.valueOf(map.get("end").toString());
         String table = map.get("name").toString();
         switch (table) {
-            case "默认":
+            case "基本信息":
                 for (int i = begin; i <= end; i++) {
                     Cell cell = datarow.getCell(i);
                     if (cell == null)

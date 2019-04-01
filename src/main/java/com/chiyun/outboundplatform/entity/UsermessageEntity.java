@@ -21,6 +21,8 @@ public class UsermessageEntity {
     private String dxdz;
     @ApiModelProperty(value = "地址类型")
     private String dzlx;
+    @ApiModelProperty(value = "显示状态 1-显示 2-不显示")
+    private Integer xszt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -93,6 +95,16 @@ public class UsermessageEntity {
         this.dzlx = dzlx;
     }
 
+    @Basic
+    @Column(name = "show_state")
+    public Integer getXszt() {
+        return xszt;
+    }
+
+    public void setXszt(Integer xszt) {
+        this.xszt = xszt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -104,11 +116,12 @@ public class UsermessageEntity {
                 Objects.equals(dxnl, that.dxnl) &&
                 Objects.equals(dxxb, that.dxxb) &&
                 Objects.equals(dxdz, that.dxdz) &&
-                Objects.equals(dzlx, that.dzlx);
+                Objects.equals(dzlx, that.dzlx) &&
+                Objects.equals(xszt, that.xszt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, dxxm, dxnl, dxxb, dxdz, dzlx);
+        return Objects.hash(id, ajid, dxxm, dxnl, dxxb, dxdz, dzlx, xszt);
     }
 }

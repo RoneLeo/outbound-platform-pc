@@ -13,6 +13,8 @@ public class RemarkmsgEntity {
     private Integer ajid;
     @ApiModelProperty(value = "备注")
     private String remark;
+    @ApiModelProperty(value = "显示状态 1-显示 2-不显示")
+    private Integer xszt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +47,16 @@ public class RemarkmsgEntity {
         this.remark = remark;
     }
 
+    @Basic
+    @Column(name = "show_state")
+    public Integer getXszt() {
+        return xszt;
+    }
+
+    public void setXszt(Integer xszt) {
+        this.xszt = xszt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -52,11 +64,12 @@ public class RemarkmsgEntity {
         RemarkmsgEntity that = (RemarkmsgEntity) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(ajid, that.ajid) &&
-                Objects.equals(remark, that.remark);
+                Objects.equals(remark, that.remark) &&
+                Objects.equals(xszt, that.xszt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, remark);
+        return Objects.hash(id, ajid, remark, xszt);
     }
 }

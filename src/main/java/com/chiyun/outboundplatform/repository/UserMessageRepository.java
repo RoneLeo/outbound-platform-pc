@@ -12,4 +12,6 @@ import java.util.List;
 
 public interface UserMessageRepository extends JpaRepository<UsermessageEntity, Integer> {
 
+    @Query(value = "update usermessage set show_state = 1 where case_id = ?1", nativeQuery = true)
+    void setXszt(Integer ajid);
 }

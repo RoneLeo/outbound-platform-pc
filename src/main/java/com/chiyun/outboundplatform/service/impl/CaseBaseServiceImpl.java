@@ -2,14 +2,14 @@ package com.chiyun.outboundplatform.service.impl;
 
 import com.chiyun.outboundplatform.entity.CasebasemessageAllEntity;
 import com.chiyun.outboundplatform.entity.CasebasemessageEntity;
-import com.chiyun.outboundplatform.repository.CasebasemessageAllRepository;
-import com.chiyun.outboundplatform.repository.CasebasemessageRepository;
+import com.chiyun.outboundplatform.repository.*;
 import com.chiyun.outboundplatform.service.IcaseBaseService;
 import com.chiyun.outboundplatform.utils.DateUtils;
 import com.chiyun.outboundplatform.utils.StringUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -26,6 +26,24 @@ public class CaseBaseServiceImpl implements IcaseBaseService {
     private CasebasemessageRepository casebasemessageRepository;
     @Resource
     private CasebasemessageAllRepository casebasemessageAllRepository;
+    @Resource
+    private CardMessageRepository cardMessageRepository;
+    @Resource
+    private CasepeoplemessageRepository casepeoplemessageRepository;
+    @Resource
+    private EmpMessageRepository empMessageRepository;
+    @Resource
+    private LinkmanMessageRepository linkmanMessageRepository;
+    @Resource
+    private LoanMessageRepository loanMessageRepository;
+    @Resource
+    private OtherMessageRepository otherMessageRepository;
+    @Resource
+    private OutboundMessageRepository outboundMessageRepository;
+    @Resource
+    private RemarkMsgRepository remarkMsgRepository;
+    @Resource
+    private UserMessageRepository userMessageRepository;
 
     @Override
     public CasebasemessageAllEntity findAllInfoById(Integer id) {
@@ -64,5 +82,32 @@ public class CaseBaseServiceImpl implements IcaseBaseService {
             }
             return casebasemessageRepository.findAllByConditionAndDrsjBetween(pcid, ajmc, ajlx, ajzt, ajqy, begin, end, pageable);
         }
+    }
+
+    @Override
+    @Transactional
+    public boolean reset(Integer id) {
+        // 先修改其他附表数据
+        // 卡号信息
+        cardMessageRepository.setXszt(id);
+        // 案人信息
+        casepeoplemessageRepository.setXszt(id);
+        // 催收员信息
+        empMessageRepository.setXszt(id);
+        // 联系人信息
+        linkmanMessageRepository.setXszt(id);
+        // 贷款信息
+        loanMessageRepository.setXszt(id);
+        // 其他信息
+        otherMessageRepository.setXszt(id);
+        // 外访信息
+        outboundMessageRepository.setXszt(id);
+        // 备注信息
+        remarkMsgRepository.setXszt(id);
+        // 对象信息
+        userMessageRepository.setXszt(id);
+        // 将案件显示状态修改：不显示
+        casebasemessageRepository.updateXszt(id);
+        return true;
     }
 }

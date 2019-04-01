@@ -4,6 +4,7 @@ import com.chiyun.outboundplatform.entity.CasebasemessageAllEntity;
 import com.chiyun.outboundplatform.entity.CasebasemessageEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -39,4 +40,10 @@ public interface IcaseBaseService {
      * 多条件查询
      */
     Page<CasebasemessageEntity> findAllByCondition(String pcid, String ajmc, Integer ajlx, Integer ajzt, Integer ajqy, Date begin, Date end, Pageable pageable);
+
+    /**
+     *  删除
+     */
+    @Transactional
+    boolean reset(Integer id);
 }

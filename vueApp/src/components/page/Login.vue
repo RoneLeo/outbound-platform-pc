@@ -27,8 +27,8 @@
         data: function(){
             return {
                 ruleForm: {
-                    username: '1234',
-                    password: '666666'
+                    username: 'admin',
+                    password: 'admin'
                 },
                 rules: {
                     username: [
@@ -45,17 +45,14 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         let param = this.ruleForm;
-                        localStorage.setItem('ms_username',param.username);
-                        let loading = this.$loading('登录中');
-                        this.$axios.post('user/login', {yhm: param.username,mm: param.password}).then( (res) => {
-                            loading.close();
+
+                        this.$axios.post('/user/login', {yhm: param.username,mm: param.password}).then( (res) => {
                             if(res.resCode == 200){
                                 let data = res.data;
-                                //localStorage.setItem('ms_username',data.xm);
-                                //localStorage.setItem('gsid',data.gsid);
-                                //localStorage.setItem('uuid',data.uuid);
+                                localStorage.setItem('ms_username',data.mz);
+//                                localStorage.setItem('gsid',data.gsid);
+                                localStorage.setItem('uuid',data.id);
                                 this.$router.push('/homePage');
-
                             }else{
                                 this.$message.error(res.resMsg);
                             }

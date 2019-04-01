@@ -1,4 +1,4 @@
-
+import axios from 'axios';
 export default {
     dictParse(dictID,dict){
         let dictName = '';
@@ -8,5 +8,7 @@ export default {
             }
         }
         return dictName;
-    }
+    },
+
+
 };

@@ -43,7 +43,16 @@
                     msg[i].name && arr.push(msg[i].name);
                 }
                 this.tagsList = arr;
-            })
+            });
+
+            window.onstorage = (e) => {
+                console.log(e, e.key, e.key == 'uuid', e.oldValue != e.newValue)
+                if(e.key == 'uuid' && e.oldValue != e.newValue) {
+                    this.$router.push('/homePage');
+                    window.location.reload();
+                }
+            }
+
         }
     }
 </script>

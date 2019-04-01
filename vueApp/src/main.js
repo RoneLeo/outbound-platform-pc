@@ -2,7 +2,7 @@ import Vue from 'vue';
 import App from './App';
 import router from './router';
 import axios from 'axios';
-import util from './components/common/util';
+import util from './components/common/util.js';
 import qs from 'qs';
 import ElementUI from 'element-ui';
 import { Message } from 'element-ui';
@@ -11,8 +11,8 @@ import 'element-ui/lib/theme-chalk/index.css';    // 默认主题
 import '../static/css/icon.css';
 import "babel-polyfill";
 
-axios.defaults.baseURL = 'https://localhost/';
-// axios.defaults.baseURL = 'http://182.151.22.247:8083/';
+axios.defaults.baseURL = 'http://182.151.22.247:8083';
+axios.defaults.withCredentials = true;
 // if(process.env.NODE_ENV === 'development') {
 //     console.log(111);
 // }
@@ -21,19 +21,23 @@ axios.defaults.baseURL = 'https://localhost/';
 // http request 拦截器（所有发送的请求都要从这儿过一次）
 axios.interceptors.request.use(
     config => {
-        const uuid = localStorage.getItem("uuid"); //获取存储在本地的token
-        if(config.data){
-            config.data = qs.stringify(config.data); //处理参数格式
+        // const uuid = localStorage.getItem("uuid"); //获取存储在本地的token
+
+        if(!config.headers.hasOwnProperty('Content-Type')) {
+            console.log(config.data)
+            if(config.data){
+                config.data = qs.stringify(config.data); //处理参数格式
+            }
         }
         //
         // console.log(config.data)
-        /*config.headers = {
-            'Content-Type': 'application/json', //参数格式设置
-        };*/
-        if (uuid) {
-            config.headers.Authorization = "Token"; //携带权限参数
-            config.headers.uuid = uuid; //用户id
-        }
+        // config.headers = {
+        //     'Content-Type': 'application/x-www-form-urlencoded', //参数格式设置
+        // };
+        // if (uuid) {
+        //     config.headers.Authorization = "Token"; //携带权限参数
+        //     config.headers.uuid = uuid; //用户id
+        // }
         return config;
     },
     error => {
@@ -68,7 +72,7 @@ axios.interceptors.response.use(
 Vue.use(ElementUI, { size: 'small' });
 Vue.prototype.$axios = axios;
 Vue.prototype.$qs = qs;
-Vue.prototype.$util = util;
+Vue.prototype.$common = util;
 
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {

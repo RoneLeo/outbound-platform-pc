@@ -57,6 +57,9 @@ public class UserController {
         if (userEntity == null) {
             return ApiResult.FAILURE("用户名不存在");
         }
+        if (userEntity.getZt()==1){
+            return ApiResult.FAILURE("该帐号已注销，请联系管理员");
+        }
         //UserEntity userEntity = userReposity.findByYhmAndMm(yhm, mm);
         if (!mm.equals(userEntity.getMm())) {
             return ApiResult.FAILURE("密码错误");
@@ -114,6 +117,9 @@ public class UserController {
                     //授权码查询出来的数据有人绑定
                     return ApiResult.FAILURE("授权码已有人使用，请核实");
                 }
+                if (userEntity.getZt()==1){
+                    return ApiResult.FAILURE("该帐号已注销，请联系管理员");
+                }
                 //使用授权码绑定帐号
                 userEntity1.setOpenid(map.get("openid").toString());
                 // userEntity1.setUnionid(map.get("unionid").toString());
@@ -125,11 +131,16 @@ public class UserController {
                     return ApiResult.FAILURE("数据添加失败");
                 }
                 SessionUtil.put(String.valueOf(result1.getId()), sessionId);
+                session.setAttribute("id",userEntity.getId());
                 result.put("userEntity", result1);
             }
         }else{
+            if (userEntity.getZt()==1){
+                return ApiResult.FAILURE("该帐号已注销，请联系管理员");
+            }
             SessionUtil.put(String.valueOf(userEntity.getId()), sessionId);
-            result.put("userEntity", userEntity);
+            session.setAttribute("id",userEntity.getId());
+            result.put("userInfo", userEntity);
         }
         result.put("sessionId", sessionId);
         return ApiResult.SUCCESS(result);
@@ -252,13 +263,7 @@ public class UserController {
         HttpSession session = SessionHelper.getSession();
         ApiResult<Object> isLogin = SessionUtil.isLogin(session);
         if (isLogin.getResCode() < 200) return isLogin;
-//        System.out.print("userid:"+request.getHeader("userid"));
-//        System.out.print("sessionUserid:"+session.getAttribute("id"));
-//        String userid = request.getHeader("userid");
-//        String sessionUserid = String.valueOf(session.getAttribute("id"));
-//        if(!userid.equals(sessionUserid)){
-//            return ApiResult.FAILURE("已登录其他帐号！退出该帐号");
-//        }
+        //
         Pageable pageable = PageRequest.of(page - 1, pagesize, Sort.by(new Sort.Order(Sort.Direction.DESC, "cjsj")));
         Page<UserEntity> result;
         //判断用户权限
@@ -297,7 +302,8 @@ public class UserController {
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "注销帐号")
     @RequestMapping("/cancelAccount")
-    public ApiResult<Object> cancelAccount(int id) {
+    public ApiResult<Object> cancelAccount(int id,
+                                           @RequestParam @ApiParam(value = "类型（0-启动用户、1-注销用户）", required = true)int zt) {
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
         ApiResult<Object> isLogin = SessionUtil.isLogin(session);
@@ -306,7 +312,7 @@ public class UserController {
         if (oldUserEntity == null) {
             return ApiResult.FAILURE("没有该用户的信息");
         }
-        oldUserEntity.setZt(1);
+        oldUserEntity.setZt(zt);
         //清掉session
         SessionUtil.put(String.valueOf(id), null);
         userReposity.save(oldUserEntity);

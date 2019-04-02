@@ -61,7 +61,6 @@ public class DictionaryListController {
         entity.setCtdm(ctdm);
         entity.setZxbz(zxbz);
         entity.setId(0);
-        entity.setCtlx("0"); //强制措施，不让用户能操作不可修改的字典
         list = idictionaryListService.queryByEntity(entity, true);
         return ApiResult.SUCCESS(list);
     }

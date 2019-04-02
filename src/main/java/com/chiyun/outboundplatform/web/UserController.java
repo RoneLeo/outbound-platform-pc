@@ -124,22 +124,13 @@ public class UserController {
                 if (result1 == null) {
                     return ApiResult.FAILURE("数据添加失败");
                 }
-                SessionUtil.put(String.valueOf(userEntity1.getId()), sessionId);
-                session.setAttribute("id", userEntity1.getId());
-                session.setAttribute("szxzqdm", userEntity1.getSzxzqdm());
-                session.setAttribute("js", userEntity1.getJs());
-                result.put("userEntity", userEntity1);
+                SessionUtil.put(String.valueOf(result1.getId()), sessionId);
+                session.setAttribute("id", result1.getId());
+                session.setAttribute("szxzqdm", result1.getSzxzqdm());
+                session.setAttribute("js", result1.getJs());
+                result.put("userEntity", result1);
             }
         }else{
-            //通过openid在数据库中查询出了数据，登录成功
-            /*String userid = String.valueOf(userEntity.getId());//获取用户id
-            String sessionValue = SessionUtil.getMapValue(userid);
-            if (sessionValue == null || !sessionValue.equals(sessionId)) {
-                SessionUtil.put(userid, sessionId);
-            } else if (Objects.equals(sessionValue, sessionId)) {
-                //已登录
-                return ApiResult.FAILURE("重复登录");
-            }*/
             SessionUtil.put(String.valueOf(userEntity.getId()), sessionId);
             session.setAttribute("id", userEntity.getId());
             session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
@@ -148,15 +139,6 @@ public class UserController {
         }
         result.put("session", session);
         return ApiResult.SUCCESS(result);
-
-//            //userEntity不为空，数据库有openid的信息，不需要授权码，登录成功
-//            //保存本次session_key
-//            userEntity.setSk(map.get("session_key").toString());
-//            userEntity.setSkcjsj(new Date());
-//            UserEntity result = userReposity.save(userEntity);
-//            if (result == null) {
-//                return ApiResult.FAILURE("数据添加失败");
-//            }
         }
 
 

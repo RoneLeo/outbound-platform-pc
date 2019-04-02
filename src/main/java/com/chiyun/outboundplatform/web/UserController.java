@@ -98,7 +98,7 @@ public class UserController {
         HttpSession session = request.getSession();//创建session
         String sessionId = session.getId();//获取sessionid
         UserEntity userEntity = userReposity.findByOpenid(map.get("openid").toString());
-        Map<String, Object> result=null;
+        Map<String, Object> result= new HashMap<>();
         if (userEntity == null) {
             //数据库中没有openid数据
             if (StringUtil.isNull(sqm)) {
@@ -124,39 +124,15 @@ public class UserController {
                 if (result1 == null) {
                     return ApiResult.FAILURE("数据添加失败");
                 }
-                SessionUtil.put(String.valueOf(userEntity1.getId()), sessionId);
-                session.setAttribute("id", userEntity1.getId());
-                session.setAttribute("szxzqdm", userEntity1.getSzxzqdm());
-                session.setAttribute("js", userEntity1.getJs());
-                result.put("userEntity", userEntity1);
+                SessionUtil.put(String.valueOf(result1.getId()), sessionId);
+                result.put("userEntity", result1);
             }
         }else{
-            //通过openid在数据库中查询出了数据，登录成功
-            /*String userid = String.valueOf(userEntity.getId());//获取用户id
-            String sessionValue = SessionUtil.getMapValue(userid);
-            if (sessionValue == null || !sessionValue.equals(sessionId)) {
-                SessionUtil.put(userid, sessionId);
-            } else if (Objects.equals(sessionValue, sessionId)) {
-                //已登录
-                return ApiResult.FAILURE("重复登录");
-            }*/
             SessionUtil.put(String.valueOf(userEntity.getId()), sessionId);
-            session.setAttribute("id", userEntity.getId());
-            session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
-            session.setAttribute("js", userEntity.getJs());
             result.put("userEntity", userEntity);
         }
-        result.put("session", session);
+        result.put("sessionId", sessionId);
         return ApiResult.SUCCESS(result);
-
-//            //userEntity不为空，数据库有openid的信息，不需要授权码，登录成功
-//            //保存本次session_key
-//            userEntity.setSk(map.get("session_key").toString());
-//            userEntity.setSkcjsj(new Date());
-//            UserEntity result = userReposity.save(userEntity);
-//            if (result == null) {
-//                return ApiResult.FAILURE("数据添加失败");
-//            }
         }
 
 
@@ -309,10 +285,6 @@ public class UserController {
     @ApiOperation(value = "退出登录")
     @RequestMapping("/outLogin")
     public ApiResult<Object> outLogin(int id) throws Exception {
-        //判断是否登录
-        HttpSession session = SessionHelper.getSession();
-        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
-        if (isLogin.getResCode() < 200) return isLogin;
         UserEntity oldUserEntity = userReposity.findById(id);
         if (oldUserEntity == null) {
             return ApiResult.FAILURE("没有该用户的信息");

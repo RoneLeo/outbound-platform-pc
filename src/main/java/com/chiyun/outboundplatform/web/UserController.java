@@ -98,6 +98,7 @@ public class UserController {
         HttpSession session = request.getSession();//创建session
         String sessionId = session.getId();//获取sessionid
         UserEntity userEntity = userReposity.findByOpenid(map.get("openid").toString());
+        Map<String, Object> result=null;
         if (userEntity == null) {
             //数据库中没有openid数据
             if (StringUtil.isNull(sqm)) {
@@ -119,12 +120,17 @@ public class UserController {
                 userEntity1.setSk(map.get("session_key").toString());
                 userEntity1.setSkcjsj(new Date());
                 userEntity1.setBdsj(new Date());
-                UserEntity result = userReposity.save(userEntity1);
-                if (result == null) {
+                UserEntity result1 = userReposity.save(userEntity1);
+                if (result1 == null) {
                     return ApiResult.FAILURE("数据添加失败");
                 }
+                SessionUtil.put(String.valueOf(userEntity1.getId()), sessionId);
+                session.setAttribute("id", userEntity1.getId());
+                session.setAttribute("szxzqdm", userEntity1.getSzxzqdm());
+                session.setAttribute("js", userEntity1.getJs());
+                result.put("userEntity", userEntity1);
             }
-        }
+        }else{
             //通过openid在数据库中查询出了数据，登录成功
             /*String userid = String.valueOf(userEntity.getId());//获取用户id
             String sessionValue = SessionUtil.getMapValue(userid);
@@ -138,10 +144,10 @@ public class UserController {
             session.setAttribute("id", userEntity.getId());
             session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
             session.setAttribute("js", userEntity.getJs());
-            Map<String, Object> result=null;
-            result.put("session", session);
             result.put("userEntity", userEntity);
-            return ApiResult.SUCCESS(result);
+        }
+        result.put("session", session);
+        return ApiResult.SUCCESS(result);
 
 //            //userEntity不为空，数据库有openid的信息，不需要授权码，登录成功
 //            //保存本次session_key

@@ -138,7 +138,10 @@ public class UserController {
             session.setAttribute("id", userEntity.getId());
             session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
             session.setAttribute("js", userEntity.getJs());
-            return ApiResult.SUCCESS(userEntity);
+            Map<String, Object> result=null;
+            result.put("session", session);
+            result.put("userEntity", userEntity);
+            return ApiResult.SUCCESS(result);
 
 //            //userEntity不为空，数据库有openid的信息，不需要授权码，登录成功
 //            //保存本次session_key

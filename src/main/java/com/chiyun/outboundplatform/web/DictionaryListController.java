@@ -165,6 +165,7 @@ public class DictionaryListController {
             return ApiResult.FAILURE("添加失败,该字典不允许添加词典信息");
         }
 
+
         DictionarylistEntity entity = new DictionarylistEntity();
         entity.setZddm(zdxx.getZddm());
         entity.setZdmc(zdxx.getZdmc());
@@ -181,9 +182,10 @@ public class DictionaryListController {
         Map<String, Object> msg = idictionaryListService.save(entity);
         String str = msg.keySet().toString().replace("[", " ").replace("]", " ").trim();
            entity=(DictionarylistEntity) msg.get("success");
-             entity.setCtdm(entity.getId());
-           idictionaryListService.updateOne(entity);
+
         if (str.equals("success")) {
+            entity.setCtdm(entity.getId());
+            idictionaryListService.updateOne(entity);
             return ApiResult.SUCCESS((DictionarylistEntity) msg.get("success"));
         } else if (str.equals("fail")) {
             return ApiResult.FAILURE(msg.get("fail").toString());

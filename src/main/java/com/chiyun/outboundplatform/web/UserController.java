@@ -224,10 +224,6 @@ public class UserController {
     @ApiOperation(value="修改密码")
     @RequestMapping("/changePassword")
     public ApiResult<Object> changePassword(int id, String mm) throws Exception {
-        //判断是否登录
-        HttpSession session = SessionHelper.getSession();
-        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
-        if (isLogin.getResCode() < 200) return isLogin;
         //查询是否有该用户
         UserEntity oldUserEntity = userReposity.findById(id);
         if (oldUserEntity == null) {

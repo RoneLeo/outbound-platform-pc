@@ -52,7 +52,7 @@ public class DictionaryController {
              entity.setZddm(zddm);
              entity.setZdmc(zdmc);
              entity.setZxbz(zxbz);
-             entity.setZdlx("0");
+
          list= idictionaryService.queryByEntity(entity);
 
         return ApiResult.SUCCESS(list);
@@ -118,7 +118,7 @@ public class DictionaryController {
         DictionaryEntity entity = new DictionaryEntity();
         entity.setZddm(zddm);
         entity.setZdmc(zdmc);
-       entity.setZdlx("0");
+        entity.setZdlx("0");
         Map<String, Object> msg = idictionaryService.save(entity);
         String str = msg.keySet().toString().replace("[", " ").replace("]", " ").trim();
         if ("failuer".equals(str)) {

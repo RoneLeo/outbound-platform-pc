@@ -224,6 +224,10 @@ public class UserController {
     @ApiOperation(value="修改密码")
     @RequestMapping("/changePassword")
     public ApiResult<Object> changePassword(int id, String mm) throws Exception {
+        //判断是否登录
+        HttpSession session = SessionHelper.getSession();
+        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
+        if (isLogin.getResCode() < 200) return isLogin;
         //查询是否有该用户
         UserEntity oldUserEntity = userReposity.findById(id);
         if (oldUserEntity == null) {
@@ -281,10 +285,6 @@ public class UserController {
     @ApiOperation(value = "退出登录")
     @RequestMapping("/outLogin")
     public ApiResult<Object> outLogin(int id) throws Exception {
-        //判断是否登录
-        HttpSession session = SessionHelper.getSession();
-        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
-        if (isLogin.getResCode() < 200) return isLogin;
         UserEntity oldUserEntity = userReposity.findById(id);
         if (oldUserEntity == null) {
             return ApiResult.FAILURE("没有该用户的信息");

@@ -181,9 +181,8 @@ public class DictionaryListController {
 
         Map<String, Object> msg = idictionaryListService.save(entity);
         String str = msg.keySet().toString().replace("[", " ").replace("]", " ").trim();
-           entity=(DictionarylistEntity) msg.get("success");
-
         if (str.equals("success")) {
+            entity=(DictionarylistEntity) msg.get("success");
             entity.setCtdm(entity.getId());
             idictionaryListService.updateOne(entity);
             return ApiResult.SUCCESS((DictionarylistEntity) msg.get("success"));

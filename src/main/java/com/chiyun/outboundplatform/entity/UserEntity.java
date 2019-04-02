@@ -11,11 +11,11 @@ import java.util.Objects;
 @Table(name = "user", schema = "ajjcxx", catalog = "")
 public class UserEntity {
     private int id;
-    @ApiModelProperty(value="用户名")
+    @ApiModelProperty(value="用户名",required = true)
     private String yhm;
     @ApiModelProperty(value="密码")
     private String mm;
-    @ApiModelProperty(value="类型（0-系统用户，1-小程序用户）",required = true)
+    @ApiModelProperty(value="类型（0-系统用户，1-小程序用户）")
     private int lx;
     @ApiModelProperty(value="名字")
     private String mz;

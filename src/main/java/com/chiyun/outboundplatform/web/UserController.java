@@ -47,7 +47,7 @@ public class UserController {
     @RequestMapping("/login")
     public ApiResult<Object> login(@RequestParam @ApiParam(value = "用户名") String yhm,
                                    @RequestParam @ApiParam(value = "密码") String mm,
-                                   HttpServletRequest request, HttpServletResponse response) throws Exception {
+                                   HttpServletRequest request) throws Exception {
         System.out.print("用戶名：" + yhm);
         if (StringUtil.isNull(yhm) || StringUtil.isNull(mm)) {
             return ApiResult.FAILURE("用户名或密码不能为空");
@@ -56,6 +56,9 @@ public class UserController {
         UserEntity userEntity = userReposity.findByYhm(yhm);
         if (userEntity == null) {
             return ApiResult.FAILURE("用户名不存在");
+        }
+        if (userEntity.getZt()==1){
+            return ApiResult.FAILURE("该帐号已注销，请联系管理员");
         }
         //UserEntity userEntity = userReposity.findByYhmAndMm(yhm, mm);
         if (!mm.equals(userEntity.getMm())) {
@@ -79,7 +82,7 @@ public class UserController {
             SessionUtil.put(userid, sessionId);
         } else if (sessionValue.equals(sessionId)) {
             //已登录
-            return ApiResult.FAILURE("重复登录");
+            return ApiResult.REPEATLOGIN();
         }
         session.setAttribute("yhm", userEntity.getYhm());
         session.setAttribute("id", userEntity.getId());
@@ -98,6 +101,7 @@ public class UserController {
         HttpSession session = request.getSession();//创建session
         String sessionId = session.getId();//获取sessionid
         UserEntity userEntity = userReposity.findByOpenid(map.get("openid").toString());
+        Map<String, Object> result= new HashMap<>();
         if (userEntity == null) {
             //数据库中没有openid数据
             if (StringUtil.isNull(sqm)) {
@@ -113,41 +117,33 @@ public class UserController {
                     //授权码查询出来的数据有人绑定
                     return ApiResult.FAILURE("授权码已有人使用，请核实");
                 }
+                if (userEntity.getZt()==1){
+                    return ApiResult.FAILURE("该帐号已注销，请联系管理员");
+                }
                 //使用授权码绑定帐号
                 userEntity1.setOpenid(map.get("openid").toString());
                 // userEntity1.setUnionid(map.get("unionid").toString());
                 userEntity1.setSk(map.get("session_key").toString());
                 userEntity1.setSkcjsj(new Date());
                 userEntity1.setBdsj(new Date());
-                UserEntity result = userReposity.save(userEntity1);
-                if (result == null) {
+                UserEntity result1 = userReposity.save(userEntity1);
+                if (result1 == null) {
                     return ApiResult.FAILURE("数据添加失败");
                 }
+                SessionUtil.put(String.valueOf(result1.getId()), sessionId);
+                session.setAttribute("id",userEntity.getId());
+                result.put("userEntity", result1);
             }
-        }
-            //通过openid在数据库中查询出了数据，登录成功
-            /*String userid = String.valueOf(userEntity.getId());//获取用户id
-            String sessionValue = SessionUtil.getMapValue(userid);
-            if (sessionValue == null || !sessionValue.equals(sessionId)) {
-                SessionUtil.put(userid, sessionId);
-            } else if (Objects.equals(sessionValue, sessionId)) {
-                //已登录
-                return ApiResult.FAILURE("重复登录");
-            }*/
+        }else{
+            if (userEntity.getZt()==1){
+                return ApiResult.FAILURE("该帐号已注销，请联系管理员");
+            }
             SessionUtil.put(String.valueOf(userEntity.getId()), sessionId);
-            session.setAttribute("id", userEntity.getId());
-            session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
-            session.setAttribute("js", userEntity.getJs());
-            return ApiResult.SUCCESS(userEntity);
-
-//            //userEntity不为空，数据库有openid的信息，不需要授权码，登录成功
-//            //保存本次session_key
-//            userEntity.setSk(map.get("session_key").toString());
-//            userEntity.setSkcjsj(new Date());
-//            UserEntity result = userReposity.save(userEntity);
-//            if (result == null) {
-//                return ApiResult.FAILURE("数据添加失败");
-//            }
+            session.setAttribute("id",userEntity.getId());
+            result.put("userInfo", userEntity);
+        }
+        result.put("sessionId", sessionId);
+        return ApiResult.SUCCESS(result);
         }
 
 
@@ -164,31 +160,24 @@ public class UserController {
         if (!"1".equals(js) && !"3".equals(js)) {
             return ApiResult.FAILURE("没有权限添加用户");
         }
+        if(userEntity.getYhm()==null){
+            return ApiResult.FAILURE("用户名为空");
+        }
         //判断用户名是否重复
         UserEntity oldUserEntity = userReposity.findByYhm(userEntity.getYhm());
         if (oldUserEntity != null) {
             return ApiResult.FAILURE("该用户名已存在！");
         }
         /* 添加用户 */
-        UserEntity result = null;
         userEntity.setCjsj(new Date());
         userEntity.setZt(0);
-        //判断添加的用户为什么网站用户还是微信小程序用户
-        if(0==userEntity.getLx()){
-            //网站用户
             userEntity.setMm(MD5Util.MD5("666666"));
-            result = userReposity.save(userEntity);
-        }else if(1==userEntity.getLx()){
-            //微信小程序用户,
-            result = userReposity.save(userEntity);
-            String sqm = CodeUtil.toSerialCode(result.getId());
-            result.setSqm(sqm);
-            result = userReposity.save(result);
-        } else {
-            return ApiResult.FAILURE("添加用户类型错误");
-        }
+            UserEntity userEntity1 = userReposity.save(userEntity);
+            String sqm = CodeUtil.toSerialCode(userEntity1.getId());
+            userEntity1.setSqm(sqm);
+            UserEntity result = userReposity.save(userEntity1);
         if (result == null) {
-            return ApiResult.FAILURE("添加失败");
+            return ApiResult.FAILURE("授权码添加失败");
         }
         return ApiResult.SUCCESS(result);
     }
@@ -227,6 +216,7 @@ public class UserController {
         if (oldUserEntity == null) {
             return ApiResult.FAILURE("没有该用户的信息");
         }
+        userEntity.setMm(oldUserEntity.getMm());
         userEntity.setCjsj(oldUserEntity.getCjsj());
         UserEntity result = userReposity.save(userEntity);
         if (result == null) {
@@ -260,20 +250,13 @@ public class UserController {
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "查询所有用户")
     @RequestMapping("/findAll")
-    public ApiResult<Object> findAll(@RequestParam @ApiParam(value = "类型（0-系统用户、1-小程序用户）", required = true) int lx,
-                                     @RequestParam(required = false) @ApiParam(value = "状态（0-启用用户，1-注销用户,不传显示全部）") Integer zt,
+    public ApiResult<Object> findAll(@RequestParam(required = false) @ApiParam(value = "状态（0-启用用户，1-注销用户,不传显示全部）") Integer zt,
                                      @RequestParam int page, @RequestParam int pagesize) {
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
         ApiResult<Object> isLogin = SessionUtil.isLogin(session);
         if (isLogin.getResCode() < 200) return isLogin;
-//        System.out.print("userid:"+request.getHeader("userid"));
-//        System.out.print("sessionUserid:"+session.getAttribute("id"));
-//        String userid = request.getHeader("userid");
-//        String sessionUserid = String.valueOf(session.getAttribute("id"));
-//        if(!userid.equals(sessionUserid)){
-//            return ApiResult.FAILURE("已登录其他帐号！退出该帐号");
-//        }
+        //
         Pageable pageable = PageRequest.of(page - 1, pagesize, Sort.by(new Sort.Order(Sort.Direction.DESC, "cjsj")));
         Page<UserEntity> result;
         //判断用户权限
@@ -286,11 +269,11 @@ public class UserController {
             ztList.add(zt);
         }
         if ("1".equals(js)) {
-            result = userReposity.findByZtInAndLx(ztList, lx, pageable);
+            result = userReposity.findByZtIn(ztList, pageable);
         } else if ("2".equals(js)) {
             //List<Integer> a=new ArrayList<>();
             int jsArray[] = {2, 4};
-            result = userReposity.findByJsInAndZtInAndLxAndSzxzqdm(jsArray, ztList, lx, session.getAttribute("szxzqdm").toString(), pageable);
+            result = userReposity.findByJsInAndZtInAndSzxzqdm(jsArray, ztList, session.getAttribute("szxzqdm").toString(), pageable);
         } else {
             return ApiResult.FAILURE("没有权限查看用户");
         }
@@ -300,10 +283,6 @@ public class UserController {
     @ApiOperation(value = "退出登录")
     @RequestMapping("/outLogin")
     public ApiResult<Object> outLogin(int id) throws Exception {
-        //判断是否登录
-        HttpSession session = SessionHelper.getSession();
-        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
-        if (isLogin.getResCode() < 200) return isLogin;
         UserEntity oldUserEntity = userReposity.findById(id);
         if (oldUserEntity == null) {
             return ApiResult.FAILURE("没有该用户的信息");
@@ -316,7 +295,8 @@ public class UserController {
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "注销帐号")
     @RequestMapping("/cancelAccount")
-    public ApiResult<Object> cancelAccount(int id) {
+    public ApiResult<Object> cancelAccount(int id,
+                                           @RequestParam @ApiParam(value = "类型（0-启动用户、1-注销用户）", required = true)int zt) {
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
         ApiResult<Object> isLogin = SessionUtil.isLogin(session);
@@ -325,7 +305,7 @@ public class UserController {
         if (oldUserEntity == null) {
             return ApiResult.FAILURE("没有该用户的信息");
         }
-        oldUserEntity.setZt(1);
+        oldUserEntity.setZt(zt);
         //清掉session
         SessionUtil.put(String.valueOf(id), null);
         userReposity.save(oldUserEntity);

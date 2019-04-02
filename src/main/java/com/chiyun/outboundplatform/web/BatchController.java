@@ -46,7 +46,7 @@ public class BatchController {
     private IdictionaryListService idictionaryListService;
 
     @ApiOperation("添加")
-    @MustLogin(rolerequired = {1, 2})
+//    @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/add")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pcmc", value = "模板名称", dataType = "String", paramType = "query"),
@@ -108,7 +108,7 @@ public class BatchController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
-    @MustLogin(rolerequired = {1, 2})
+//    @MustLogin(rolerequired = {1, 2})
     @ApiOperation("查询所有模板id")
     @RequestMapping("/findAllPcid")
     public ApiResult<Object> findAllPcid() {
@@ -116,7 +116,7 @@ public class BatchController {
     }
 
     @ApiOperation("导出模板")
-    @MustLogin(rolerequired = {1, 2})
+//    @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/exportExcel")
     @ApiImplicitParam(name = "pcid", value = "模板id", dataType = "String", paramType = "query")
     public ApiResult<Object> exportExcel(String pcid, HttpServletResponse response) throws IOException {
@@ -148,11 +148,11 @@ public class BatchController {
     }
 
     @ApiOperation("导入模板")
-    @MustLogin(rolerequired = {1, 2})
+//    @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/importExcel")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pcid", value = "批次id", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "file", value = "上传文件", dataType = "MultipartFile", paramType = "query"),
+//            @ApiImplicitParam(name = "file", value = "上传文件", dataType = "MultipartFile", paramType = "query"),
             @ApiImplicitParam(name = "ajqy", value = "案件区域id", dataType = "Integer", paramType = "query"),
             @ApiImplicitParam(name = "ajlx", value = "案件类型id", dataType = "Integer", paramType = "query")
     })

@@ -61,7 +61,6 @@ public class DictionaryListController {
         entity.setCtdm(ctdm);
         entity.setZxbz(zxbz);
         entity.setId(0);
-        entity.setCtlx("0"); //强制措施，不让用户能操作不可修改的字典
         list = idictionaryListService.queryByEntity(entity, true);
         return ApiResult.SUCCESS(list);
     }
@@ -115,6 +114,7 @@ public class DictionaryListController {
         entity.setZxbz(zxbz);
         entity.setCtdm(0);
         entity.setZdid(0);
+        entity.setId(0);
         List<DictionarylistEntity> list = idictionaryListService.queryByEntity(entity, false);
         return ApiResult.SUCCESS(list);
     }
@@ -128,13 +128,14 @@ public class DictionaryListController {
     public ApiResult<Object> findDictListByZddm(@RequestParam String zddm,
                                                 @RequestParam(required = false) String zxbz) {
         if (StringUtil.isNull(zddm)) {
-            return ApiResult.FAILURE("字典名称不能为空！！");
+            return ApiResult.FAILURE("字典d代码不能为空！！");
         }
         DictionarylistEntity entity = new DictionarylistEntity();
         entity.setZddm(zddm);
         entity.setZxbz(zxbz);
         entity.setCtdm(0);
         entity.setZdid(0);
+        entity.setId(0);
         List<DictionarylistEntity> list = idictionaryListService.queryByEntity(entity, false);
         return ApiResult.SUCCESS(list);
     }
@@ -164,6 +165,7 @@ public class DictionaryListController {
             return ApiResult.FAILURE("添加失败,该字典不允许添加词典信息");
         }
 
+
         DictionarylistEntity entity = new DictionarylistEntity();
         entity.setZddm(zdxx.getZddm());
         entity.setZdmc(zdxx.getZdmc());
@@ -179,10 +181,10 @@ public class DictionaryListController {
 
         Map<String, Object> msg = idictionaryListService.save(entity);
         String str = msg.keySet().toString().replace("[", " ").replace("]", " ").trim();
-           entity=(DictionarylistEntity) msg.get("success");
-             entity.setCtdm(entity.getId());
-           idictionaryListService.updateOne(entity);
         if (str.equals("success")) {
+            entity=(DictionarylistEntity) msg.get("success");
+            entity.setCtdm(entity.getId());
+            idictionaryListService.updateOne(entity);
             return ApiResult.SUCCESS((DictionarylistEntity) msg.get("success"));
         } else if (str.equals("fail")) {
             return ApiResult.FAILURE(msg.get("fail").toString());

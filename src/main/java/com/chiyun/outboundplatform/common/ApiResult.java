@@ -87,4 +87,11 @@ public class ApiResult<T> implements Serializable {
         result.setResMsg("该用户已在其他地方登录");
         return result;
     }
+
+    public static ApiResult<Object> REPEATLOGIN() {
+        ApiResult<Object> result = new ApiResult<>();
+        result.setResCode(102);
+        result.setResMsg("重复登录");
+        return result;
+    }
 }

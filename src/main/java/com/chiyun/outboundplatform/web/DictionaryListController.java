@@ -145,12 +145,12 @@ public class DictionaryListController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", name = "zdid", value = "字典ID", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType = "query", name = "ctmc", value = "词条名称", required = true, dataType = "String"),
-            @ApiImplicitParam(paramType = "query", name = "ctdm", value = "词条代码", required = true, dataType = "Integer")
+            @ApiImplicitParam(paramType = "query", name = "ctdm", value = "词条代码", required = false, dataType = "Integer")
 
     })
     public ApiResult<Object> addDictList(@RequestParam Integer zdid,
                                          @RequestParam String  ctmc,
-                                         @RequestParam Integer ctdm
+                                         @RequestParam(required = false) Integer ctdm
     ) {
 
         //第一步获取字典表信息
@@ -169,13 +169,19 @@ public class DictionaryListController {
         entity.setZdmc(zdxx.getZdmc());
         entity.setZdid(zdid);
         entity.setCtmc(ctmc);
-        entity.setCtdm(ctdm);
+        if(!(ctdm==null)){
+            entity.setCtdm(ctdm);
+        }
+
         entity.setZxbz("0");// 默认填写为0,未注销
         entity.setCtlx("0"); //默认词条类型为可修改
 
 
         Map<String, Object> msg = idictionaryListService.save(entity);
         String str = msg.keySet().toString().replace("[", " ").replace("]", " ").trim();
+           entity=(DictionarylistEntity) msg.get("success");
+             entity.setCtdm(entity.getId());
+           idictionaryListService.updateOne(entity);
         if (str.equals("success")) {
             return ApiResult.SUCCESS((DictionarylistEntity) msg.get("success"));
         } else if (str.equals("fail")) {

@@ -98,7 +98,7 @@ public class UserController {
         HttpSession session = request.getSession();//创建session
         String sessionId = session.getId();//获取sessionid
         UserEntity userEntity = userReposity.findByOpenid(map.get("openid").toString());
-        Map<String, Object> result=null;
+        Map<String, Object> result= new HashMap<>();
         if (userEntity == null) {
             //数据库中没有openid数据
             if (StringUtil.isNull(sqm)) {

@@ -12,4 +12,6 @@ import java.util.List;
 
 public interface LoanMessageRepository extends JpaRepository<LoanmessageEntity, Integer> {
 
+    @Query(value = "update loanmessage set show_state = 1 where case_id = ?1", nativeQuery = true)
+    void setXszt(Integer ajid);
 }

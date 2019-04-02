@@ -9,7 +9,7 @@ import java.util.Objects;
 @Table(name = "batch", schema = "ajjcxx", catalog = "")
 public class BatchEntity {
     private Integer id;
-    @ApiModelProperty(value = "批次id")
+    @ApiModelProperty(value = "模板id")
     private String pcid;
     @ApiModelProperty(value = "批次名称")
     private String pcmc;

@@ -16,11 +16,13 @@ public class UsermessageEntity {
     @ApiModelProperty(value = "对象年龄")
     private Integer dxnl;
     @ApiModelProperty(value = "对象性别")
-    private Integer dxxb;
+    private String dxxb;
     @ApiModelProperty(value = "地址")
     private String dxdz;
     @ApiModelProperty(value = "地址类型")
     private String dzlx;
+    @ApiModelProperty(value = "显示状态 1-显示 2-不显示")
+    private Integer xszt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,16 +67,16 @@ public class UsermessageEntity {
 
     @Basic
     @Column(name = "sex")
-    public Integer getDxxb() {
+    public String getDxxb() {
         return dxxb;
     }
 
-    public void setDxxb(Integer dxxb) {
+    public void setDxxb(String dxxb) {
         this.dxxb = dxxb;
     }
 
     @Basic
-    @Column(name = "add")
+    @Column(name = "addr")
     public String getDxdz() {
         return dxdz;
     }
@@ -93,6 +95,16 @@ public class UsermessageEntity {
         this.dzlx = dzlx;
     }
 
+    @Basic
+    @Column(name = "show_state")
+    public Integer getXszt() {
+        return xszt;
+    }
+
+    public void setXszt(Integer xszt) {
+        this.xszt = xszt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -104,11 +116,12 @@ public class UsermessageEntity {
                 Objects.equals(dxnl, that.dxnl) &&
                 Objects.equals(dxxb, that.dxxb) &&
                 Objects.equals(dxdz, that.dxdz) &&
-                Objects.equals(dzlx, that.dzlx);
+                Objects.equals(dzlx, that.dzlx) &&
+                Objects.equals(xszt, that.xszt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, dxxm, dxnl, dxxb, dxdz, dzlx);
+        return Objects.hash(id, ajid, dxxm, dxnl, dxxb, dxdz, dzlx, xszt);
     }
 }

@@ -26,31 +26,9 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
     List<DictionarylistEntity> findAll(Specification querySpecifi);
 
 
-    @Query(value = "select * from dictionarylist where  dictid=?1 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
-    List<DictionarylistEntity> findByZdid(Integer zdid);
 
 
-    @Query(value = "select * from dictionarylist where  dictid=?1 and state=?2 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
-    List<DictionarylistEntity> findByZdidAndZxbz(Integer zdid,String zxbz);
 
-
-    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') ORDER BY FIELD (state,'0','1') ", nativeQuery = true)
-    List<DictionarylistEntity>  findByCtdm(Integer zdid,Integer ctdm);
-
-    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and state=?3 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
-    List<DictionarylistEntity>  findByCtdmAndZxbz(Integer zdid,Integer ctdm,String zxbz);
-
-    @Query(value = "select * from dictionarylist where  dictid=?1 and entryvalue like concat('%',?2,'%') ORDER BY FIELD (state,'0','1')", nativeQuery = true)
-    List<DictionarylistEntity>  findByCtz(Integer zdid,String ctz);
-
-    @Query(value = "select * from dictionarylist where  dictid=?1 and entryvalue like concat('%',?2,'%') and state=?3 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
-    List<DictionarylistEntity>  findByCtzAndZxbz(Integer zdid,String ctz,String zxbz);
-
-    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and entryvalue like concat('%',?3,'%') ORDER BY FIELD (state,'0','1')", nativeQuery = true)
-    List<DictionarylistEntity>  findByCtdmAndCtz(Integer zdid,Integer ctdm,String ctz);
-
-    @Query(value = "select * from dictionarylist where  dictid=?1 and entrycode like concat('%',?2,'%') and entryvalue like concat('%',?3,'%') and state=?4 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
-    List<DictionarylistEntity>  findByCtdmAndCtzAndZxbz(Integer zdid,Integer ctdm,String ctz ,String zxbz);
  /**
   *   词条查询是否已存在
   * @param ctdm
@@ -73,7 +51,7 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
      * @param id
      * @return
      */
-    @Query(value = "update dictionarylist   set state='1' where entrycode=?1 and state='0'" , nativeQuery = true)
+    @Query(value = "update dictionarylist   set state='1' where id=?1 and state='0'" , nativeQuery = true)
     @Modifying
     @Transactional
      int    cancellationDicListById(Integer id);
@@ -83,7 +61,7 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
      * @param id
      * @return
      */
-    @Query(value = "update dictionarylist   set state='0' where entrycode=?1 and state='1'" , nativeQuery = true)
+    @Query(value = "update dictionarylist   set state='0' where id=?1 and state='1'" , nativeQuery = true)
     @Modifying
     @Transactional
     int   unCancellationDicListById(Integer id);
@@ -95,8 +73,19 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
     void  updateForDictnameAndDictengname (String dictName,String dictdm,int dictId);
 
     /**************************************给其它模块提供的功能方法********************************************************/
-    @Query(value = "select * from dictionarylist where  entrycode=?1",nativeQuery = true)
+    @Query(value = "select * from dictionarylist where  id=?1",nativeQuery = true)
     DictionarylistEntity findById(Integer id);
+
+
+    @Query(value = "select * from dictionarylist where  dictid=?1 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
+    List<DictionarylistEntity> findByZdid(Integer zdid);
+
+    @Query(value = "select * from dictionarylist where  dictname=?1 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
+    List<DictionarylistEntity> queryCtxxByZdmc(String zdmc);
+
+
+    @Query(value = "select * from dictionarylist where  dicteng_name=?1 ORDER BY FIELD (state,'0','1')", nativeQuery = true)
+    List<DictionarylistEntity> queryCtxxByZddm(String zddm);
 
     /**
      * 根据字典名称和词条代码查询词条名称 --用于导出数据时把字典字段的代码转换成中文名
@@ -124,7 +113,7 @@ public interface DictionaryListRepository extends CrudRepository<DictionarylistE
 
     /*********************便于开发调试提供的方法-在后期上线时需要删除掉****************************************************/
 
-    @Query(value = "delete from dictionarylist where entrycode = ?1", nativeQuery = true)
+    @Query(value = "delete from dictionarylist where id = ?1", nativeQuery = true)
     @Modifying
     @Transactional
     int deleteById(Integer id);

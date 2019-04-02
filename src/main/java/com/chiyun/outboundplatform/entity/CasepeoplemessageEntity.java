@@ -17,7 +17,7 @@ public class CasepeoplemessageEntity {
     @ApiModelProperty(value = "案人名称")
     private String armc;
     @ApiModelProperty(value = "案人性别")
-    private Integer arxb;
+    private String arxb;
     @ApiModelProperty(value = "单位名称")
     private String dwmc;
     @ApiModelProperty(value = "单位地址")
@@ -48,6 +48,8 @@ public class CasepeoplemessageEntity {
     private String arzjhyczsw;
     @ApiModelProperty(value = "案人证件号(隐藏中六位)")
     private String arzjhyczlw;
+    @ApiModelProperty(value = "显示状态 1-显示 2-不显示")
+    private Integer xszt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -91,11 +93,11 @@ public class CasepeoplemessageEntity {
 
     @Basic
     @Column(name = "cSex")
-    public Integer getArxb() {
+    public String getArxb() {
         return arxb;
     }
 
-    public void setArxb(Integer arxb) {
+    public void setArxb(String arxb) {
         this.arxb = arxb;
     }
 
@@ -250,6 +252,16 @@ public class CasepeoplemessageEntity {
         this.arzjhyczlw = arzjhyczlw;
     }
 
+    @Basic
+    @Column(name = "show_state")
+    public Integer getXszt() {
+        return xszt;
+    }
+
+    public void setXszt(Integer xszt) {
+        this.xszt = xszt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -274,11 +286,12 @@ public class CasepeoplemessageEntity {
                 Objects.equals(ardy, that.ardy) &&
                 Objects.equals(arzjhychsw, that.arzjhychsw) &&
                 Objects.equals(arzjhyczsw, that.arzjhyczsw) &&
-                Objects.equals(arzjhyczlw, that.arzjhyczlw);
+                Objects.equals(arzjhyczlw, that.arzjhyczlw) &&
+                Objects.equals(xszt, that.xszt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, wtfmc, armc, arxb, dwmc, dwdz, arbm, arzw, jtdz, hjdz, dzddz, arsj, arzd, ardwdh, arzjh, ardy, arzjhychsw, arzjhyczsw, arzjhyczlw);
+        return Objects.hash(id, ajid, wtfmc, armc, arxb, dwmc, dwdz, arbm, arzw, jtdz, hjdz, dzddz, arsj, arzd, ardwdh, arzjh, ardy, arzjhychsw, arzjhyczsw, arzjhyczlw, xszt);
     }
 }

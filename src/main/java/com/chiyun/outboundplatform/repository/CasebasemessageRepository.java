@@ -33,6 +33,12 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
     Page<CasebasemessageEntity> findAll(Pageable pageable);
 
     /**
+     *  修改状态
+     */
+    @Query(value = "update casebasemessage set show_state = 1 where id = ?1", nativeQuery = true)
+    void updateXszt(Integer id);
+
+    /**
      *  通过区域查询
      */
     Page<CasebasemessageEntity> findAllByAjqy(Integer ajqy, Pageable pageable);

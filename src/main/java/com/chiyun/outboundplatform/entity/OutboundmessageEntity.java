@@ -36,6 +36,8 @@ public class OutboundmessageEntity {
     private String wfbg;
     @ApiModelProperty(value = "外访备注")
     private String wfbz;
+    @ApiModelProperty(value = "显示状态 1-显示 2-不显示")
+    private Integer xszt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -178,6 +180,16 @@ public class OutboundmessageEntity {
         this.wfbz = wfbz;
     }
 
+    @Basic
+    @Column(name = "show_state")
+    public Integer getXszt() {
+        return xszt;
+    }
+
+    public void setXszt(Integer xszt) {
+        this.xszt = xszt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -196,11 +208,12 @@ public class OutboundmessageEntity {
                 Objects.equals(sqrq, that.sqrq) &&
                 Objects.equals(yjwfrq, that.yjwfrq) &&
                 Objects.equals(wfbg, that.wfbg) &&
-                Objects.equals(wfbz, that.wfbz);
+                Objects.equals(wfbz, that.wfbz) &&
+                Objects.equals(xszt, that.xszt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, wfsf, wfcs, wfqx, wfy, wfyid, wfyy, wfyq, wfqc, sqrq, yjwfrq, wfbg, wfbz);
+        return Objects.hash(id, ajid, wfsf, wfcs, wfqx, wfy, wfyid, wfyy, wfyq, wfqc, sqrq, yjwfrq, wfbg, wfbz, xszt);
     }
 }

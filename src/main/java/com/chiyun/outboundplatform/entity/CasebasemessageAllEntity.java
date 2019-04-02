@@ -29,6 +29,8 @@ public class CasebasemessageAllEntity {
     private Double ajyj;
     @ApiModelProperty(value = "导入时间")
     private Date drsj;
+    @ApiModelProperty(value = "显示状态 1-显示 2-不显示")
+    private Integer xszt;
     @ApiModelProperty(value = "卡号信息")
     private List<CardmessageEntity> khxx;
     @ApiModelProperty(value = "催收员信息")
@@ -151,6 +153,16 @@ public class CasebasemessageAllEntity {
         this.gaxlh = gaxlh;
     }
 
+    @Basic
+    @Column(name = "show_state")
+    public Integer getXszt() {
+        return xszt;
+    }
+
+    public void setXszt(Integer xszt) {
+        this.xszt = xszt;
+    }
+
     @OneToMany(cascade={CascadeType.ALL})
     @JoinColumn(name="case_id")
     public List<CardmessageEntity> getKhxx() {
@@ -256,6 +268,7 @@ public class CasebasemessageAllEntity {
                 Objects.equals(ajqy, that.ajqy) &&
                 Objects.equals(ajyj, that.ajyj) &&
                 Objects.equals(drsj, that.drsj) &&
+                Objects.equals(xszt, that.xszt) &&
                 Objects.equals(khxx, that.khxx) &&
                 Objects.equals(csyxx, that.csyxx) &&
                 Objects.equals(dkxx, that.dkxx) &&
@@ -269,6 +282,6 @@ public class CasebasemessageAllEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, pcid, gaxlh, pch, ajmc, ajlx, ajzt, ajqy, ajyj, drsj, khxx, csyxx, dkxx, dxxx, wfxx, arxx, qtxx, lxrxx, bzxx);
+        return Objects.hash(id, pcid, gaxlh, pch, ajmc, ajlx, ajzt, ajqy, ajyj, drsj, xszt, khxx, csyxx, dkxx, dxxx, wfxx, arxx, qtxx, lxrxx, bzxx);
     }
 }

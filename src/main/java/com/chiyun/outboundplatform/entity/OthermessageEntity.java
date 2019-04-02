@@ -19,17 +19,11 @@ public class OthermessageEntity {
     @ApiModelProperty(value = "信用额度")
     private String xyed;
     @ApiModelProperty(value = "信贷分类")
-    private Integer xdfl;
-    @ApiModelProperty(value = "信贷分类名称")
-    private String xdflmc;
+    private String xdfl;
     @ApiModelProperty(value = "催收分类")
-    private Integer cslx;
-    @ApiModelProperty(value = "催收分类名称")
-    private String cslxmc;
+    private String cslx;
     @ApiModelProperty(value = "拖欠级别")
-    private Integer tqjb;
-    @ApiModelProperty(value = "拖欠级别名称")
-    private String tqjbmc;
+    private String tqjb;
     @ApiModelProperty(value = "保证金")
     private Double bzj;
     @ApiModelProperty(value = "开卡日")
@@ -66,6 +60,8 @@ public class OthermessageEntity {
     private String sp;
     @ApiModelProperty(value = "商户")
     private String sh;
+    @ApiModelProperty(value = "显示状态 1-显示 2-不显示")
+    private Integer xszt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -121,61 +117,32 @@ public class OthermessageEntity {
 
     @Basic
     @Column(name = "loanType")
-    public Integer getXdfl() {
+    public String getXdfl() {
         return xdfl;
     }
 
-    public void setXdfl(Integer xdfl) {
+    public void setXdfl(String xdfl) {
         this.xdfl = xdfl;
     }
 
     @Basic
-    @Column(name = "loanTypeName")
-    public String getXdflmc() {
-        return xdflmc;
-    }
-
-    public void setXdflmc(String xdflmc) {
-        this.xdflmc = xdflmc;
-    }
-
-    @Basic
     @Column(name = "collType")
-    public Integer getCslx() {
+    public String getCslx() {
         return cslx;
     }
-    public void setCslx(Integer cslx) {
+
+    public void setCslx(String cslx) {
         this.cslx = cslx;
     }
 
     @Basic
-    @Column(name = "collTypeName")
-    public String getCslxmc() {
-        return cslxmc;
-    }
-
-    public void setCslxmc(String cslxmc) {
-        this.cslxmc = cslxmc;
-    }
-
-    @Basic
     @Column(name = "delayLv")
-    public Integer getTqjb() {
+    public String getTqjb() {
         return tqjb;
     }
 
-    public void setTqjb(Integer tqjb) {
+    public void setTqjb(String tqjb) {
         this.tqjb = tqjb;
-    }
-
-    @Basic
-    @Column(name = "delayLvName")
-    public String getTqjbmc() {
-        return tqjbmc;
-    }
-
-    public void setTqjbmc(String tqjbmc) {
-        this.tqjbmc = tqjbmc;
     }
 
     @Basic
@@ -358,6 +325,16 @@ public class OthermessageEntity {
         this.sh = sh;
     }
 
+    @Basic
+    @Column(name = "show_state")
+    public Integer getXszt() {
+        return xszt;
+    }
+
+    public void setXszt(Integer xszt) {
+        this.xszt = xszt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -369,11 +346,8 @@ public class OthermessageEntity {
                 Objects.equals(hkqx, that.hkqx) &&
                 Objects.equals(xyed, that.xyed) &&
                 Objects.equals(xdfl, that.xdfl) &&
-                Objects.equals(xdflmc, that.xdflmc) &&
                 Objects.equals(cslx, that.cslx) &&
-                Objects.equals(cslxmc, that.cslxmc) &&
                 Objects.equals(tqjb, that.tqjb) &&
-                Objects.equals(tqjbmc, that.tqjbmc) &&
                 Objects.equals(bzj, that.bzj) &&
                 Objects.equals(kkr, that.kkr) &&
                 Objects.equals(zhhkr, that.zhhkr) &&
@@ -391,11 +365,12 @@ public class OthermessageEntity {
                 Objects.equals(yqqs, that.yqqs) &&
                 Objects.equals(yhqs, that.yhqs) &&
                 Objects.equals(sp, that.sp) &&
-                Objects.equals(sh, that.sh);
+                Objects.equals(sh, that.sh) &&
+                Objects.equals(xszt, that.xszt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, yqzl, hkqx, xyed, xdfl, xdflmc, cslx, cslxmc, tqjb, tqjbmc, bzj, kkr, zhhkr, zhhke, zhxfr, zhtxr, tkr, zdr, rmb, usd, gb, waqs, yqts, sybj, yqqs, yhqs, sp, sh);
+        return Objects.hash(id, ajid, yqzl, hkqx, xyed, xdfl, cslx, tqjb, bzj, kkr, zhhkr, zhhke, zhxfr, zhtxr, tkr, zdr, rmb, usd, gb, waqs, yqts, sybj, yqqs, yhqs, sp, sh, xszt);
     }
 }

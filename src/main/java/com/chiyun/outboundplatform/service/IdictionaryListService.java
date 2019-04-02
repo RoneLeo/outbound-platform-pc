@@ -12,7 +12,6 @@ public interface IdictionaryListService {
 
 
 
-
     /**
      * 新增
      * @param entity
@@ -28,7 +27,6 @@ public interface IdictionaryListService {
      */
      int updateOne(DictionarylistEntity entity);
 
-
     /**
      * 通过 id注销
      * @param id
@@ -37,15 +35,6 @@ public interface IdictionaryListService {
      int   cancellationDicListById(Integer id);
 
     int   unCancellationDicListById(Integer id);
-
-
-    List<DictionarylistEntity> findByZdid(Integer zdid,String zxbz);
-
-    List<DictionarylistEntity> findByCtdm(Integer zdid,Integer ctdm,String zxbz);
-
-    List<DictionarylistEntity> findByCtz(Integer zdid,String ctmc,String zxbz);
-
-    List<DictionarylistEntity> findByCtdmAndCtz(Integer zdid,Integer ctdm,String ctmc ,String zxbz);
 
     List<DictionarylistEntity> queryByEntity(DictionarylistEntity entity,boolean isSort);
 
@@ -59,6 +48,16 @@ public interface IdictionaryListService {
      */
      DictionarylistEntity findById(Integer id);
 
+    /**
+     *  通过字典名称查询字典信息
+     * @param zdmc
+     * @return
+     */
+    List<DictionarylistEntity> queryCtxxByZdmc(String zdmc);
+
+    List<DictionarylistEntity> queryCtxxByZddm(String zddm);
+
+    List<DictionarylistEntity> queryCtxxByZdid(Integer zdid);
 
     /**
      * 根据字典名称和词条代码查询词条名称 --用于导出数据时把字典字段的代码转换成中文名
@@ -78,6 +77,8 @@ public interface IdictionaryListService {
     * 根据字典名称和词条名称查询词条代码 --用于导入数据时把字典字段的词条名称转换成对应的词条代码
     */
      String  queryCtdmByZdmcAndCtmc(String zdmc, String ctmc);
+
+
 
     /*********************便于开发调试提供的方法-在后期上线时需要删除掉****************************************************/
     /*

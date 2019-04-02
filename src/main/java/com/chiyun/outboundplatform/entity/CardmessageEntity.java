@@ -29,6 +29,8 @@ public class CardmessageEntity {
     private String kl;
     @ApiModelProperty(value = "币种")
     private String bz;
+    @ApiModelProperty(value = "显示状态 1-显示 2-不显示")
+    private Integer xszt;
 
 
     @Id
@@ -144,6 +146,16 @@ public class CardmessageEntity {
         this.bz = bz;
     }
 
+    @Basic
+    @Column(name = "show_state")
+    public Integer getXszt() {
+        return xszt;
+    }
+
+    public void setXszt(Integer xszt) {
+        this.xszt = xszt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -159,11 +171,12 @@ public class CardmessageEntity {
                 Objects.equals(zh, that.zh) &&
                 Objects.equals(dah, that.dah) &&
                 Objects.equals(kl, that.kl) &&
-                Objects.equals(bz, that.bz);
+                Objects.equals(bz, that.bz) &&
+                Objects.equals(xszt, that.xszt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, kh, khychsw, khyczsw, khyczlw, khhsw, zh, dah, kl, bz);
+        return Objects.hash(id, ajid, kh, khychsw, khyczsw, khyczlw, khhsw, zh, dah, kl, bz, xszt);
     }
 }

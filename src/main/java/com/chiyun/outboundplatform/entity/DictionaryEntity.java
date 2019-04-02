@@ -23,8 +23,10 @@ public class DictionaryEntity {
     @ApiModelProperty(value = "字典代码")
     private String zddm;
 
-    @ApiModelProperty(value = "状注销标志态")
+    @ApiModelProperty(value = "注销标志态")
     private String zxbz;
+    @ApiModelProperty(value = "字典类型")
+    private  String zdlx;
 
 
     @Id
@@ -62,9 +64,6 @@ public class DictionaryEntity {
 
 
 
-
-
-
     @Basic
     @Column(name = "state")
     public String getZxbz() {
@@ -74,6 +73,17 @@ public class DictionaryEntity {
     public void setZxbz(String zxbz) {
         this.zxbz = zxbz;
     }
+
+    @Basic
+    @Column(name = "type")
+    public String getZdlx() {
+        return zdlx;
+    }
+
+    public void setZdlx(String zdlx) {
+        this.zdlx = zdlx;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -85,8 +95,11 @@ public class DictionaryEntity {
         if (!id.equals(that.id)) return false;
         if (!zdmc.equals(that.zdmc)) return false;
         if (!zddm.equals(that.zddm)) return false;
+        if(!zdlx.equals(that.zdlx)) return false;
         return zxbz.equals(that.zxbz);
     }
+
+
 
     @Override
     public int hashCode() {
@@ -94,6 +107,7 @@ public class DictionaryEntity {
         result = 31 * result + zdmc.hashCode();
         result = 31 * result + zddm.hashCode();
         result = 31 * result + zxbz.hashCode();
+        result= 31*result +zdlx.hashCode();
         return result;
     }
 

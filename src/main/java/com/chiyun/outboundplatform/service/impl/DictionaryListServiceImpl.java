@@ -31,42 +31,8 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
 
 
 
-    @Override
-    public List<DictionarylistEntity> findByZdid(Integer did, String zxbz) {
-        if (StringUtil.isNull(zxbz)) {
-            return dictionaryListRepository.findByZdid(did);
-        } else {
-            return dictionaryListRepository.findByZdidAndZxbz(did, zxbz);
-        }
 
-    }
 
-    @Override
-    public List<DictionarylistEntity> findByCtdm(Integer did, Integer ctdm, String zxbz) {
-        if (StringUtil.isNull(zxbz)) {
-            return dictionaryListRepository.findByCtdm(did, ctdm);
-        } else {
-            return dictionaryListRepository.findByCtdmAndZxbz(did, ctdm, zxbz);
-        }
-    }
-
-    @Override
-    public List<DictionarylistEntity> findByCtz(Integer did, String ctmc, String zxbz) {
-        if (StringUtil.isNull(zxbz)) {
-            return dictionaryListRepository.findByCtz(did, ctmc);
-        } else {
-            return dictionaryListRepository.findByCtzAndZxbz(did, ctmc, zxbz);
-        }
-    }
-
-    @Override
-    public List<DictionarylistEntity> findByCtdmAndCtz(Integer did, Integer ctdm, String ctmc, String zxbz) {
-        if (StringUtil.isNull(zxbz)) {
-            return dictionaryListRepository.findByCtdmAndCtz(did, ctdm, ctmc);
-        } else {
-            return dictionaryListRepository.findByCtdmAndCtzAndZxbz(did, ctdm, ctmc, zxbz);
-        }
-    }
 
     @Override
     public List<DictionarylistEntity> queryByEntity(DictionarylistEntity entity ,boolean isSort) {
@@ -88,12 +54,19 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
                       if(0!=entity.getZdid()){
                          predicates.add(criteriaBuilder.equal(root.get("zdid"),entity.getZdid()));
                        }
+                      if(0!=entity.getId()){
+                         predicates.add(criteriaBuilder.equal(root.get("id"),entity.getId()));
+                      }
                        if(StringUtil.isNotNull(entity.getZddm())){
                           predicates.add(criteriaBuilder.equal(root.get("zddm"),entity.getZddm()));
                        }
                        if(StringUtil.isNotNull(entity.getZdmc())){
                            predicates.add(criteriaBuilder.equal(root.get("zdmc"),entity.getZdmc()));
                        }
+                      if(StringUtil.isNotNull(entity.getCtlx())){
+                          predicates.add(criteriaBuilder.equal(root.get("ctlx"),entity.getCtlx()));
+                      }
+
                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         };
@@ -166,7 +139,22 @@ public class DictionaryListServiceImpl implements IdictionaryListService {
     return dictionaryListRepository.findById(id);
 }
 
-@Override
+    @Override
+    public List<DictionarylistEntity> queryCtxxByZdmc(String zdmc) {
+        return dictionaryListRepository.queryCtxxByZdmc(zdmc);
+    }
+
+    @Override
+    public List<DictionarylistEntity> queryCtxxByZddm(String zddm) {
+        return dictionaryListRepository.queryCtxxByZddm(zddm);
+    }
+
+    @Override
+    public List<DictionarylistEntity> queryCtxxByZdid(Integer zdid) {
+        return dictionaryListRepository.findByZdid(zdid);
+    }
+
+    @Override
 public String queryCtmcByZdmcAndCtdm(String zdmc, String ctdm) {
       if(StringUtil.isNull(zdmc)||StringUtil.isNull(ctdm)){
           return  "字典名称和词条代码不能为空";

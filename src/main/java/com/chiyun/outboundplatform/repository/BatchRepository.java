@@ -20,9 +20,14 @@ public interface BatchRepository extends JpaRepository<BatchEntity, Integer> {
      */
     List<BatchEntity> findAllByPcidOrderBySort(String pcid);
 
+    /**
+     * 查询所有批次id
+     */
+    @Query(value = "select distinct batch_id, batch_name from batch", nativeQuery = true)
+    List<Map<String, String>> findAllPcidAndPcmc();
 
     @Query(value = "SELECT batch_id pcid,batch_name pcmc FROM batch GROUP BY batch_id,batch_name ORDER BY batch_id DESC ", countQuery = "SELECT count(*) FROM (SELECT batch_id,batch_name FROM batch GROUP BY batch_id,batch_name ORDER BY batch_id DESC)a", nativeQuery = true)
-    Page<Map<String, Object>> findAllPcid(Pageable pageable);
+    Page<Map<String, Object>> findAllPcidByPage(Pageable pageable);
 
     /**
      * 查询所有的类型

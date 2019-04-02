@@ -10,13 +10,10 @@
       <mapping class="com.chiyun.outboundplatform.entity.BatchEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.CardmessageEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.CasepeoplemessageEntity"/>
-      <mapping class="com.chiyun.outboundplatform.entity.ColltypeEntity"/>
-      <mapping class="com.chiyun.outboundplatform.entity.DelaylvEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.EmpmessageEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.FieldcasebaseEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.LinkmanmessageEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.LoanmessageEntity"/>
-    <mapping class="com.chiyun.outboundplatform.entity.LoantypeEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.OthermessageEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.OutboundmessageEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.UsermessageEntity"/>

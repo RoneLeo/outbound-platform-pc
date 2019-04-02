@@ -171,6 +171,7 @@ public class ExcelImportUtils {
             baseentity.setAjlx(ajlx);
             baseentity.setAjzt(1);
             baseentity.setDrsj(new Date());
+            baseentity.setXszt(1);
 
             List<CardmessageEntity> cardmessageEntityList = new ArrayList<>();
             List<EmpmessageEntity> empmessageEntityList = new ArrayList<>();
@@ -211,7 +212,7 @@ public class ExcelImportUtils {
         int end = Integer.valueOf(map.get("end").toString());
         String table = map.get("name").toString();
         switch (table) {
-            case "默认":
+            case "基本信息":
                 for (int i = begin; i <= end; i++) {
                     Cell cell = datarow.getCell(i);
                     if (cell == null)

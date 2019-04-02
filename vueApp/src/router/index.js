@@ -7,7 +7,7 @@ export default new Router({
     routes: [
         {
             path: '/',
-            redirect: '/homePage'
+            redirect: '/login'
         },
         {
             path: '/login',
@@ -66,7 +66,7 @@ export default new Router({
                 {
                     path: '/templates',
                     name: 'templates',
-                    component: resolve => require(['../components/page/Templates.vue'], resolve),
+                    component: resolve => require(['../components/page/Template.vue'], resolve),
                     meta: { title: '模板批次',keepAlive: true}
                 },
                 ///**/

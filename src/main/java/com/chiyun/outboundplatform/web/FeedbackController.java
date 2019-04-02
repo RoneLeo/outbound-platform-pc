@@ -33,8 +33,6 @@ public class FeedbackController {
     @Resource
     private FeedbackRepository feedbackRepository;
     @Resource
-    private UserReposity userReposity;
-    @Resource
     private ItaskService itaskService;
 
     @ApiOperation("添加")
@@ -45,14 +43,8 @@ public class FeedbackController {
             return ApiResult.FAILURE("任务id不能为空");
         }
         TaskEntity taskEntity = itaskService.findById(entity.getRwid());
-        if (taskEntity == null) {
-            return ApiResult.FAILURE("该任务不存在");
-        }
         if (entity.getFkr() == null) {
             return ApiResult.FAILURE("反馈人不能为空");
-        }
-        if (userReposity.findById(entity.getFkr()) == null) {
-            return ApiResult.FAILURE("该业务员不存在");
         }
         entity.setFksj(new Date());
         entity.setFkzt(1);

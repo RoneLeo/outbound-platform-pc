@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by wazto on 2019/3/20.
@@ -34,6 +36,10 @@ public class BatchServiceImpl implements IbatchService {
     private OtherMessageRepository otherMessageRepository;
     @Resource
     private RemarkMsgRepository remarkMsgRepository;
+    @Resource
+    private BatchRecordRepository batchRecordRepository;
+    @Resource
+    private FieldCaseBaseRepository fieldCaseBaseRepository;
 
     @Override
     @Transactional
@@ -85,5 +91,41 @@ public class BatchServiceImpl implements IbatchService {
         }
         remarkMsgRepository.saveAll(remarkmsgEntityList);
         return true;
+    }
+
+    @Override
+    public Map countNum(String pcid) {
+        Map<String, Integer> map = new HashMap<>();
+        // 去重之后的
+        List<Integer> zdids = batchRecordRepository.findZdidsByPcid(pcid);
+        // 未去重的
+        List<Integer> zdidsAll = batchRecordRepository.findAllZdidsByPcid(pcid);
+        int flag1 = 0;
+        int flag2 = 0;
+        int flag3 = 0;
+        int flag4 = 0;
+        for (Integer zdid : zdids) {
+            int jcxxlx = fieldCaseBaseRepository.findById(zdid).get().getJcxxlx();
+            if (jcxxlx == 7) {
+                flag1 ++;
+            }
+            if (jcxxlx == 9) {
+                flag2 ++;
+            }
+        }
+        for (Integer zdid : zdidsAll) {
+            int jcxxlx = fieldCaseBaseRepository.findById(zdid).get().getJcxxlx();
+            if (jcxxlx == 7) {
+                flag3 ++;
+            }
+            if (jcxxlx == 9) {
+                flag4 ++;
+            }
+        }
+        int lxrNum = flag3/flag1;
+        int bzNum = flag4/flag2;
+        map.put("lxrNum", lxrNum);
+        map.put("bzNum", bzNum);
+        return map;
     }
 }

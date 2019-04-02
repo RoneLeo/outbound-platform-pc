@@ -14,33 +14,16 @@ import java.util.Map;
 
 public interface BatchRepository extends JpaRepository<BatchEntity, Integer> {
 
-
-    /**
-     * 通过批次id查询
-     */
-    List<BatchEntity> findAllByPcidOrderBySort(String pcid);
-
-    /**
-     * 查询所有批次id
-     */
-    @Query(value = "select distinct batch_id, batch_name from batch", nativeQuery = true)
-    List<Map<String, String>> findAllPcidAndPcmc();
-
-    @Query(value = "SELECT batch_id pcid,batch_name pcmc FROM batch GROUP BY batch_id,batch_name ORDER BY batch_id DESC ", countQuery = "SELECT count(*) FROM (SELECT batch_id,batch_name FROM batch GROUP BY batch_id,batch_name ORDER BY batch_id DESC)a", nativeQuery = true)
-    Page<Map<String, Object>> findAllPcidByPage(Pageable pageable);
-
     /**
      * 查询所有的类型
      */
-    @Query(value = "select fieldcasebase_id from batch where batch_id = ?1", nativeQuery = true)
-    List<Integer> findAllJczdidsByPcid(String pcid);
-
-    /**
-     * 查询所有的类型
-     */
-    @Query(value = "SELECT mc, id ,sl,count(*) lx from (SELECT name mc, type id ,fieldcasebase_id ,count(*) sl FROM basetype,batch,fieldcasebase WHERE batch_id = ?1 AND type = basetype AND fieldcasebase_id = fieldcasebase.id GROUP BY fieldcasebase_id ,type)ss GROUP BY mc, id,sl ORDER BY id ASC ", nativeQuery = true)
+    @Query(value = "SELECT mc, id ,sl,count(*) lx from (SELECT name mc, type id ,fieldcasebase_id ,count(*) sl FROM basetype,batch,fieldcasebase, batchrecord WHERE batch.batch_id = ?1 AND type = basetype AND fieldcasebase_id = fieldcasebase.id AND batch.batch_id = batchrecord.batch_id GROUP BY fieldcasebase_id ,type)ss GROUP BY mc, id,sl ORDER BY id ASC ", nativeQuery = true)
     List<Map<String, Object>> findAllByPcid(String pcid);
 
+    /**
+     *  通过模板id查询
+     */
+    BatchEntity findByPcid(String pcid);
 
     /**
      * 通过id删除

@@ -50,14 +50,6 @@ public class TaskController {
         if (ajid == null) {
             return ApiResult.FAILURE("案件id不能为空");
         }
-        CasebasemessageEntity casebasemessageEntity = icaseBaseService.findInfoById(ajid);
-        if (casebasemessageEntity == null) {
-            return ApiResult.FAILURE("该案件数据不存在");
-        }
-        // 判断任务方式
-        if (idictionaryListService.findById(entity.getRwfs()) == null) {
-            return ApiResult.FAILURE("该任务方式不存在");
-        }
         // 判断时间
         Date now = new Date();
         if (now.after(entity.getRwjzsj())) {
@@ -88,19 +80,8 @@ public class TaskController {
     @ApiOperation("修改")
     @RequestMapping("/update")
     public ApiResult<Object> update(TaskEntity entity) {
-        if (taskRepository.findById(entity.getId()) == null) {
-            return ApiResult.FAILURE("该数据不存在");
-        }
-        if (entity.getAjid() == null || entity.getRwfs() == null)
-        if (entity.getAjid() == null) {
-            return ApiResult.FAILURE("案件id不能为空");
-        }
-        if (icaseBaseService.findInfoById(entity.getAjid()) == null) {
-            return ApiResult.FAILURE("该案件数据不存在");
-        }
-        // 判断任务方式
-        if (idictionaryListService.findById(entity.getRwfs()) == null) {
-            return ApiResult.FAILURE("该任务方式不存在");
+        if (entity.getAjid() == null || entity.getRwfs() == null) {
+            return ApiResult.FAILURE("案件id和任务方式不能为空");
         }
         // 判断时间
         Date now = new Date();
@@ -109,9 +90,6 @@ public class TaskController {
         }
         // 如果执行人不为空，则修改任务状态
         if (entity.getRwzxr() != null) {
-            if (userReposity.findById(entity.getRwzxr()) == null) {
-                return ApiResult.FAILURE("该执行人不存在");
-            }
             // 修改状态
             if (entity.getRwzt() == null) {
                 entity.setRwzt(1);
@@ -134,9 +112,6 @@ public class TaskController {
     public ApiResult<Object> delete(Integer id) {
         if (id == null) {
             return ApiResult.FAILURE("id不能为空");
-        }
-        if (itaskService.findById(id) == null) {
-            return ApiResult.FAILURE("该数据不存在");
         }
         try {
             taskRepository.deleteById(id);
@@ -203,9 +178,6 @@ public class TaskController {
         if (ywyid == null || rwid == null) {
             return ApiResult.FAILURE("业务员id不能为空和任务id不能为空");
         }
-        if (userReposity.findById(ywyid) == null) {
-            return ApiResult.FAILURE("该业务员不存在");
-        }
         TaskEntity entity = itaskService.findById(rwid);
         if (entity == null) {
             return ApiResult.FAILURE("该任务不存在");
@@ -259,9 +231,6 @@ public class TaskController {
             return ApiResult.FAILURE("id和审核状态不能为空");
         }
         TaskEntity entity = itaskService.findById(id);
-        if (entity == null) {
-            return ApiResult.FAILURE("该任务不存在");
-        }
         entity.setRwzt(5);
         entity.setShzt(shzt);
         entity.setShbz(shbz);

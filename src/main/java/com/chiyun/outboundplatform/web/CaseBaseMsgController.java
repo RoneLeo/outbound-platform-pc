@@ -77,31 +77,12 @@ public class CaseBaseMsgController {
     @ApiOperation("修改")
     @RequestMapping("/update")
     public ApiResult<Object> update(CasebasemessageEntity entity) {
-        if (casebasemessageRepository.findById(entity.getId()) == null) {
-            return ApiResult.FAILURE("该案件不存在");
-        }
         if (entity.getPcid() == null || entity.getAjlx() == null || entity.getAjqy() == null || entity.getAjzt() == null) {
             return ApiResult.FAILURE("批次id、案件类型、案件区域、案件状态不能为空");
         }
-        // 批次id
-        if (batchRepository.findAllByPcid(entity.getPcid()).size() < 1) {
-            return ApiResult.FAILURE("该批次id不存在");
-        }
-        // 案件类型
-        if (idictionaryListService.findById(entity.getAjlx()) == null) {
-            return ApiResult.FAILURE("该案件类型不存在");
-        }
-        // 案件区域
-        if (idictionaryListService.findById(entity.getAjqy()) == null) {
-            return ApiResult.FAILURE("该区域不存在");
-        }
-        // 案件状态
-        if (idictionaryListService.findById(entity.getAjzt()) == null) {
-            return ApiResult.FAILURE("该状态不存在");
-        }
-
-        CasebasemessageEntity entity1 = casebasemessageRepository.save(entity);
-        if (entity1 == null) {
+        try {
+            casebasemessageRepository.save(entity);
+        } catch (Exception e) {
             return ApiResult.FAILURE("修改失败");
         }
         return ApiResult.SUCCESS("修改成功");
@@ -150,11 +131,12 @@ public class CaseBaseMsgController {
         if (!optional.isPresent()) {
             return ApiResult.FAILURE("该数据不存在");
         }
-        if (idictionaryListService.findById(ajzt) == null) {
-            return ApiResult.FAILURE("该案件状态不存在");
-        }
         optional.get().setAjzt(ajzt);
-        casebasemessageRepository.save(optional.get());
+        try {
+            casebasemessageRepository.save(optional.get());
+        } catch (Exception e) {
+            return ApiResult.FAILURE("修改失败");
+        }
         return ApiResult.SUCCESS("修改成功");
     }
 

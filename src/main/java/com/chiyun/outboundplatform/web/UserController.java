@@ -125,19 +125,13 @@ public class UserController {
                     return ApiResult.FAILURE("数据添加失败");
                 }
                 SessionUtil.put(String.valueOf(result1.getId()), sessionId);
-                session.setAttribute("id", result1.getId());
-                session.setAttribute("szxzqdm", result1.getSzxzqdm());
-                session.setAttribute("js", result1.getJs());
                 result.put("userEntity", result1);
             }
         }else{
             SessionUtil.put(String.valueOf(userEntity.getId()), sessionId);
-            session.setAttribute("id", userEntity.getId());
-            session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
-            session.setAttribute("js", userEntity.getJs());
             result.put("userEntity", userEntity);
         }
-        result.put("session", session);
+        result.put("sessionId", sessionId);
         return ApiResult.SUCCESS(result);
         }
 

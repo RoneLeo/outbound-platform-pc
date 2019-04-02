@@ -26,16 +26,19 @@
         data(){
             return {
                 tagsList: [],
-                collapse: false
+                collapse: false,
+                userInfo: {}
             }
         },
         components:{
             vHead, vSidebar, vTags
         },
         created(){
+
             bus.$on('collapse', msg => {
                 this.collapse = msg;
             });
+
             // 只有在标签页列表里的页面才使用keep-alive，即关闭标签之后就不保存到内存中了。
             bus.$on('tags', msg => {
                 let arr = [];
@@ -46,13 +49,25 @@
             });
 
             window.onstorage = (e) => {
-                console.log(e, e.key, e.key == 'uuid', e.oldValue != e.newValue)
-                if(e.key == 'uuid' && e.oldValue != e.newValue) {
+                 console.log('onstorage:', e);
+                let key = e.key;
+                let newValue = e.newValue;
+                let oldValue = e.oldValue;
+                //判断登录用户信息发生改变
+                if(key == 'userInfo' && (newValue != oldValue)){
                     this.$router.push('/homePage');
-                    window.location.reload();
+                    location.reload()
                 }
-            }
+            };
 
+            this.getUserInfo();
+        },
+        methods:{
+            getUserInfo(){
+                let userInfo = localStorage.getItem('userInfo');
+                this.userInfo = JSON.parse(userInfo);
+            },
         }
+
     }
 </script>

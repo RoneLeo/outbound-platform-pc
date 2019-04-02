@@ -28,6 +28,18 @@ export default new Router({
                     meta: { title: '系统首页', keepAlive: true }
                 },
                 {
+                    path: '/cases',
+                    name: 'cases',
+                    component: resolve => require(['../components/page/Cases.vue'], resolve),
+                    meta: { title: '案件管理',keepAlive: true}
+                },
+                {
+                    path: '/templates',
+                    name: 'templates',
+                    component: resolve => require(['../components/page/Templates.vue'], resolve),
+                    meta: { title: '模板批次',keepAlive: true}
+                },
+                {
                     path: '/dict',
                     name: 'dict',
                     component: resolve => require(['../components/page/Dict.vue'], resolve),
@@ -46,30 +58,21 @@ export default new Router({
                     meta: { title: '系统用户管理', keepAlive: true }
                 },
                 {
-                    path: '/wxUsers',
-                    name: 'wxUsers',
-                    component: resolve => require(['../components/page/WxUsers.vue'], resolve),
-                    meta: { title: '系统用户管理', keepAlive: true }
-                },
-                {
                     path: '/messages',
                     name: 'messages',
                     component: resolve => require(['../components/page/Messages.vue'], resolve),
                     meta: { title: '消息通知', keepAlive: true }
                 },
-                {
-                    path: '/cases',
-                    name: 'cases',
-                    component: resolve => require(['../components/page/Cases.vue'], resolve),
-                    meta: { title: '案件管理',keepAlive: true}
-                },
-                {
-                    path: '/templates',
-                    name: 'templates',
-                    component: resolve => require(['../components/page/Template.vue'], resolve),
-                    meta: { title: '模板批次',keepAlive: true}
-                },
+
                 ///**/
+
+
+
+
+
+
+
+
                 {
                     path: '/order',
                     name: 'order',

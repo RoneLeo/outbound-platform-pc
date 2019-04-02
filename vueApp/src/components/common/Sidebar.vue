@@ -44,6 +44,21 @@
                         title: '系统首页'
                     },
                     {
+                        icon: 'el-icon-lx-cascades',
+                        index: 'casesManage',
+                        title: '案件管理',
+                        subs: [
+                            {
+                                index: 'templates',
+                                title: '批次管理'
+                            },
+                            {
+                                index: 'cases',
+                                title: '案件信息'
+                            }
+                        ]
+                    },
+                    {
                         icon: 'el-icon-lx-copy',
                         index: 'dictMange',
                         title: '字典管理',
@@ -61,33 +76,10 @@
                     {
                         icon: 'el-icon-lx-people',
                         index: 'users',
-                        title: '用户管理',
-                        subs: [
-                            {
-                                index: 'users',
-                                title: '系统用户'
-                            },
-                            {
-                                index: 'wxUsers',
-                                title: '微信用户'
-                            }
-                        ]
+                        title: '用户管理'
                     },
-                    {
-                        icon: 'el-icon-lx-cascades',
-                        index: 'casesManage',
-                        title: '案件管理',
-                        subs: [
-                            {
-                                index: 'templates',
-                                title: '批次管理'
-                            },
-                            {
-                                index: 'cases',
-                                title: '案件信息'
-                            }
-                        ]
-                    },
+
+                    /*
                     {
                         icon: 'el-icon-lx-cascades',
                         index: 'table',
@@ -137,11 +129,11 @@
                         index: 'charts',
                         title: 'schart图表'
                     },
-                    /*{
+                    {
                         icon: 'el-icon-rank',
                         index: 'drag',
                         title: '拖拽列表'
-                    },*/
+                    },
                     {
                         icon: 'el-icon-lx-warn',
                         index: '6',
@@ -157,6 +149,7 @@
                             }
                         ]
                     }
+                    */
                 ]
             }
         },

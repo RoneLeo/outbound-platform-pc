@@ -82,7 +82,7 @@ public class UserController {
             SessionUtil.put(userid, sessionId);
         } else if (sessionValue.equals(sessionId)) {
             //已登录
-            return ApiResult.FAILURE("重复登录");
+            return ApiResult.REPEATLOGIN();
         }
         session.setAttribute("yhm", userEntity.getYhm());
         session.setAttribute("id", userEntity.getId());

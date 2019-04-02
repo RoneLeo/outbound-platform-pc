@@ -17,14 +17,14 @@ public interface UserReposity extends CrudRepository<UserEntity, Long> {
 //    List<UserEntity> findAll();
 
     //Page<UserEntity> findAllByOrderByCjsjDesc(Pageable pageable);
-    Page<UserEntity> findByZtInAndLx(List<Integer> ztlist, int lx, Pageable pageable);
+    Page<UserEntity> findByZtIn(List<Integer> ztlist, Pageable pageable);
 
 
    // @Query(value = "select * from user where role_id in ?1 and area_code = ?2  order by create_time desc", nativeQuery = true)
     //Page<UserEntity> findByJsInAndSzxzqdm(List<Integer> js, String szxzqdm, Pageable pageable);
    //Page<UserEntity> findByJsInAndSzxzqdm(int lx, List<String> ztList, int[] js, String szxzqdm, Pageable pageable);
 
-    Page<UserEntity> findByJsInAndZtInAndLxAndSzxzqdm(int[] js, List<Integer> ztList, int lx, String szxzqdm, Pageable pageable);
+    Page<UserEntity> findByJsInAndZtInAndSzxzqdm(int[] js, List<Integer> ztList, String szxzqdm, Pageable pageable);
 
 
     UserEntity findByOpenid(String openid);

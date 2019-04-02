@@ -47,7 +47,7 @@ public class UserController {
     @RequestMapping("/login")
     public ApiResult<Object> login(@RequestParam @ApiParam(value = "用户名") String yhm,
                                    @RequestParam @ApiParam(value = "密码") String mm,
-                                   HttpServletRequest request, HttpServletResponse response) throws Exception {
+                                   HttpServletRequest request) throws Exception {
         System.out.print("用戶名：" + yhm);
         if (StringUtil.isNull(yhm) || StringUtil.isNull(mm)) {
             return ApiResult.FAILURE("用户名或密码不能为空");
@@ -160,31 +160,24 @@ public class UserController {
         if (!"1".equals(js) && !"3".equals(js)) {
             return ApiResult.FAILURE("没有权限添加用户");
         }
+        if(userEntity.getYhm()==null){
+            return ApiResult.FAILURE("用户名为空");
+        }
         //判断用户名是否重复
         UserEntity oldUserEntity = userReposity.findByYhm(userEntity.getYhm());
         if (oldUserEntity != null) {
             return ApiResult.FAILURE("该用户名已存在！");
         }
         /* 添加用户 */
-        UserEntity result = null;
         userEntity.setCjsj(new Date());
         userEntity.setZt(0);
-        //判断添加的用户为什么网站用户还是微信小程序用户
-        if(0==userEntity.getLx()){
-            //网站用户
             userEntity.setMm(MD5Util.MD5("666666"));
-            result = userReposity.save(userEntity);
-        }else if(1==userEntity.getLx()){
-            //微信小程序用户,
-            result = userReposity.save(userEntity);
-            String sqm = CodeUtil.toSerialCode(result.getId());
-            result.setSqm(sqm);
-            result = userReposity.save(result);
-        } else {
-            return ApiResult.FAILURE("添加用户类型错误");
-        }
+            UserEntity userEntity1 = userReposity.save(userEntity);
+            String sqm = CodeUtil.toSerialCode(userEntity1.getId());
+            userEntity1.setSqm(sqm);
+            UserEntity result = userReposity.save(userEntity1);
         if (result == null) {
-            return ApiResult.FAILURE("添加失败");
+            return ApiResult.FAILURE("授权码添加失败");
         }
         return ApiResult.SUCCESS(result);
     }
@@ -223,6 +216,7 @@ public class UserController {
         if (oldUserEntity == null) {
             return ApiResult.FAILURE("没有该用户的信息");
         }
+        userEntity.setMm(oldUserEntity.getMm());
         userEntity.setCjsj(oldUserEntity.getCjsj());
         UserEntity result = userReposity.save(userEntity);
         if (result == null) {
@@ -256,8 +250,7 @@ public class UserController {
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "查询所有用户")
     @RequestMapping("/findAll")
-    public ApiResult<Object> findAll(@RequestParam @ApiParam(value = "类型（0-系统用户、1-小程序用户）", required = true) int lx,
-                                     @RequestParam(required = false) @ApiParam(value = "状态（0-启用用户，1-注销用户,不传显示全部）") Integer zt,
+    public ApiResult<Object> findAll(@RequestParam(required = false) @ApiParam(value = "状态（0-启用用户，1-注销用户,不传显示全部）") Integer zt,
                                      @RequestParam int page, @RequestParam int pagesize) {
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
@@ -276,11 +269,11 @@ public class UserController {
             ztList.add(zt);
         }
         if ("1".equals(js)) {
-            result = userReposity.findByZtInAndLx(ztList, lx, pageable);
+            result = userReposity.findByZtIn(ztList, pageable);
         } else if ("2".equals(js)) {
             //List<Integer> a=new ArrayList<>();
             int jsArray[] = {2, 4};
-            result = userReposity.findByJsInAndZtInAndLxAndSzxzqdm(jsArray, ztList, lx, session.getAttribute("szxzqdm").toString(), pageable);
+            result = userReposity.findByJsInAndZtInAndSzxzqdm(jsArray, ztList, session.getAttribute("szxzqdm").toString(), pageable);
         } else {
             return ApiResult.FAILURE("没有权限查看用户");
         }

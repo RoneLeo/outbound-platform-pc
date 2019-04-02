@@ -115,6 +115,7 @@ public class DictionaryListController {
         entity.setZxbz(zxbz);
         entity.setCtdm(0);
         entity.setZdid(0);
+        entity.setId(0);
         List<DictionarylistEntity> list = idictionaryListService.queryByEntity(entity, false);
         return ApiResult.SUCCESS(list);
     }
@@ -128,13 +129,14 @@ public class DictionaryListController {
     public ApiResult<Object> findDictListByZddm(@RequestParam String zddm,
                                                 @RequestParam(required = false) String zxbz) {
         if (StringUtil.isNull(zddm)) {
-            return ApiResult.FAILURE("字典名称不能为空！！");
+            return ApiResult.FAILURE("字典d代码不能为空！！");
         }
         DictionarylistEntity entity = new DictionarylistEntity();
         entity.setZddm(zddm);
         entity.setZxbz(zxbz);
         entity.setCtdm(0);
         entity.setZdid(0);
+        entity.setId(0);
         List<DictionarylistEntity> list = idictionaryListService.queryByEntity(entity, false);
         return ApiResult.SUCCESS(list);
     }

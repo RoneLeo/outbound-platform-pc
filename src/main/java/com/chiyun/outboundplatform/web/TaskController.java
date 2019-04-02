@@ -6,7 +6,6 @@ import com.chiyun.outboundplatform.entity.CasebasemessageEntity;
 import com.chiyun.outboundplatform.entity.TaskEntity;
 import com.chiyun.outboundplatform.entity.UserEntity;
 import com.chiyun.outboundplatform.repository.TaskRepository;
-import com.chiyun.outboundplatform.repository.TaskstateRepository;
 import com.chiyun.outboundplatform.repository.UserReposity;
 import com.chiyun.outboundplatform.service.IcaseBaseService;
 import com.chiyun.outboundplatform.service.IdictionaryListService;
@@ -40,8 +39,6 @@ public class TaskController {
     private IdictionaryListService idictionaryListService;
     @Resource
     private UserReposity userReposity;
-    @Resource
-    private TaskstateRepository taskstateRepository;
     @Resource
     private TaskRepository taskRepository;
 
@@ -91,7 +88,7 @@ public class TaskController {
     @ApiOperation("修改")
     @RequestMapping("/update")
     public ApiResult<Object> update(TaskEntity entity) {
-        if (taskstateRepository.findById(entity.getId()) == null) {
+        if (taskRepository.findById(entity.getId()) == null) {
             return ApiResult.FAILURE("该数据不存在");
         }
         if (entity.getAjid() == null || entity.getRwfs() == null)
@@ -278,9 +275,4 @@ public class TaskController {
     }
 
 
-    @ApiOperation("查询所有任务状态")
-    @RequestMapping("/findAllRwzt")
-    public ApiResult<Object> findAllRwzt() {
-        return ApiResult.SUCCESS(taskstateRepository.findAll());
-    }
 }

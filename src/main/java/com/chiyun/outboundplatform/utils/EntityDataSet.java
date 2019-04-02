@@ -46,7 +46,7 @@ public class EntityDataSet {
             case "卡号(隐藏后四位)":
                 card.setKhychsw(data);
                 break;
-            case "卡号(隐藏中四位":
+            case "卡号(隐藏中四位)":
                 card.setKhyczsw(data);
                 break;
             case "卡号(隐藏中六位)":

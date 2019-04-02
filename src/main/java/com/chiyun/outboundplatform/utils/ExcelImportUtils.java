@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.chiyun.outboundplatform.common.ApiResult;
 import com.chiyun.outboundplatform.entity.*;
 import com.chiyun.outboundplatform.service.IbatchService;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -25,6 +26,8 @@ public class ExcelImportUtils {
     static SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 
     static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+    static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 
     // @描述：是否是2003的excel，返回true是2003
     public static boolean isExcel2003(String filePath) {
@@ -217,6 +220,7 @@ public class ExcelImportUtils {
                     Cell cell = datarow.getCell(i);
                     if (cell == null)
                         continue;
+
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     String str = listMap.get(i);//目标字段名称
                     String datastr = cell.getStringCellValue();//数据内容
@@ -258,9 +262,19 @@ public class ExcelImportUtils {
                     Cell cell = datarow.getCell(i);
                     if (cell == null)
                         continue;
+                    String datastr = "";
+                    if (cell.getCellType() == 0) {
+                        if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                            datastr = sdf1.format(cell.getDateCellValue());
+                            System.out.println("value:" + datastr);
+                            continue;
+                        }
+                    } else {
+                        datastr = cell.getStringCellValue();//数据内容
+                    }
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     String str = listMap.get(i);//目标字段名称
-                    String datastr = cell.getStringCellValue();//数据内容
+//                    String
                     EntityDataSet.loandataset(datastr, str, entity);
                 }
                 if (!StringUtil.checkObjAllFieldsIsNull(entity))

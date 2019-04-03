@@ -164,7 +164,7 @@ public class TaskController {
             return ApiResult.FAILURE("该业务员不存在");
         }
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
-        Page<TaskEntity> list = itaskService.findAllByYwyqy(ywyid, pageable);
+        Page<TaskEntity> list = itaskService.findAllByYwyqy(Integer.parseInt(entity.getSzxzqdm()), pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 

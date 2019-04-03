@@ -102,6 +102,10 @@ public class BatchController {
             @ApiImplicitParam(name = "zdids", value = "所选字段id组合，英文','分隔", dataType = "String", paramType = "query")
     })
     public ApiResult<Object> update(String pcid, String pcmc, String zdids) {
+        BatchEntity batchEntity = batchRepository.findByPcid(pcid);
+        if (batchEntity == null) {
+            return ApiResult.FAILURE("该模板不存在");
+        }
         // 循环字段ids，查询选取保存
         String[] str = zdids.split(",");
         List<String> zdidslist = Arrays.asList(str);
@@ -133,7 +137,7 @@ public class BatchController {
                 return ApiResult.FAILURE("添加失败");
             }
         }
-        BatchEntity batchEntity = batchRepository.findByPcid(pcid);
+
         batchEntity.setPcmc(pcmc);
         try {
             batchRepository.save(batchEntity);

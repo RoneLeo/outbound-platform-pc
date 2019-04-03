@@ -160,25 +160,19 @@ public class BatchController {
     }
 
     @MustLogin(rolerequired = {1, 2})
-    @ApiOperation("查询所有")
-    @RequestMapping("/findAll")
-    public ApiResult<Object> findAll(String pcid) {
+    @ApiOperation("通过模板id查询所有字段组合")
+    @RequestMapping("/findAllZdzh")
+    public ApiResult<Object> findAllZdzh(String pcid) {
         if (StringUtil.isNull(pcid)) {
             return ApiResult.FAILURE("模板id不能为空");
         }
-        Map<String, Object> map1 = batchRepository.findAllByPcidMap(pcid);
-        Map<String, Object> map = new HashMap<>();
-        map.putAll(map1);
-        List<BatchrecordEntity> list = batchRecordRepository.findAllByPcidOrderBySort(pcid);
-        map.put("zdlb", list);
-        return ApiPageResult.SUCCESS(map);
+        List<Integer> list = batchRecordRepository.findAllZdidsByPcid(pcid);
+        return ApiPageResult.SUCCESS(list);
     }
 
-
-
     @MustLogin(rolerequired = {1, 2})
-    @ApiOperation("查询所有模板id")
-    @RequestMapping("/findAllPcid")
+    @ApiOperation("查询所有模板")
+    @RequestMapping("/findAll")
     public ApiResult<Object> findAll(int page, int pagesize) {
         Pageable pageable = PageRequest.of(page - 1, pagesize);
         Page<BatchEntity> list = batchRepository.findAll(pageable);

@@ -30,6 +30,7 @@
       <mapping class="com.chiyun.outboundplatform.entity.TaskEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.TaskstateEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.FeedbackEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.LogEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.BatchrecordEntity"/>
 
 

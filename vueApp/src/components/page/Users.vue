@@ -33,16 +33,22 @@
                             <el-button v-if="scope.row.zt==0"  type="text" size="mini" @click="handleCancel(scope.$index, scope.row)" style="color: #c2970e;">注销</el-button>
                         </span>
                         <span v-else>
-                             <el-button v-if="scope.row.zt==1"  type="text" size="mini" @click="handleActive(scope.$index, scope.row)" style="color: #00ab00;">激活</el-button>
+                             <el-button v-if="scope.row.zt==1"  type="text" size="mini" @click="handleCancel(scope.$index, scope.row)" style="color: #00ab00;">激活</el-button>
                             <el-button v-if="scope.row.zt==1" type="text" size="mini" @click="handleDel(scope.$index, scope.row)" style="color: #ff0000;">删除</el-button>
                         </span>
                     </template>
                 </el-table-column>
             </el-table>
-            <div class="block">
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                               :current-page.sync="currentPage" :page-sizes="[5, 10, 20, 30, 50]" :page-size="pageSize"
-                               layout="sizes, prev, pager, next" :total="total">
+            <div class="pagination">
+                <el-pagination
+                        :current-page.sync="currentPage"
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        background
+                        :page-sizes="[15, 20, 50]"
+                        :page-size="pageSize"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="total">
                 </el-pagination>
             </div>
 
@@ -128,14 +134,13 @@
                 addFormVisible: false,
                 addForm: {},
                 currentPage: 1,
-                pageSize: 5,
+                pageSize: 15,
                 total: 0,
                 roles: [],
                 caseArea: []
             }
         },
         created(){
-
             this.getData();
             this.getDictData();
 
@@ -175,7 +180,7 @@
                 return util.dictParse(row.js,this.roles);
             },
             getData() {
-                this.$axios.post('/user/findAll', {lx:0, zt: this.userType, page: this.currentPage, pagesize: this.pageSize}).then((res) => {
+                this.$axios.post('/user/findAll', {zt: this.userType, page: this.currentPage, pagesize: this.pageSize}).then((res) => {
                     if(res.resCode == 200){
                         this.userData = res.data;
                         this.total = res.counts;
@@ -197,7 +202,7 @@
 
             },
 
-            //del
+            //删除
             handleDel: function (index, row) {
                 this.$confirm('此操作将永久删除该账号, 是否继续?', '提示', {
                     confirmButtonText: '确定',
@@ -220,32 +225,30 @@
                     });
                 });
             },
-            //注销
+            //注销,激活
             handleCancel(index, row) {
-                this.$confirm('此操作将注销该账号, 是否继续?', '提示', {
+                let zt = row.zt; //0为激活状态,1位注销状态
+                let text = '注销';
+                let zxbz = 1;
+                if(zt == 1){
+                    text = '激活';
+                    zxbz = 0;
+                }
+                this.$confirm('此操作将' + text+ '该账号, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.$axios.post('/user/cancelAccount', {id: row.id}).then(res => {
+                    this.$axios.post('/user/cancelAccount', {id: row.id,zt: zxbz}).then(res => {
                         if(res.resCode == 200) {
                             this.getData();
                             this.$message({
                                 type: 'success',
-                                message: '已注销!'
+                                message: text + '成功!'
                             });
                         }
                     })
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '已取消'
-                    });
-                });
-            },
-            //激活
-            handleActive(){
-
+                }).catch(() => {});
             },
             handleSizeChange(val) {
                 this.pageSize = val;

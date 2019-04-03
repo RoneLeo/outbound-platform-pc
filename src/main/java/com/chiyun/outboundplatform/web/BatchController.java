@@ -166,8 +166,12 @@ public class BatchController {
         if (StringUtil.isNull(pcid)) {
             return ApiResult.FAILURE("模板id不能为空");
         }
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Integer> map1 = ibatchService.countNum(pcid);
+        map.putAll(map1);
         List<Integer> list = batchRecordRepository.findAllZdidsByPcid(pcid);
-        return ApiPageResult.SUCCESS(list);
+        map.put("zdids", list);
+        return ApiPageResult.SUCCESS(map);
     }
 
     @MustLogin(rolerequired = {1, 2})
@@ -177,16 +181,6 @@ public class BatchController {
         Pageable pageable = PageRequest.of(page - 1, pagesize);
         Page<BatchEntity> list = batchRepository.findAll(pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
-    }
-
-    @ApiOperation("统计联系人及备注数目")
-    @RequestMapping("/countNum")
-    public ApiResult<Object> countNum(String pcid) {
-        if (StringUtil.isNull(pcid)) {
-            ApiResult.FAILURE("模板id不能为空");
-        }
-        Map<String, Integer> map = ibatchService.countNum(pcid);
-        return ApiResult.SUCCESS(map);
     }
 
     @ApiOperation("导出模板")

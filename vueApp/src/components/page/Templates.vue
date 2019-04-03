@@ -30,7 +30,7 @@
                 </el-pagination>
             </div>
 
-            <el-dialog id="fieldDialog" title="模板字段信息" width="60%" :visible.sync="addFormVisible" :close-on-click-modal="false" @closed="dialogClose">
+            <el-dialog id="fieldDialog" :title="fieldDialogTitle" width="60%" :visible.sync="addFormVisible" :close-on-click-modal="false" @closed="dialogClose">
                 <el-form class="baseCaseForm" :model="dataForm" label-width="120px" ref="dataForm">
                     <el-form-item label="批次名称" prop="pcmc"
                                   :rules="[{ required: true, message: '输入不能为空', trigger: 'blur' }]">
@@ -43,7 +43,7 @@
                                 <el-checkbox v-for="item in fieldCases[index]"  size="mini" border :label="item.id" :key="item.id">{{item.name}}</el-checkbox>
                             </el-checkbox-group>
                             <span class="">
-                                联系人个数<el-input-number v-model="lxrNum" :min="1" :max="10" size="mini" label="描述文字" style="margin-left: 10px"></el-input-number>
+                                联系人个数<el-input-number v-model="lxrNum" :min="1" :max="10" size="mini"  style="margin-left: 10px"></el-input-number>
                             </span>
                         </template>
                         <!--备注信息-->
@@ -51,7 +51,7 @@
                             <el-checkbox-group v-model="zdidArr[index]">
                                 <el-checkbox v-for="item in fieldCases[index]"  size="mini" border  :label="item.id" :key="item.id">{{item.name}}</el-checkbox>
                             </el-checkbox-group>
-                            备注个数<el-input-number v-model="bzNum" :min="1" :max="10" size="mini" label="描述文字" style="margin-left: 10px"></el-input-number>
+                            备注个数<el-input-number v-model="bzNum" :min="1" :max="10" size="mini"  style="margin-left: 10px"></el-input-number>
                         </template>
                         <!--other-->
                         <template v-else>
@@ -74,6 +74,7 @@
     export default {
         data() {
             return {
+                fieldDialogTitle: '添加模板信息',
                 checked: true,
                 baseType:[],
                 fieldCases: [],
@@ -85,7 +86,7 @@
                 pageSize: 5,
                 total: 0,
                 zdidArr: [],
-                zdidEditArr: [],
+                zdidAddArr: [],
                 lxrNum: 1,
                 bzNum: 1
             }
@@ -105,6 +106,7 @@
                             this.zdidArr = [];
                             data.forEach(item => {
                                 this.zdidArr.push([]);
+                                this.zdidAddArr.push([]);
                                 this.baseType.push(item.name);
                             });
                         }
@@ -139,54 +141,60 @@
                 this.dataForm = {};
                 this.lxrNum = 1;
                 this.bzNum = 1;
-                this.zdidEditArr = [];
+                this.zdidArr = this.zdidAddArr;
+                this.fieldDialogTitle = '添加模板信息';
             },
             handleEdit: function (index, row) {
                 this.dataForm = Object.assign({}, row);
-                this.zdidEditArr = [];
+                this.fieldDialogTitle = row.pcmc + ' 编辑';
+                this.zdidArr = [];
+                let loading = this.$loading({text: '正在获取模板字段信息,请稍后...'});
                 this.$axios.post('batch/findAllZdzh', {pcid: row.pcid}).then( (res) => {
+                    loading.close();
                     let data = res.data;
-                    this.zdidEditArr = data.zdids;
+                    for(let k in data){
+                        let zdidArr2 = data[k];
+                        if(zdidArr2.length){
+                            zdidArr2 = [zdidArr2[0]]; //防止多个相同字段不停叠加!
+                        }
+                        this.zdidArr[k] = zdidArr2;
+                    }
                     this.lxrNum = data.lxrNum;
                     this.bzNum = data.bzNum;
                     this.addFormVisible = true;
                 });
             },
-            //判断字段选中
-            isFieldChecked(id){
-                let res = this.zdidEditArr.indexOf(id);
-                return res >= 0;
-            },
-            dialogClose(){
-                this.zdidEditArr = [];
-            },
+            dialogClose(){},
             //保存数据
             saveData() {
                 this.$refs.dataForm.validate((valid) => {
                     if (valid) {
-                        console.log(this.dataForm, this.zdidArr)
+                        console.log(this.dataForm, this.zdidArr,this.lxrNum,this.bzNum);
                         let zdids = [];
+                        let lxrNum = this.lxrNum;
+                        let bzNum = this.bzNum;
+                        console.log(lxrNum,bzNum);
                         this.zdidArr.forEach((arr,index) => {
                             //联系人
                             if(index == 7) {  //联系人信息的时候，判断联系人数量
-                                for(let i= 0; i< this.lxrNum; i++) {
+                                for(let i= 0; i< lxrNum; i++) {
                                     arr.forEach(item => {
                                         zdids.push(item)
-                                    })
+                                    });
                                 }
                             }
                             //备注
-                            if(index == 9) {  //联系人信息的时候，判断联系人数量
-                                for(let i= 0; i< this.bzNum; i++) {
+                            else if(index == 9) {  //联系人信息的时候，判断联系人数量
+                                for(let j= 0; j< bzNum; j++) {
                                     arr.forEach(item => {
                                         zdids.push(item)
-                                    })
+                                    });
                                 }
                             }
                             else {
                                 arr.forEach(item => {
                                     zdids.push(item)
-                                })
+                                });
                             }
                         });
                         let url = 'batch/add'; //添加
@@ -196,16 +204,12 @@
                         };
                         if(this.dataForm.id) {
                             url = 'batch/update';
-                            param.pcid = this.dataForm.id;
+                            param.pcid = this.dataForm.pcid;
                         }
                         this.$axios.post(url, param).then( (res) => {
-                            if(res.resCode == 200){
-                                this.addFormVisible = false;
-                                this.getBatchData();
-                                this.$message.success('保存成功!');
-                            }else{
-                                this.$message.error(res.resMsg);
-                            }
+                            this.addFormVisible = false;
+                            this.getBatchData();
+                            this.$message.success('保存成功!');
                         });
                     } else {
                         return false;

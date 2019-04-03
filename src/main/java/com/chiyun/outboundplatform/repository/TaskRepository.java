@@ -22,6 +22,11 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     Page<TaskEntity> findAllByRwzt(Integer rwzt, Pageable pageable);
 
 
+    /**
+     *  根据案件id修改任务状态：注销
+     */
+    @Query(value = "update task set task_state = '8' where case_id = ?1", nativeQuery = true)
+    void resetByAjid(Integer ajid);
 
     /**
      * 通过案件id查询任务

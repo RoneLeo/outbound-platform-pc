@@ -44,6 +44,8 @@ public class CaseBaseServiceImpl implements IcaseBaseService {
     private RemarkMsgRepository remarkMsgRepository;
     @Resource
     private UserMessageRepository userMessageRepository;
+    @Resource
+    private TaskRepository taskRepository;
 
     @Override
     public CasebasemessageAllEntity findAllInfoById(Integer id) {
@@ -57,12 +59,12 @@ public class CaseBaseServiceImpl implements IcaseBaseService {
 
     @Override
     public Page<CasebasemessageEntity> findAllByPage(Pageable pageable) {
-        return casebasemessageRepository.findAll(pageable);
+        return casebasemessageRepository.findAllByXszt(1, pageable);
     }
 
     @Override
     public Page<CasebasemessageEntity> findAllByPcidAndPage(String pcid, Pageable pageable) {
-        return casebasemessageRepository.findAllByPcid(pcid, pageable);
+        return casebasemessageRepository.findAllByPcidAndXszt(pcid, 1, pageable);
     }
 
     @Override
@@ -106,6 +108,8 @@ public class CaseBaseServiceImpl implements IcaseBaseService {
         remarkMsgRepository.setXszt(id);
         // 对象信息
         userMessageRepository.setXszt(id);
+        // 注销任务
+        taskRepository.resetByAjid(id);
         // 将案件显示状态修改：不显示
         casebasemessageRepository.updateXszt(id);
         return true;

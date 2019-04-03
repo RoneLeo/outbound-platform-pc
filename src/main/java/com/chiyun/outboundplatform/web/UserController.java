@@ -42,6 +42,8 @@ public class UserController {
     private static final String SECRET = "b2ed2f764ac0467733840008eda01954";
     @Resource
     private UserReposity userReposity;
+    @Resource
+    private LogController logController;
 
     @ApiOperation(value = "登录")
     @RequestMapping("/login")
@@ -84,16 +86,20 @@ public class UserController {
             //已登录
             return ApiResult.REPEATLOGIN();
         }
+        //给session存数据
         session.setAttribute("yhm", userEntity.getYhm());
         session.setAttribute("id", userEntity.getId());
         session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
         session.setAttribute("js", userEntity.getJs());
+        session.setAttribute("mz", userEntity.getMz());
+        //记录日志
+        logController.add(String.valueOf(session.getAttribute("mz")),"网站登录");
         return ApiResult.SUCCESS(userEntity);
     }
 
     @ApiOperation(value = "微信小程序登录")
     @RequestMapping("/weLogin")
-    public ApiResult<Object> weLogin(@ApiParam(value = "授权码") String sqm, String encryptedData, String iv, String code, HttpServletRequest request, HttpServletResponse response) {
+    public ApiResult<Object> weLogin(@ApiParam(value = "授权码") String sqm, String encryptedData, String iv, String code, HttpServletRequest request, HttpServletResponse response) throws Exception{
         Map<String, Object> map = weChatLogin(code, encryptedData, iv);
         if (map.get("status").toString() == "0") {
             return ApiResult.FAILURE(map.get("msg").toString());
@@ -132,6 +138,8 @@ public class UserController {
                 }
                 SessionUtil.put(String.valueOf(result1.getId()), sessionId);
                 session.setAttribute("id",userEntity.getId());
+                session.setAttribute("mz", userEntity.getMz());
+                session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
                 result.put("userEntity", result1);
             }
         }else{
@@ -140,9 +148,12 @@ public class UserController {
             }
             SessionUtil.put(String.valueOf(userEntity.getId()), sessionId);
             session.setAttribute("id",userEntity.getId());
+            session.setAttribute("mz", userEntity.getMz());
+            session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
             result.put("userInfo", userEntity);
         }
         result.put("sessionId", sessionId);
+        logController.add(String.valueOf(session.getAttribute("mz")),"微信小程序登录");
         return ApiResult.SUCCESS(result);
         }
 
@@ -179,13 +190,14 @@ public class UserController {
         if (result == null) {
             return ApiResult.FAILURE("授权码添加失败");
         }
+        logController.add(String.valueOf(session.getAttribute("mz")),"添加用户");
         return ApiResult.SUCCESS(result);
     }
 
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "删除用户")
     @RequestMapping("/delete")
-    public ApiResult<Object> delete(int id) {
+    public ApiResult<Object> delete(int id) throws Exception{
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
         ApiResult<Object> isLogin = SessionUtil.isLogin(session);
@@ -199,13 +211,14 @@ public class UserController {
         if (result == 0) {
             return ApiResult.FAILURE("删除失败");
         }
+        logController.add(String.valueOf(session.getAttribute("mz")),"删除用户");
         return ApiResult.SUCCESS("删除成功");
     }
 
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "修改用户")
     @RequestMapping("/update")
-    public ApiResult<Object> update(UserEntity userEntity) {
+    public ApiResult<Object> update(UserEntity userEntity) throws Exception{
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
         ApiResult<Object> isLogin = SessionUtil.isLogin(session);
@@ -222,6 +235,7 @@ public class UserController {
         if (result == null) {
             return ApiResult.FAILURE("修改失败");
         }
+        logController.add(String.valueOf(session.getAttribute("mz")),"修改用户信息");
         return ApiResult.SUCCESS(result);
     }
 
@@ -243,6 +257,7 @@ public class UserController {
         if(result==null){
             return ApiResult.FAILURE("修改失败");
         }
+        logController.add(String.valueOf(session.getAttribute("mz")),"修改密码");
         return ApiResult.SUCCESS(result);
     }
 
@@ -251,7 +266,7 @@ public class UserController {
     @ApiOperation(value = "查询所有用户")
     @RequestMapping("/findAll")
     public ApiResult<Object> findAll(@RequestParam(required = false) @ApiParam(value = "状态（0-启用用户，1-注销用户,不传显示全部）") Integer zt,
-                                     @RequestParam int page, @RequestParam int pagesize) {
+                                     @RequestParam int page, @RequestParam int pagesize) throws Exception{
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
         ApiResult<Object> isLogin = SessionUtil.isLogin(session);
@@ -277,6 +292,7 @@ public class UserController {
         } else {
             return ApiResult.FAILURE("没有权限查看用户");
         }
+        logController.add(String.valueOf(session.getAttribute("mz")),"查询用户");
         return ApiPageResult.SUCCESS(result.getContent(), page, pagesize, result.getTotalElements(), result.getTotalPages());
     }
 
@@ -289,6 +305,7 @@ public class UserController {
         }
         //清掉session
         SessionUtil.put(String.valueOf(id), null);
+        logController.add(oldUserEntity.getMz(),"退出登录");
         return ApiResult.SUCCESS();
     }
 
@@ -296,7 +313,7 @@ public class UserController {
     @ApiOperation(value = "注销帐号")
     @RequestMapping("/cancelAccount")
     public ApiResult<Object> cancelAccount(int id,
-                                           @RequestParam @ApiParam(value = "类型（0-启动用户、1-注销用户）", required = true)int zt) {
+                                           @RequestParam @ApiParam(value = "类型（0-启动用户、1-注销用户）", required = true)int zt) throws Exception{
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
         ApiResult<Object> isLogin = SessionUtil.isLogin(session);
@@ -309,6 +326,7 @@ public class UserController {
         //清掉session
         SessionUtil.put(String.valueOf(id), null);
         userReposity.save(oldUserEntity);
+        logController.add(String.valueOf(session.getAttribute("mz")),"注销用户");
         return ApiResult.SUCCESS();
     }
 

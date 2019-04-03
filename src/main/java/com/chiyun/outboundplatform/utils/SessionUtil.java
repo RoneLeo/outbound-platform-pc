@@ -27,7 +27,7 @@ public class SessionUtil {
             return ApiResult.SEIZE();//该帐号在其他地方登录
         } else if (sessionValue.equals(sessionId)) {
             //已登录
-            return ApiResult.SUCCESS();//已登录
+            return ApiResult.REPEATLOGIN();//已登录
         }
         return ApiResult.FAILURE("其他情况");//其他情况
     }

@@ -38,24 +38,24 @@ public class TaskServiceImpl implements ItaskService {
 
     @Override
     public Page<TaskEntity> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj, Integer rwfs,
-                                               Integer rwzt, Integer shzt, Integer rwzxr, Date beginWcsj, Date endWcsj, Pageable pageable) {
+                                               Integer rwzt, Integer rwzxr, Date beginWcsj, Date endWcsj, Pageable pageable) {
         if (StringUtil.isNull(rwmc)) {
             rwmc = "%%";
         } else {
             rwmc = "%" + rwmc + "%";
         }
         if (beginJzsj == null && endJzsj == null && beginWcsj == null && endWcsj == null) {
-            return taskRepository.findAllByCondition(rwmc, rwfs, rwzt, shzt, rwzxr, pageable);
+            return taskRepository.findAllByCondition(rwmc, rwfs, rwzt, rwzxr, pageable);
         } else {
             if ((beginJzsj != null || endJzsj != null) && (beginWcsj == null && endWcsj == null)) {
                 beginJzsj = getTime(beginJzsj, endJzsj, 1, 1);
                 endJzsj = getTime(beginJzsj, endJzsj, 1, 2);
                 return taskRepository.findAllByConditionAndRwjzsjBetween(rwmc, beginJzsj, endJzsj,
-                        rwfs, rwzt, shzt, rwzxr, pageable);
+                        rwfs, rwzt, rwzxr, pageable);
             } else if ((beginJzsj == null && endJzsj == null) && (beginWcsj != null || endWcsj != null)) {
                 beginWcsj = getTime(beginWcsj, endWcsj, 2, 1);
                 endWcsj = getTime(beginWcsj, endWcsj, 2,2);
-                return taskRepository.findAllByConditionAndRwwcsjBetween(rwmc, rwfs, rwzt, shzt, rwzxr,
+                return taskRepository.findAllByConditionAndRwwcsjBetween(rwmc, rwfs, rwzt, rwzxr,
                         beginWcsj, endWcsj, pageable);
             } else {
                 beginJzsj = getTime(beginJzsj, endJzsj, 1, 1);
@@ -63,7 +63,7 @@ public class TaskServiceImpl implements ItaskService {
                 beginWcsj = getTime(beginWcsj, endWcsj, 2, 1);
                 endWcsj = getTime(beginWcsj, endWcsj, 2,2);
                 return taskRepository.findAllByConditionAndRwjzsjBetweenAndRwwcsjBetween(rwmc, beginJzsj, endJzsj,
-                        rwfs, rwzt, shzt, rwzxr, beginWcsj, endWcsj, pageable);
+                        rwfs, rwzt, rwzxr, beginWcsj, endWcsj, pageable);
             }
         }
 
@@ -139,21 +139,5 @@ public class TaskServiceImpl implements ItaskService {
         return map;
     }
 
-    @Override
-    public Page<TaskEntity> findAllByFlag(Integer ywyid, Integer flag, Pageable pageable) {
-        Page<TaskEntity> list = null;
-        if (flag == null) {
-            // 查询所有
-            List<Integer> list1 = new ArrayList<>();
-            list1.add(1);
-            list1.add(2);
-            list = taskRepository.findAllByRwzxrAndRwztNotIn(ywyid, list1, pageable);
-        } else if (flag == 1 || flag == 2) {
-            list = taskRepository.findAllByRwzxrAndShzt(ywyid, flag, pageable);
-        } else if (flag == 3 || flag == 4){
-            list = taskRepository.findAllByRwzxrAndRwzt(ywyid, flag, pageable);
-        }
-        return list;
-    }
 
 }

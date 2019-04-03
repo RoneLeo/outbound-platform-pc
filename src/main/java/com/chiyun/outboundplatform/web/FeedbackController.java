@@ -40,16 +40,16 @@ public class FeedbackController {
     @RequestMapping("/add")
     @ApiImplicitParam(name = "fkfj", value = "反馈附件", dataType = "MultipartFile", paramType = "query")
     public ApiResult<Object> add(FeedbackEntity entity, HttpServletRequest request) {
-//        if (entity.getRwid() == null) {
-//            return ApiResult.FAILURE("任务id不能为空");
-//        }
-//        TaskEntity taskEntity = itaskService.findById(entity.getRwid());
-//        if (entity.getFkr() == null) {
-//            return ApiResult.FAILURE("反馈人不能为空");
-//        }
-//        entity.setFksj(new Date());
-//        entity.setFkzt(1);
-//
+        if (entity.getRwid() == null) {
+            return ApiResult.FAILURE("任务id不能为空");
+        }
+        TaskEntity taskEntity = itaskService.findById(entity.getRwid());
+        if (entity.getFkr() == null) {
+            return ApiResult.FAILURE("反馈人不能为空");
+        }
+        entity.setFksj(new Date());
+        entity.setFkzt(1);
+
 //        File file = new File("C:\\upload" + System.currentTimeMillis() + fkfj.getOriginalFilename().substring(fkfj.getOriginalFilename().lastIndexOf(".")));
 //        if (!file.exists()) {
 //            file.mkdir();

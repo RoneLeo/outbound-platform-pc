@@ -144,11 +144,11 @@ public class TaskController {
             @ApiImplicitParam(name = "endWcsj", value = "任务完成时间的开始时间", dataType = "Date", paramType = "query")
     })
     public ApiResult<Object> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj,
-                                                Integer rwfs, Integer rwzt, Integer shzt, Integer rwzxr,
+                                                Integer rwfs, Integer rwzt, Integer rwzxr,
                                                 Date beginWcsj, Date endWcsj, int page, int pagesize) {
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
         Page<TaskEntity> list = itaskService.findAllByCondition(rwmc, beginJzsj, endJzsj, rwfs,
-                rwzt, shzt, rwzxr, beginWcsj, endWcsj, pageable);
+                rwzt, rwzxr, beginWcsj, endWcsj, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
@@ -172,14 +172,14 @@ public class TaskController {
     @RequestMapping("/findAllByYwyidYjd")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query"),
-            @ApiImplicitParam(name = "flag", value = "参数1-审核通过 1-审核未通过 3-已接单 4-已完成", dataType = "Integer", paramType = "query")
+            @ApiImplicitParam(name = "rwzt", value = "任务状态 3-已接单 4-已完成，待审核 5-审核未通过 6-审核通过 7-佣金发放", dataType = "Integer", paramType = "query")
     })
-    public ApiResult<Object> findAllByYwyidYjd(Integer ywyid, Integer flag, int page, int pagesize) {
+    public ApiResult<Object> findAllByYwyidYjd(Integer ywyid, Integer rwzt, int page, int pagesize) {
         if (ywyid == null) {
             return ApiResult.FAILURE("业务员id不能为空");
         }
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
-        Page<TaskEntity> list = itaskService.findAllByFlag(ywyid, flag, pageable);
+        Page<TaskEntity> list = taskRepository.findAllByRwzxrAndRwzt(ywyid, rwzt, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
@@ -247,7 +247,6 @@ public class TaskController {
         }
         TaskEntity entity = itaskService.findById(id);
         entity.setRwzt(5);
-        entity.setShzt(shzt);
         entity.setShbz(shbz);
         entity.setSjyj(sjyj);
         try {

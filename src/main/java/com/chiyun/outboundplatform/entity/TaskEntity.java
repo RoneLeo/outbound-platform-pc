@@ -27,8 +27,6 @@ public class TaskEntity {
     private Integer rwfs;
     @ApiModelProperty(value = "任务状态")
     private Integer rwzt;
-    @ApiModelProperty(value = "审核状态 1-通过 2-未通过")
-    private Integer shzt;
     @ApiModelProperty(value = "审核备注")
     private String shbz;
     @ApiModelProperty(value = "实际佣金")
@@ -130,16 +128,6 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "check_state")
-    public Integer getShzt() {
-        return shzt;
-    }
-
-    public void setShzt(Integer shzt) {
-        this.shzt = shzt;
-    }
-
-    @Basic
     @Column(name = "check_remark")
     public String getShbz() {
         return shbz;
@@ -193,7 +181,6 @@ public class TaskEntity {
                 Objects.equals(jdfs, entity.jdfs) &&
                 Objects.equals(rwfs, entity.rwfs) &&
                 Objects.equals(rwzt, entity.rwzt) &&
-                Objects.equals(shzt, entity.shzt) &&
                 Objects.equals(shbz, entity.shbz) &&
                 Objects.equals(sjyj, entity.sjyj) &&
                 Objects.equals(rwzxr, entity.rwzxr) &&
@@ -202,6 +189,6 @@ public class TaskEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, jdfs, rwfs, rwzt, shzt, shbz, sjyj, rwzxr, rwwcsj);
+        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, jdfs, rwfs, rwzt, shbz, sjyj, rwzxr, rwwcsj);
     }
 }

@@ -381,5 +381,11 @@ public class UserController {
         return map;
     }
 
+    @ApiOperation(value = "test")
+    @RequestMapping("/test")
+    public String findAll(long id){
+        String result = CodeUtil.toSerialCode(id);
+        return result;
+    }
 
 }

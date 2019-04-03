@@ -11,10 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class TaskServiceImpl implements ItaskService {
@@ -109,7 +106,10 @@ public class TaskServiceImpl implements ItaskService {
         // 获取该区域所有案件id
         List<Integer> ajids = casebasemessageRepository.findIdsByAjqy(qy);
         // 获取所有任务
-        Page<TaskEntity> list = taskRepository.findAllByAjidIn(ajids, pageable);
+        List<Integer> rwzts = new ArrayList<>();
+        rwzts.add(1);
+        rwzts.add(2);
+        Page<TaskEntity> list = taskRepository.findAllByRwztInAndAjidIn(rwzts, ajids, pageable);
         return list;
     }
 

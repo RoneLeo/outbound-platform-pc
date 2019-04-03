@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -38,38 +39,39 @@ public class FeedbackController {
     @ApiOperation("添加")
     @RequestMapping("/add")
     @ApiImplicitParam(name = "fkfj", value = "反馈附件", dataType = "MultipartFile", paramType = "query")
-    public ApiResult<Object> add(FeedbackEntity entity, MultipartFile fkfj) {
-        if (entity.getRwid() == null) {
-            return ApiResult.FAILURE("任务id不能为空");
-        }
-        TaskEntity taskEntity = itaskService.findById(entity.getRwid());
-        if (entity.getFkr() == null) {
-            return ApiResult.FAILURE("反馈人不能为空");
-        }
-        entity.setFksj(new Date());
-        entity.setFkzt(1);
-        File file = new File("C:\\upload" + System.currentTimeMillis() + fkfj.getOriginalFilename().substring(fkfj.getOriginalFilename().lastIndexOf(".")));
-        if (!file.exists()) {
-            file.mkdir();
-        }
-        try {
-            fkfj.transferTo(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        entity.setFkfj(file.getPath());
-        try {
-            feedbackRepository.save(entity);
-        } catch (Exception e) {
-            return ApiResult.FAILURE("添加失败");
-        }
-        // 修改任务状态:已接单-待审核
-        taskEntity.setRwzt(4);
-        try {
-            itaskService.save(taskEntity);
-        } catch (Exception e) {
-            return ApiResult.FAILURE("修改任务状态失败");
-        }
+    public ApiResult<Object> add(FeedbackEntity entity, HttpServletRequest request) {
+//        if (entity.getRwid() == null) {
+//            return ApiResult.FAILURE("任务id不能为空");
+//        }
+//        TaskEntity taskEntity = itaskService.findById(entity.getRwid());
+//        if (entity.getFkr() == null) {
+//            return ApiResult.FAILURE("反馈人不能为空");
+//        }
+//        entity.setFksj(new Date());
+//        entity.setFkzt(1);
+//
+//        File file = new File("C:\\upload" + System.currentTimeMillis() + fkfj.getOriginalFilename().substring(fkfj.getOriginalFilename().lastIndexOf(".")));
+//        if (!file.exists()) {
+//            file.mkdir();
+//        }
+//        try {
+//            fkfj.transferTo(file);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        entity.setFkfj(file.getPath());
+//        try {
+//            feedbackRepository.save(entity);
+//        } catch (Exception e) {
+//            return ApiResult.FAILURE("添加失败");
+//        }
+//        // 修改任务状态:已接单-待审核
+//        taskEntity.setRwzt(4);
+//        try {
+//            itaskService.save(taskEntity);
+//        } catch (Exception e) {
+//            return ApiResult.FAILURE("修改任务状态失败");
+//        }
         return ApiResult.SUCCESS(entity);
     }
 

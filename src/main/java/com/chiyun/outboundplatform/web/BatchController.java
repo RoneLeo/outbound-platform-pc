@@ -44,12 +44,10 @@ public class BatchController {
     @Resource
     private IbatchService ibatchService;
     @Resource
-    private IdictionaryListService idictionaryListService;
-    @Resource
     private BatchRecordRepository batchRecordRepository;
 
     @ApiOperation("添加")
-    @MustLogin(rolerequired = {1, 2})
+//    @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/add")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pcmc", value = "模板名称", dataType = "String", paramType = "query"),
@@ -164,19 +162,14 @@ public class BatchController {
         return ApiResult.SUCCESS("删除成功");
     }
 
-    @MustLogin(rolerequired = {1, 2})
+//    @MustLogin(rolerequired = {1, 2})
     @ApiOperation("通过模板id查询所有字段组合")
     @RequestMapping("/findAllZdzh")
     public ApiResult<Object> findAllZdzh(String pcid) {
         if (StringUtil.isNull(pcid)) {
             return ApiResult.FAILURE("模板id不能为空");
         }
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Integer> map1 = ibatchService.countNum(pcid);
-        map.putAll(map1);
-        List<Integer> list = batchRecordRepository.findAllZdidsByPcid(pcid);
-        map.put("zdids", list);
-        return ApiPageResult.SUCCESS(map);
+        return ApiPageResult.SUCCESS(ibatchService.countNum(pcid));
     }
 
 //    @MustLogin(rolerequired = {1, 2})

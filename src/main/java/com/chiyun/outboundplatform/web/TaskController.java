@@ -152,10 +152,10 @@ public class TaskController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
-    @ApiOperation("业务员登录查询本区域的任务")
+    @ApiOperation("业务员登录查询本区域的任务:新建、指派")
     @RequestMapping("/findAllByYwyqy")
     @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query")
-    public ApiResult<Object> findAllByYwyqy(Integer ywyid, int page, int pagesize) {
+    public ApiResult<Object> findAllByYwyidWjd(Integer ywyid, int page, int pagesize) {
         if (ywyid == null) {
             return ApiResult.FAILURE("业务员id不能为空");
         }
@@ -166,6 +166,16 @@ public class TaskController {
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
         Page<TaskEntity> list = itaskService.findAllByYwyqy(Integer.parseInt(entity.getSzxzqdm()), pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
+
+    @ApiOperation("业务员登录查询本区域已接的任务:接收等")
+    @RequestMapping("/findAllByYwyidYjd")
+    public ApiResult<Object> findAllByYwyidYjd(Integer ywyid, Integer rwzt, Integer shzt, int page, int pagesize) {
+        if (ywyid == null) {
+            return ApiResult.FAILURE("业务员id不能为空");
+        }
+
+        return ApiResult.SUCCESS();
     }
 
     @ApiOperation("业务员接单")

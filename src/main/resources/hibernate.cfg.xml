@@ -6,7 +6,7 @@
   <session-factory>
     <property name="connection.url">jdbc:mysql://182.151.22.247:3306/ajjcxx</property>
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-    <mapping class="com.chiyun.outboundplatform.entity.BasetypeEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.BasetypeEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.BatchEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.CardmessageEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.CasepeoplemessageEntity"/>
@@ -31,9 +31,10 @@
       <mapping class="com.chiyun.outboundplatform.entity.TaskstateEntity"/>
       <mapping class="com.chiyun.outboundplatform.entity.FeedbackEntity"/>
     <mapping class="com.chiyun.outboundplatform.entity.BatchrecordEntity"/>
+      <mapping class="com.chiyun.outboundplatform.entity.FileEntity"/>
 
 
-    <!-- <property name="connection.username"/> -->
+      <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 
     <!-- DB schema will be updated if needed -->

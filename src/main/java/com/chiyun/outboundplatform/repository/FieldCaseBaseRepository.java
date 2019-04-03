@@ -31,5 +31,9 @@ public interface FieldCaseBaseRepository extends JpaRepository<FieldcasebaseEnti
     int countFieldcasebaseEntitiesByJcxxlx(Integer jcxxlx);
 
 
+    @Query(value = "select basetype from fieldcasebase where id = ?1", nativeQuery = true)
+    int findJcxxlxById(Integer id);
+
+
 
 }

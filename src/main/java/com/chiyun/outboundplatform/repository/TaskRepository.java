@@ -24,7 +24,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     /**
      * 通过案件id查询任务
      */
-    Page<TaskEntity> findAllByAjidIn(List<Integer> ajids, Pageable pageable);
+    Page<TaskEntity> findAllByRwztInAndAjidIn(List<Integer> rwzts, List<Integer> ajids, Pageable pageable);
 
     /**
      *  通过接单方式查询

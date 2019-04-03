@@ -11,13 +11,9 @@ import 'element-ui/lib/theme-chalk/index.css';    // 默认主题
 import '../static/css/icon.css';
 import "babel-polyfill";
 
-axios.defaults.baseURL = 'http://182.151.22.247:8083';
+axios.defaults.baseURL = process.env.NODE_ENV === 'development' ?  'http://182.151.22.247:8083' : location.origin;
 axios.defaults.withCredentials = true;
-// if(process.env.NODE_ENV === 'development') {
-//     console.log(111);
-// }
-// axios.defaults.baseURL = process.env.NODE_ENV === 'development' ? '/api' : 'http://47.96.85.104:80';
-// axios.defaults.baseURL = 'http://localhost:8080/';
+
 // http request 拦截器（所有发送的请求都要从这儿过一次）
 axios.interceptors.request.use(
     config => {

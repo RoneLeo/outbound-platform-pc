@@ -55,7 +55,7 @@ export default new Router({
                     path: '/users',
                     name: 'users',
                     component: resolve => require(['../components/page/Users.vue'], resolve),
-                    meta: { title: '系统用户管理', keepAlive: true }
+                    meta: { title: '用户管理', keepAlive: true }
                 },
                 {
                     path: '/messages',

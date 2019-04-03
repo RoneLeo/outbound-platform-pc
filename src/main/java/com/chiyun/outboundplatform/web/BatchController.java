@@ -19,6 +19,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -174,11 +175,11 @@ public class BatchController {
         return ApiPageResult.SUCCESS(map);
     }
 
-    @MustLogin(rolerequired = {1, 2})
+//    @MustLogin(rolerequired = {1, 2})
     @ApiOperation("查询所有模板")
     @RequestMapping("/findAll")
     public ApiResult<Object> findAll(int page, int pagesize) {
-        Pageable pageable = PageRequest.of(page - 1, pagesize);
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "cjsj"));
         Page<BatchEntity> list = batchRepository.findAll(pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }

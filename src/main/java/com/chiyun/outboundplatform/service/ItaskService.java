@@ -47,4 +47,9 @@ public interface ItaskService {
      */
     Map<String, Object> countYwyRwxx(Integer rwzxr);
 
+    /**
+     *  通过任务执行人、任务状态、审核状态查询
+     */
+    Page<TaskEntity> findAllByFlag(Integer ywyid, Integer flag, Pageable pageable);
+
 }

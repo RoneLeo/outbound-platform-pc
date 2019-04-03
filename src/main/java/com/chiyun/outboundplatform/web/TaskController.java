@@ -152,10 +152,10 @@ public class TaskController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
-    @ApiOperation("业务员登录查询本区域的任务")
+    @ApiOperation("业务员登录查询本区域的任务:新建、指派")
     @RequestMapping("/findAllByYwyqy")
     @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query")
-    public ApiResult<Object> findAllByYwyqy(Integer ywyid, int page, int pagesize) {
+    public ApiResult<Object> findAllByYwyidWjd(Integer ywyid, int page, int pagesize) {
         if (ywyid == null) {
             return ApiResult.FAILURE("业务员id不能为空");
         }
@@ -165,6 +165,21 @@ public class TaskController {
         }
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
         Page<TaskEntity> list = itaskService.findAllByYwyqy(Integer.parseInt(entity.getSzxzqdm()), pageable);
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
+
+    @ApiOperation("业务员登录查询本区域已接的任务:接收等")
+    @RequestMapping("/findAllByYwyidYjd")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "flag", value = "参数1-审核通过 1-审核未通过 3-已接单 4-已完成", dataType = "Integer", paramType = "query")
+    })
+    public ApiResult<Object> findAllByYwyidYjd(Integer ywyid, Integer flag, int page, int pagesize) {
+        if (ywyid == null) {
+            return ApiResult.FAILURE("业务员id不能为空");
+        }
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
+        Page<TaskEntity> list = itaskService.findAllByFlag(ywyid, flag, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
@@ -182,7 +197,7 @@ public class TaskController {
         if (entity == null) {
             return ApiResult.FAILURE("该任务不存在");
         }
-        if (entity.getRwzt() != 1) {
+        if (entity.getRwzt() != 1 && entity.getRwzt() != 2) {
             return ApiResult.FAILURE("该任务已接单");
         }
         // 接单方式：1-自己接单

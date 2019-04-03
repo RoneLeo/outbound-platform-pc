@@ -73,6 +73,21 @@ public class FeedbackController {
         return ApiResult.SUCCESS(entity);
     }
 
+    @ApiOperation("批量删除")
+    @RequestMapping("/delete")
+    public ApiResult<Object> delete(List<Integer> ids) {
+        if (ids.size() < 1) {
+            return ApiResult.FAILURE("未选择要删除的数据");
+        }
+        try {
+            feedbackRepository.deleteAllByIdIn(ids);
+        } catch (Exception e) {
+            return ApiResult.FAILURE("删除失败");
+        }
+        return ApiResult.SUCCESS("删除成功");
+    }
+
+
     @ApiOperation("修改反馈状态")
     @RequestMapping("/updateFkzt")
     @ApiImplicitParam(name = "ids", value = "反馈id组合，以英文','分隔", dataType = "List", paramType = "query")
@@ -106,6 +121,17 @@ public class FeedbackController {
         } else {
             list = feedbackRepository.findAllByFkztOrderByFksjDesc(fkzt, pageable);
         }
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
+
+    @ApiOperation("根据任务id查询")
+    @RequestMapping("/findAllByRwid")
+    public ApiResult<Object> findAllByRwid(Integer rwid, int page, int pagesize) {
+        if (rwid == null) {
+            return ApiResult.FAILURE("任务id不能为空");
+        }
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "fksj"));
+        Page<FeedbackEntity> list = feedbackRepository.findAllByRwid(rwid, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 }

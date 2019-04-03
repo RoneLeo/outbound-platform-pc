@@ -48,7 +48,7 @@ public class BatchController {
     private BatchRecordRepository batchRecordRepository;
 
     @ApiOperation("添加")
-//    @MustLogin(rolerequired = {1, 2})
+    @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/add")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pcmc", value = "模板名称", dataType = "String", paramType = "query"),
@@ -94,7 +94,7 @@ public class BatchController {
     }
 
     @ApiOperation("修改")
-//    @MustLogin(rolerequired = {1, 2})
+    @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/update")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pcmc", value = "模板名称", dataType = "String", paramType = "query"),
@@ -143,7 +143,7 @@ public class BatchController {
     }
 
     @ApiOperation("删除")
-//    @MustLogin(rolerequired = {1, 2})
+    @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/delete")
     @ApiImplicitParam(name = "pcid", value = "模板id", dataType = "String", paramType = "query")
     public ApiResult<Object> delete(String pcid) {
@@ -159,16 +159,24 @@ public class BatchController {
         return ApiResult.SUCCESS("删除成功");
     }
 
-//    @MustLogin(rolerequired = {1, 2})
-//    @ApiOperation("查询所有模版")
-//    @RequestMapping("/findAllPcidByPage")
-//    public ApiResult<Object> findAllPcidByPage(@RequestParam int page, @RequestParam int pagesize) {
-//        Pageable pageable = PageRequest.of(page - 1, pagesize);
-//        Page<Map<String, Object>> list = batchRepository.findAllPcidByPage(pageable);
-//        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
-//    }
+    @MustLogin(rolerequired = {1, 2})
+    @ApiOperation("查询所有")
+    @RequestMapping("/findAll")
+    public ApiResult<Object> findAll(String pcid) {
+        if (StringUtil.isNull(pcid)) {
+            return ApiResult.FAILURE("模板id不能为空");
+        }
+        Map<String, Object> map1 = batchRepository.findAllByPcidMap(pcid);
+        Map<String, Object> map = new HashMap<>();
+        map.putAll(map1);
+        List<BatchrecordEntity> list = batchRecordRepository.findAllByPcidOrderBySort(pcid);
+        map.put("zdlb", list);
+        return ApiPageResult.SUCCESS(map);
+    }
 
-//    @MustLogin(rolerequired = {1, 2})
+
+
+    @MustLogin(rolerequired = {1, 2})
     @ApiOperation("查询所有模板id")
     @RequestMapping("/findAllPcid")
     public ApiResult<Object> findAll(int page, int pagesize) {
@@ -188,7 +196,7 @@ public class BatchController {
     }
 
     @ApiOperation("导出模板")
-//    @MustLogin(rolerequired = {1, 2})
+    @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/exportExcel")
     @ApiImplicitParam(name = "pcid", value = "模板id", dataType = "String", paramType = "query")
     public ApiResult<Object> exportExcel(String pcid, HttpServletResponse response) throws IOException {
@@ -220,7 +228,7 @@ public class BatchController {
     }
 
     @ApiOperation("导入模板")
-//    @MustLogin(rolerequired = {1, 2})
+    @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/importExcel")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pcid", value = "批次id", dataType = "String", paramType = "query"),

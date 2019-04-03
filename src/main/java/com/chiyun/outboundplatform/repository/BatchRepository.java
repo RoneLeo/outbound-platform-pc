@@ -25,6 +25,9 @@ public interface BatchRepository extends JpaRepository<BatchEntity, Integer> {
      */
     BatchEntity findByPcid(String pcid);
 
+    @Query(value = "select * from batch where batch_id = ?1", nativeQuery = true)
+    Map<String, Object> findAllByPcidMap(String pcid);
+
     /**
      * 通过id删除
      */

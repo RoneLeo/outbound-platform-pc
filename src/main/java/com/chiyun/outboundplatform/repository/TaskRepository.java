@@ -24,7 +24,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     /**
      * 通过案件id查询任务
      */
-    Page<TaskEntity> findAllByRwztInAndAjidIn(List<Integer> rwzts, List<Integer> ajids, Pageable pageable);
+    Page<TaskEntity> findAllByRwztInAndAjidInOrderByRwztDesc(List<Integer> rwzts, List<Integer> ajids, Pageable pageable);
 
     /**
      *  通过接单方式查询
@@ -66,6 +66,11 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     /**
      *  通过任务执行人、任务状态、审核状态查询
      */
+    Page<TaskEntity> findAllByRwzxrAndRwztNotIn(Integer ywyid, List<Integer> rwzts, Pageable pageable);
+
+    Page<TaskEntity> findAllByRwzxrAndRwzt(Integer ywyid, Integer rwzt, Pageable pageable);
+
+    Page<TaskEntity> findAllByRwzxrAndShzt(Integer ywyid, Integer shzt, Pageable pageable);
 
 
 

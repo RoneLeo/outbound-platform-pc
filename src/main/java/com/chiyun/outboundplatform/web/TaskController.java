@@ -179,11 +179,8 @@ public class TaskController {
             return ApiResult.FAILURE("业务员id不能为空");
         }
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
-//        Page<>
-        if (flag == null) {
-
-        }
-        return ApiResult.SUCCESS();
+        Page<TaskEntity> list = itaskService.findAllByFlag(ywyid, flag, pageable);
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
     @ApiOperation("业务员接单")

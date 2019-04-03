@@ -109,7 +109,7 @@ public class TaskServiceImpl implements ItaskService {
         List<Integer> rwzts = new ArrayList<>();
         rwzts.add(1);
         rwzts.add(2);
-        Page<TaskEntity> list = taskRepository.findAllByRwztInAndAjidIn(rwzts, ajids, pageable);
+        Page<TaskEntity> list = taskRepository.findAllByRwztInAndAjidInOrderByRwztDesc(rwzts, ajids, pageable);
         return list;
     }
 
@@ -137,6 +137,23 @@ public class TaskServiceImpl implements ItaskService {
         map.put("ydMoney", ydMoney);
         map.put("sjMoney", sjMoney);
         return map;
+    }
+
+    @Override
+    public Page<TaskEntity> findAllByFlag(Integer ywyid, Integer flag, Pageable pageable) {
+        Page<TaskEntity> list = null;
+        if (flag == null) {
+            // 查询所有
+            List<Integer> list1 = new ArrayList<>();
+            list1.add(1);
+            list1.add(2);
+            list = taskRepository.findAllByRwzxrAndRwztNotIn(ywyid, list1, pageable);
+        } else if (flag == 1 || flag == 2) {
+            list = taskRepository.findAllByRwzxrAndShzt(ywyid, flag, pageable);
+        } else if (flag == 3 || flag == 4){
+            list = taskRepository.findAllByRwzxrAndRwzt(ywyid, flag, pageable);
+        }
+        return list;
     }
 
 }

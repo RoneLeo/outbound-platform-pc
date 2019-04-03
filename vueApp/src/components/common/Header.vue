@@ -8,8 +8,8 @@
         <div class="header-right">
             <div class="header-user-con">
                 <!-- 全屏显示 -->
-                <div class="btn-fullscreen" @click="handleFullScreen">
-                    <el-tooltip effect="dark" :content="fullscreen?`取消全屏`:`全屏`" placement="bottom">
+                <div class="btn-fullScreen" @click="handleFullScreen">
+                    <el-tooltip effect="dark" :content="fullScreen?`取消全屏`:`全屏`" placement="bottom">
                         <i class="el-icon-rank"></i>
                     </el-tooltip>
                 </div>
@@ -27,15 +27,10 @@
                 <!-- 用户名下拉菜单 -->
                 <el-dropdown class="user-name" trigger="click" @command="handleCommand">
                     <span class="el-dropdown-link">
-                        {{username}} <i class="el-icon-caret-bottom"></i>
+                        {{userInfo.mz}} <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <!--<a href="http://blog.gdfengshuo.com/about/" target="_blank">-->
-                            <!--<el-dropdown-item>关于作者</el-dropdown-item>-->
-                        <!--</a>-->
-                        <!--<a  target="_blank">-->
-                            <el-dropdown-item @click.native="updateMM">修改密码</el-dropdown-item>
-                        <!--</a>-->
+                        <el-dropdown-item @click.native="updateMM">修改密码</el-dropdown-item>
                         <el-dropdown-item divided  command="loginout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
@@ -49,27 +44,31 @@
         data() {
             return {
                 collapse: false,
-                fullscreen: false,
-                name: 'linxin',
+                fullScreen: false,
+                userInfo: {},
                 message: 2
             }
         },
-        computed:{
-            username(){
-                let username = localStorage.getItem('ms_username');
-                return username ? username : this.name;
+        mounted(){
+            this.getUserInfo();
+            //判断宽度自动收起侧面菜单
+            if(document.body.clientWidth < 1500){
+                this.collapseChage();
             }
         },
         methods:{
+            getUserInfo(){
+                this.userInfo = this.$parent.userInfo;
+            },
             updateMM() {
                 this.$prompt('请输入新密码', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                 }).then(({ value }) => {
-                    this.$axios.post('/user/updateMm', this.$qs.stringify({mm: value})).then(res => {
+                    this.$axios.post('user/changePassword?', {id:this.userInfo.id,mm: value}).then(res => {
                         this.$message({
                             type: 'success',
-                            message: res.resMsg
+                            message: '密码修改成功!'
                         });
                     })
                 }).catch(() => {
@@ -77,9 +76,12 @@
             },
             // 用户名下拉菜单选择事件
             handleCommand(command) {
+                //退出登录
                 if(command == 'loginout'){
-                    localStorage.removeItem('ms_username')
-                    this.$router.push('/login');
+                    localStorage.removeItem('userInfo');
+                    this.$axios.post('user/outLogin', {id: this.userInfo.id}).then(res => {
+                        this.$router.push('/login');
+                    });
                 }
             },
             // 侧边栏折叠
@@ -90,7 +92,7 @@
             // 全屏事件
             handleFullScreen(){
                 let element = document.documentElement;
-                if (this.fullscreen) {
+                if (this.fullScreen) {
                     if (document.exitFullscreen) {
                         document.exitFullscreen();
                     } else if (document.webkitCancelFullScreen) {
@@ -112,12 +114,7 @@
                         element.msRequestFullscreen();
                     }
                 }
-                this.fullscreen = !this.fullscreen;
-            }
-        },
-        mounted(){
-            if(document.body.clientWidth < 1500){
-                this.collapseChage();
+                this.fullScreen = !this.fullScreen;
             }
         }
     }
@@ -151,12 +148,12 @@
         height: 60px;
         align-items: center;
     }
-    .btn-fullscreen{
+    .btn-fullScreen{
         transform: rotate(45deg);
         margin-right: 5px;
         font-size: 24px;
     }
-    .btn-bell, .btn-fullscreen{
+    .btn-bell, .btn-fullScreen{
         position: relative;
         width: 30px;
         height: 30px;

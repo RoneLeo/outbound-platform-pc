@@ -3,6 +3,7 @@ package com.chiyun.outboundplatform.entity;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -11,16 +12,10 @@ public class BatchEntity {
     private Integer id;
     @ApiModelProperty(value = "模板id")
     private String pcid;
-    @ApiModelProperty(value = "批次名称")
+    @ApiModelProperty(value = "模板名称")
     private String pcmc;
-    @ApiModelProperty(value = "基础字段id")
-    private String jczdid;
-    @ApiModelProperty(value = "字段中文")
-    private String zdzwmc;
-    @ApiModelProperty(value = "字段英文")
-    private String zdywmc;
-    @ApiModelProperty(value = "排序")
-    private Integer sort;
+    @ApiModelProperty(value = "创建时间")
+    private Date cjsj;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,46 +39,6 @@ public class BatchEntity {
     }
 
     @Basic
-    @Column(name = "fieldcasebase_id")
-    public String getJczdid() {
-        return jczdid;
-    }
-
-    public void setJczdid(String jczdid) {
-        this.jczdid = jczdid;
-    }
-
-    @Basic
-    @Column(name = "fieldCname")
-    public String getZdzwmc() {
-        return zdzwmc;
-    }
-
-    public void setZdzwmc(String zdzwmc) {
-        this.zdzwmc = zdzwmc;
-    }
-
-    @Basic
-    @Column(name = "fieldEname")
-    public String getZdywmc() {
-        return zdywmc;
-    }
-
-    public void setZdywmc(String zdywmc) {
-        this.zdywmc = zdywmc;
-    }
-
-    @Basic
-    @Column(name = "sort")
-    public Integer getSort() {
-        return sort;
-    }
-
-    public void setSort(Integer sort) {
-        this.sort = sort;
-    }
-
-    @Basic
     @Column(name = "batch_name")
     public String getPcmc() {
         return pcmc;
@@ -93,6 +48,16 @@ public class BatchEntity {
         this.pcmc = pcmc;
     }
 
+    @Basic
+    @Column(name = "create_time")
+    public Date getCjsj() {
+        return cjsj;
+    }
+
+    public void setCjsj(Date cjsj) {
+        this.cjsj = cjsj;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -100,14 +65,12 @@ public class BatchEntity {
         BatchEntity entity = (BatchEntity) o;
         return Objects.equals(id, entity.id) &&
                 Objects.equals(pcid, entity.pcid) &&
-                Objects.equals(jczdid, entity.jczdid) &&
-                Objects.equals(zdzwmc, entity.zdzwmc) &&
-                Objects.equals(zdywmc, entity.zdywmc) &&
-                Objects.equals(sort, entity.sort);
+                Objects.equals(pcmc, entity.pcmc) &&
+                Objects.equals(cjsj, entity.cjsj);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, pcid, jczdid, zdzwmc, zdywmc, sort);
+        return Objects.hash(id, pcid, pcmc, cjsj);
     }
 }

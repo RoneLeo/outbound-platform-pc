@@ -33,8 +33,6 @@ public class FeedbackController {
     @Resource
     private FeedbackRepository feedbackRepository;
     @Resource
-    private UserReposity userReposity;
-    @Resource
     private ItaskService itaskService;
 
     @ApiOperation("添加")
@@ -45,14 +43,8 @@ public class FeedbackController {
             return ApiResult.FAILURE("任务id不能为空");
         }
         TaskEntity taskEntity = itaskService.findById(entity.getRwid());
-        if (taskEntity == null) {
-            return ApiResult.FAILURE("该任务不存在");
-        }
         if (entity.getFkr() == null) {
             return ApiResult.FAILURE("反馈人不能为空");
-        }
-        if (userReposity.findById(entity.getFkr()) == null) {
-            return ApiResult.FAILURE("该业务员不存在");
         }
         entity.setFksj(new Date());
         entity.setFkzt(1);
@@ -80,6 +72,21 @@ public class FeedbackController {
         }
         return ApiResult.SUCCESS(entity);
     }
+
+    @ApiOperation("批量删除")
+    @RequestMapping("/delete")
+    public ApiResult<Object> delete(List<Integer> ids) {
+        if (ids.size() < 1) {
+            return ApiResult.FAILURE("未选择要删除的数据");
+        }
+        try {
+            feedbackRepository.deleteAllByIdIn(ids);
+        } catch (Exception e) {
+            return ApiResult.FAILURE("删除失败");
+        }
+        return ApiResult.SUCCESS("删除成功");
+    }
+
 
     @ApiOperation("修改反馈状态")
     @RequestMapping("/updateFkzt")
@@ -114,6 +121,17 @@ public class FeedbackController {
         } else {
             list = feedbackRepository.findAllByFkztOrderByFksjDesc(fkzt, pageable);
         }
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
+
+    @ApiOperation("根据任务id查询")
+    @RequestMapping("/findAllByRwid")
+    public ApiResult<Object> findAllByRwid(Integer rwid, int page, int pagesize) {
+        if (rwid == null) {
+            return ApiResult.FAILURE("任务id不能为空");
+        }
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "fksj"));
+        Page<FeedbackEntity> list = feedbackRepository.findAllByRwid(rwid, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 }

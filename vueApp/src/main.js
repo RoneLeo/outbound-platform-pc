@@ -49,15 +49,26 @@ axios.interceptors.response.use(
         let status = response.status;
         let statusText = response.statusText;
         if(status == 200){
-            var data = response.data;
+            let data = response.data;
             if(data.resCode == -1){
                 Message.error(data.resMsg);
+            }
+            else if(data.resCode == 100){
+                Message.error('未登录');
+                location.href = 'login'
+            }
+            else if(data.resCode == 101){
+                Message.error('该用户在其他地方登录');
+            }
+            else if(data.resCode == 102){
+                Message.error('重复登录!!!!!');
+                location.href = 'homePage'
             }
             else{
                 return response.data;
             }
         }else{
-            console.log(status + ':' + statusText);
+            Message.error('服务器错误:' + status + ':' + statusText);
         }
     },
     error => {
@@ -71,11 +82,12 @@ axios.interceptors.response.use(
 Vue.use(ElementUI, { size: 'small' });
 Vue.prototype.$axios = axios;
 Vue.prototype.$qs = qs;
-Vue.prototype.$common = util;
+Vue.prototype.$util = util;
+Vue.prototype.$baseURL = axios.defaults.baseURL;
 
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
-    const role = localStorage.getItem('ms_username');
+    const role = true;//localStorage.getItem('ms_username');
     if(!role && to.path !== '/login'){
         next('/login');
     }else if(to.meta.permission){

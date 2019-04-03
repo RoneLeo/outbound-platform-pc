@@ -6,8 +6,8 @@
                     <div class="user-info">
                         <img src="static/img/img.jpg" class="user-avator" alt="">
                         <div class="user-info-cont">
-                            <div class="user-info-name">{{name}}</div>
-                            <div>{{role}}</div>
+                            <div class="user-info-name">{{userInfo.mz}}</div>
+                            <div>{{userInfo.role}}</div>
                         </div>
                     </div>
                     <div class="user-info-list">上次登录时间：<span>2019-02-21</span></div>
@@ -107,11 +107,13 @@
 <script>
     import Schart from 'vue-schart';
     import bus from '../common/bus';
+    import util from '../common/util';
     export default {
         name: 'dashboard',
         data() {
             return {
-                name: localStorage.getItem('ms_username'),
+                userInfo: {},
+                roleDict: [],
                 todoList: [
                     {
                         title: '今天新增委托案件54件',
@@ -187,14 +189,10 @@
         components: {
             Schart
         },
-        computed: {
-            role() {
-                return this.name === 'admin' ? '系统管理员' : '普通用户';
-            }
-        },
         created(){
             this.handleListener();
             this.changeDate();
+            this.getRoleDict();
         },
         activated(){
             this.handleListener();
@@ -204,6 +202,17 @@
             bus.$off('collapse', this.handleBus);
         },
         methods: {
+            getUser(){
+                this.userInfo = this.$parent.userInfo;
+                this.userInfo.role = util.dictParse(this.userInfo.js,this.roleDict);
+            },
+            getRoleDict(){
+                //人员角色
+                this.$axios.post('/dict/findDictListByZddm', {zddm: 'D_SYS_RYJSDM', zxbz: 0}).then((res) => {
+                    this.roleDict = res.data;
+                    this.getUser();
+                });
+            },
             changeDate(){
                 const now = new Date().getTime();
                 this.data.forEach((item, index) => {
@@ -222,8 +231,8 @@
                 }, 300);
             },
             renderChart(){
-//                this.$refs.bar.renderChart();
-//                this.$refs.line.renderChart();
+               this.$refs.bar.renderChart();
+               this.$refs.line.renderChart();
             }
         }
     }

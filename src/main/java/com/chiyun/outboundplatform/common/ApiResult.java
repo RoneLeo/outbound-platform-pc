@@ -88,10 +88,10 @@ public class ApiResult<T> implements Serializable {
         return result;
     }
 
-    public static ApiResult<Object> REPEATLOGIN() {
+ /*   public static ApiResult<Object> REPEATLOGIN() {
         ApiResult<Object> result = new ApiResult<>();
         result.setResCode(102);
         result.setResMsg("重复登录");
         return result;
-    }
+    }*/
 }

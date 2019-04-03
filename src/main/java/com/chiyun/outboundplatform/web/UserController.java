@@ -79,13 +79,14 @@ public class UserController {
                 System.out.print("22222222:");
             }
         }
-        String sessionValue = SessionUtil.getMapValue(userid);
+   /*     String sessionValue = SessionUtil.getMapValue(userid);
         if (sessionValue == null || !sessionValue.equals(sessionId)) {
             SessionUtil.put(userid, sessionId);
         } else if (sessionValue.equals(sessionId)) {
             //已登录
             return ApiResult.REPEATLOGIN();
-        }
+        }*/
+        SessionUtil.put(userid, sessionId);
         //给session存数据
         session.setAttribute("yhm", userEntity.getYhm());
         session.setAttribute("id", userEntity.getId());

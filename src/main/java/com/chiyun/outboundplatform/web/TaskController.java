@@ -170,11 +170,19 @@ public class TaskController {
 
     @ApiOperation("业务员登录查询本区域已接的任务:接收等")
     @RequestMapping("/findAllByYwyidYjd")
-    public ApiResult<Object> findAllByYwyidYjd(Integer ywyid, Integer rwzt, Integer shzt, int page, int pagesize) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "flag", value = "参数1-审核通过 1-审核未通过 3-已接单 4-已完成", dataType = "Integer", paramType = "query")
+    })
+    public ApiResult<Object> findAllByYwyidYjd(Integer ywyid, Integer flag, int page, int pagesize) {
         if (ywyid == null) {
             return ApiResult.FAILURE("业务员id不能为空");
         }
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
+//        Page<>
+        if (flag == null) {
 
+        }
         return ApiResult.SUCCESS();
     }
 
@@ -192,7 +200,7 @@ public class TaskController {
         if (entity == null) {
             return ApiResult.FAILURE("该任务不存在");
         }
-        if (entity.getRwzt() != 1) {
+        if (entity.getRwzt() != 1 && entity.getRwzt() != 2) {
             return ApiResult.FAILURE("该任务已接单");
         }
         // 接单方式：1-自己接单

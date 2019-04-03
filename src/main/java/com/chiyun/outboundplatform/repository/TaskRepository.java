@@ -63,6 +63,11 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     @Query(value = "select sum(actual_money) from task where task_people = ?1", nativeQuery = true)
     Double sumAllSjyjByRwzxr(Integer rwzxr);
 
+    /**
+     *  通过任务执行人、任务状态、审核状态查询
+     */
+
+
 
     /**
      * 多条件查询:任务名称、任务截止时间、任务方式、任务状态、审核状态、任务执行人、任务完成时间

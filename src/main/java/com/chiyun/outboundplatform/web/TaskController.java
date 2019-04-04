@@ -3,8 +3,10 @@ package com.chiyun.outboundplatform.web;
 import com.chiyun.outboundplatform.common.ApiPageResult;
 import com.chiyun.outboundplatform.common.ApiResult;
 import com.chiyun.outboundplatform.entity.CasebasemessageEntity;
+import com.chiyun.outboundplatform.entity.CasepeoplemessageEntity;
 import com.chiyun.outboundplatform.entity.TaskEntity;
 import com.chiyun.outboundplatform.entity.UserEntity;
+import com.chiyun.outboundplatform.repository.CasepeoplemessageRepository;
 import com.chiyun.outboundplatform.repository.TaskRepository;
 import com.chiyun.outboundplatform.repository.UserReposity;
 import com.chiyun.outboundplatform.service.IcaseBaseService;
@@ -24,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Api(description = "任务管理")
@@ -41,6 +45,8 @@ public class TaskController {
     private UserReposity userReposity;
     @Resource
     private TaskRepository taskRepository;
+    @Resource
+    private CasepeoplemessageRepository casepeoplemessageRepository;
 
 
     @ApiOperation("区域管理员添加任务添加")
@@ -180,7 +186,13 @@ public class TaskController {
         }
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "rwjzsj"));
         Page<TaskEntity> list = taskRepository.findAllByRwzxrAndRwzt(ywyid, rwzt, pageable);
-        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+        // 查询案件的案人信息
+        List<Map<String, Object>> list1 = taskRepository.findAllByAjids(ywyid, rwzt);
+        //
+        Map<String, Object> map = new HashMap<>();
+        map.put("rwxx", list.getContent());
+        map.put("arxx", list1);
+        return ApiResult.SUCCESS(map);
     }
 
     @ApiOperation("业务员接单")

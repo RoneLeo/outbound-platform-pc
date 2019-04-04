@@ -3,10 +3,12 @@ package com.chiyun.outboundplatform.web;
 import com.chiyun.outboundplatform.common.ApiPageResult;
 import com.chiyun.outboundplatform.common.ApiResult;
 import com.chiyun.outboundplatform.entity.FeedbackEntity;
+import com.chiyun.outboundplatform.entity.FileEntity;
 import com.chiyun.outboundplatform.entity.TaskEntity;
 import com.chiyun.outboundplatform.repository.FeedbackRepository;
 import com.chiyun.outboundplatform.repository.UserReposity;
 import com.chiyun.outboundplatform.service.ItaskService;
+import com.chiyun.outboundplatform.utils.FileUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +28,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import static com.chiyun.outboundplatform.utils.FileUtil.addFile;
+
 @Api(description = "反馈记录表")
 @RequestMapping(value = "/feedback", method = {RequestMethod.POST, RequestMethod.GET})
 @RestController
@@ -35,6 +39,8 @@ public class FeedbackController {
     private FeedbackRepository feedbackRepository;
     @Resource
     private ItaskService itaskService;
+    @Resource
+    private FileController fileController;
 
     @ApiOperation("添加")
     @RequestMapping("/add")
@@ -50,28 +56,28 @@ public class FeedbackController {
         entity.setFksj(new Date());
         entity.setFkzt(1);
 
-//        File file = new File("C:\\upload" + System.currentTimeMillis() + fkfj.getOriginalFilename().substring(fkfj.getOriginalFilename().lastIndexOf(".")));
-//        if (!file.exists()) {
-//            file.mkdir();
-//        }
-//        try {
-//            fkfj.transferTo(file);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        entity.setFkfj(file.getPath());
-//        try {
-//            feedbackRepository.save(entity);
-//        } catch (Exception e) {
-//            return ApiResult.FAILURE("添加失败");
-//        }
-//        // 修改任务状态:已接单-待审核
-//        taskEntity.setRwzt(4);
-//        try {
-//            itaskService.save(taskEntity);
-//        } catch (Exception e) {
-//            return ApiResult.FAILURE("修改任务状态失败");
-//        }
+        List<MultipartFile> files = FileUtil.getfile(request);
+        String result = "";
+        if (files.size() != 0) {
+            for (MultipartFile file : files) {
+                FileEntity fileEntity = fileController.addFile(request, file);
+                result += fileEntity.getId() + ",";
+            }
+            result.substring(0, result.lastIndexOf(","));
+        }
+        entity.setFkfj(result);
+        try {
+            feedbackRepository.save(entity);
+        } catch (Exception e) {
+            return ApiResult.FAILURE("添加失败");
+        }
+        // 修改任务状态:已接单-待审核
+        taskEntity.setRwzt(4);
+        try {
+            itaskService.save(taskEntity);
+        } catch (Exception e) {
+            return ApiResult.FAILURE("修改任务状态失败");
+        }
         return ApiResult.SUCCESS(entity);
     }
 

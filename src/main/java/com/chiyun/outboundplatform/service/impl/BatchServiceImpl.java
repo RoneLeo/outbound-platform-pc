@@ -109,23 +109,23 @@ public class BatchServiceImpl implements IbatchService {
         for (Integer zdid : zdids) {
             int jcxxlx = fieldCaseBaseRepository.findById(zdid).get().getJcxxlx();
             if (jcxxlx == 7) {
-                flag1 ++;
+                flag1++;
             }
             if (jcxxlx == 9) {
-                flag2 ++;
+                flag2++;
             }
         }
         for (Integer zdid : zdidsAll) {
             int jcxxlx = fieldCaseBaseRepository.findById(zdid).get().getJcxxlx();
             if (jcxxlx == 7) {
-                flag3 ++;
+                flag3++;
             }
             if (jcxxlx == 9) {
-                flag4 ++;
+                flag4++;
             }
         }
-        int lxrNum = flag3/flag1;
-        int bzNum = flag4/flag2;
+        int lxrNum = flag3 / flag1;
+        int bzNum = flag4 / flag2;
         map.put("lxrNum", lxrNum);
         map.put("bzNum", bzNum);
 
@@ -185,5 +185,10 @@ public class BatchServiceImpl implements IbatchService {
         map.put("8", list9);
         map.put("9", list10);
         return map;
+    }
+
+    @Override
+    public List<Map<String, Object>> getBatchMap(String pcid) {
+        return batchRecordRepository.getBatchMap(pcid);
     }
 }

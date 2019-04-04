@@ -44,7 +44,7 @@ public class UserController {
 
     @ApiOperation(value = "登录")
     @RequestMapping("/login")
-    @ControllerLog(description = "用户登录")
+    @ControllerLog(description = "后台管理系统登录")
     public ApiResult<Object> login(@RequestParam @ApiParam(value = "用户名") String yhm,
                                    @RequestParam @ApiParam(value = "密码") String mm,
                                    HttpServletRequest request) throws Exception {
@@ -98,6 +98,7 @@ public class UserController {
 
     @ApiOperation(value = "微信小程序登录")
     @RequestMapping("/weLogin")
+    @ControllerLog(description = "微信小程序登录")
     public ApiResult<Object> weLogin(@ApiParam(value = "授权码") String sqm, String encryptedData, String iv, String code, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Map<String, Object> map = weChatLogin(code, encryptedData, iv);
         if (map.get("status").toString() == "0") {
@@ -152,7 +153,6 @@ public class UserController {
             result.put("userInfo", userEntity);
         }
         result.put("sessionId", sessionId);
-        logController.add(String.valueOf(session.getAttribute("mz")), "微信小程序登录");
         return ApiResult.SUCCESS(result);
     }
 
@@ -160,6 +160,7 @@ public class UserController {
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "添加用户")
     @RequestMapping("/add")
+    @ControllerLog(description = "添加用户")
     public ApiResult<Object> add(UserEntity userEntity) throws Exception {
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
@@ -189,13 +190,13 @@ public class UserController {
         if (result == null) {
             return ApiResult.FAILURE("授权码添加失败");
         }
-        logController.add(String.valueOf(session.getAttribute("mz")), "添加用户");
         return ApiResult.SUCCESS(result);
     }
 
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "删除用户")
     @RequestMapping("/delete")
+    @ControllerLog(description = "删除用户")
     public ApiResult<Object> delete(int id) throws Exception {
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
@@ -210,13 +211,13 @@ public class UserController {
         if (result == 0) {
             return ApiResult.FAILURE("删除失败");
         }
-        logController.add(String.valueOf(session.getAttribute("mz")), "删除用户");
         return ApiResult.SUCCESS("删除成功");
     }
 
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "修改用户")
     @RequestMapping("/update")
+    @ControllerLog(description = "修改用户")
     public ApiResult<Object> update(UserEntity userEntity) throws Exception {
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
@@ -234,13 +235,13 @@ public class UserController {
         if (result == null) {
             return ApiResult.FAILURE("修改失败");
         }
-        logController.add(String.valueOf(session.getAttribute("mz")), "修改用户信息");
         return ApiResult.SUCCESS(result);
     }
 
 
     @ApiOperation(value = "修改密码")
     @RequestMapping("/changePassword")
+    @ControllerLog(description = "修改密码")
     public ApiResult<Object> changePassword(int id, String mm) throws Exception {
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
@@ -256,7 +257,6 @@ public class UserController {
         if (result == null) {
             return ApiResult.FAILURE("修改失败");
         }
-        logController.add(String.valueOf(session.getAttribute("mz")), "修改密码");
         return ApiResult.SUCCESS(result);
     }
 
@@ -264,6 +264,7 @@ public class UserController {
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "查询所有用户")
     @RequestMapping("/findAll")
+    @ControllerLog(description = "查询所有用户")
     public ApiResult<Object> findAll(@RequestParam(required = false) @ApiParam(value = "状态（0-启用用户，1-注销用户,不传显示全部）") Integer zt,
                                      @RequestParam int page, @RequestParam int pagesize) throws Exception {
         //判断是否登录
@@ -291,12 +292,28 @@ public class UserController {
         } else {
             return ApiResult.FAILURE("没有权限查看用户");
         }
-        logController.add(String.valueOf(session.getAttribute("mz")), "查询用户");
         return ApiPageResult.SUCCESS(result.getContent(), page, pagesize, result.getTotalElements(), result.getTotalPages());
+    }
+
+    @ApiOperation(value = "通过id查询用户")
+    @RequestMapping("/findById")
+    @ControllerLog(description = "通过id查询用户")
+    public ApiResult<Object> findById(int id) throws Exception {
+        //判断是否登录
+        HttpSession session = SessionHelper.getSession();
+        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
+        if (isLogin.getResCode() < 200) return isLogin;
+        //通过id查询用户
+        UserEntity oldUserEntity = userReposity.findById(id);
+        if (oldUserEntity == null) {
+            return ApiResult.FAILURE("没有该用户的信息");
+        }
+        return ApiResult.SUCCESS(oldUserEntity);
     }
 
     @ApiOperation(value = "退出登录")
     @RequestMapping("/outLogin")
+    @ControllerLog(description = "退出登录")
     public ApiResult<Object> outLogin(int id) throws Exception {
         UserEntity oldUserEntity = userReposity.findById(id);
         if (oldUserEntity == null) {
@@ -304,13 +321,13 @@ public class UserController {
         }
         //清掉session
         SessionUtil.put(String.valueOf(id), null);
-        logController.add(oldUserEntity.getMz(), "退出登录");
         return ApiResult.SUCCESS();
     }
 
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "注销帐号")
     @RequestMapping("/cancelAccount")
+    @ControllerLog(description = "注销帐号")
     public ApiResult<Object> cancelAccount(int id,
                                            @RequestParam @ApiParam(value = "类型（0-启动用户、1-注销用户）", required = true) int zt) throws Exception {
         //判断是否登录
@@ -325,7 +342,6 @@ public class UserController {
         //清掉session
         SessionUtil.put(String.valueOf(id), null);
         userReposity.save(oldUserEntity);
-        logController.add(String.valueOf(session.getAttribute("mz")), "注销用户");
         return ApiResult.SUCCESS();
     }
 

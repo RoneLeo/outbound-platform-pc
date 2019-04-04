@@ -21,8 +21,6 @@ public class TaskEntity {
     private Double rwyj;
     @ApiModelProperty(value = "任务描述")
     private String rwms;
-    @ApiModelProperty(value = "接单方式 1-自己接单 2-管理员派发")
-    private Integer jdfs;
     @ApiModelProperty(value = "任务方式")
     private Integer rwfs;
     @ApiModelProperty(value = "任务状态")
@@ -98,16 +96,6 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "order_way")
-    public Integer getJdfs() {
-        return jdfs;
-    }
-
-    public void setJdfs(Integer jdfs) {
-        this.jdfs = jdfs;
-    }
-
-    @Basic
     @Column(name = "task_way")
     public Integer getRwfs() {
         return rwfs;
@@ -178,7 +166,6 @@ public class TaskEntity {
                 Objects.equals(rwjzsj, entity.rwjzsj) &&
                 Objects.equals(rwyj, entity.rwyj) &&
                 Objects.equals(rwms, entity.rwms) &&
-                Objects.equals(jdfs, entity.jdfs) &&
                 Objects.equals(rwfs, entity.rwfs) &&
                 Objects.equals(rwzt, entity.rwzt) &&
                 Objects.equals(shbz, entity.shbz) &&
@@ -189,6 +176,6 @@ public class TaskEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, jdfs, rwfs, rwzt, shbz, sjyj, rwzxr, rwwcsj);
+        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, rwfs, rwzt, shbz, sjyj, rwzxr, rwwcsj);
     }
 }

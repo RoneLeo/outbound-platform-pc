@@ -37,10 +37,6 @@ public interface ItaskService {
      */
     Page<TaskEntity> findAllByYwyqy(Integer qy, Pageable pageable);
 
-    /**
-     * 根据接单方式查询
-     */
-    Page<TaskEntity> findAllByJdfs(Integer jdfs, Integer rwzxr, Pageable pageable);
 
     /**
      *  统计业务员 已接收、已处理案件数、应得佣金及实际佣金

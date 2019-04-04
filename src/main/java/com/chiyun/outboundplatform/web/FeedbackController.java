@@ -25,8 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.chiyun.outboundplatform.utils.FileUtil.addFile;
 
@@ -138,8 +137,23 @@ public class FeedbackController {
             return ApiResult.FAILURE("任务id不能为空");
         }
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "fksj"));
-        Page<FeedbackEntity> list = feedbackRepository.findAllByRwid(rwid, pageable);
-        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+        //
+        List<Map<String, Object>> list = feedbackRepository.findAllByRwid(rwid);
+        List<Map<String, Object>> list1 = new ArrayList<>();
+        for (Map<String, Object> map : list) {
+            Map<String, Object> map2 = new HashMap<>();
+            map2.putAll(map);
+            for (String key : map.keySet()) {
+                if (key.equals("fkfj")) {
+                    Map<String, Object> map1 = fileController.get((String) map.get(key));
+                    map2.put("fkfj", map1);
+                }
+            }
+            list1.add(map2);
+        }
+        return ApiResult.SUCCESS(list1);
+//        Page<FeedbackEntity> list = feedbackRepository.findAllByRwid(rwid, pageable);
+//        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
 

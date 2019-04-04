@@ -114,14 +114,6 @@ public class TaskServiceImpl implements ItaskService {
     }
 
     @Override
-    public Page<TaskEntity> findAllByJdfs(Integer jdfs, Integer rwzxr, Pageable pageable) {
-        if (jdfs == null) {
-            return taskRepository.findAllByRwzxrOrderByIdDesc(rwzxr, pageable);
-        }
-        return taskRepository.findAllByJdfsAndRwzxrOrderByIdDesc(jdfs, rwzxr, pageable);
-    }
-
-    @Override
     public Map<String, Object> countYwyRwxx(Integer rwzxr) {
         Map<String, Object> map = new HashMap<>();
         // 已接收数量

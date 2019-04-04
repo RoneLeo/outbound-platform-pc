@@ -34,10 +34,6 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
      */
     Page<TaskEntity> findAllByRwztInAndAjidInOrderByRwztDesc(List<Integer> rwzts, List<Integer> ajids, Pageable pageable);
 
-    /**
-     *  通过接单方式查询
-     */
-    Page<TaskEntity> findAllByJdfsAndRwzxrOrderByIdDesc(Integer jdfs, Integer rwzxr, Pageable pageable);
 
     /**
      *  业务员查询所有
@@ -72,13 +68,19 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     Double sumAllSjyjByRwzxr(Integer rwzxr);
 
     /**
+     *  通过案件id统计任务佣金
+     */
+    @Query(value = "select sum (task_money) from task where case_id = ?1", nativeQuery = true)
+    Double sumAllRwyjByAjid(Integer ajid);
+
+    /**
      *  通过任务执行人、任务状态查询
      */
     Page<TaskEntity> findAllByRwzxrAndRwzt(Integer ywyid, Integer rwzt, Pageable pageable);
 
 
     /**
-     * 多条件查询:任务名称、任务截止时间、任务方式、任务状态、审核状态、任务执行人、任务完成时间
+     * 多条件查询:任务名称、任务截止时间、任务方式、任务状态、任务执行人、任务完成时间
      */
     @Query(value = "select * from task where task_name like ?1 and " +
             "task_time between ?2 and ?3 and " +

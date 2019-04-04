@@ -7,10 +7,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Map;
 
 public interface FeedbackRepository extends JpaRepository<FeedbackEntity, Integer> {
 
     Page<FeedbackEntity> findAllByFkztOrderByFksjDesc(Integer fkzt, Pageable pageable);
+
+
+    @Query(value = "select id, task_id rwid, feedback_people fzr, content fknr, attachment fkfj, feedback_state fkzt, feedback_time fksj from feedback where task_id = ?1", nativeQuery = true)
+    List<Map<String, Object>> findAllByRwid(Integer rwid);
 
     Page<FeedbackEntity> findAllByRwid(Integer rwid, Pageable pageable);
 

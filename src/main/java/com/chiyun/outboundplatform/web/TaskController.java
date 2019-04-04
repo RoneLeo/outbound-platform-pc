@@ -192,7 +192,13 @@ public class TaskController {
             map.put("arxx", entity1);
             mapList.add(map);
         }
-        return ApiResult.SUCCESS(mapList);
+        int totalpage = 0;
+        if (mapList.size() % pagesize == 0) {
+            totalpage = mapList.size()/pagesize;
+        } else {
+            totalpage = mapList.size()/pagesize + 1;
+        }
+        return ApiPageResult.SUCCESS(mapList, page, pagesize, mapList.size(), totalpage);
     }
 
     @ApiOperation("业务员接单")

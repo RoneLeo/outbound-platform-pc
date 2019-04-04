@@ -49,7 +49,6 @@ public class LoggerAspect {
         HttpSession session = request.getSession();
         String mz = (String) session.getAttribute("mz");
         int czrid = (int) session.getAttribute("id");
-        boolean enable = false;
         try {
             LogEntity log = new LogEntity();
             log.setCzsj(getControllerMethodDescription(joinPoint));
@@ -58,7 +57,7 @@ public class LoggerAspect {
             log.setBz(sb.toString());
             log.setCzrid(czrid);
             log.setCzr(mz);
-            loggerController.addLog(log,enable);
+            loggerController.addLog(log);
         } catch (Exception e) {
             logger.error("异常信息:{}", e.getMessage());
         }

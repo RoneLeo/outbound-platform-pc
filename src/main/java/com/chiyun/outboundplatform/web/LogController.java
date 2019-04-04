@@ -10,6 +10,7 @@ import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,8 +34,10 @@ public class LogController {
     @Resource
     private LogRepository logRepository;
 
+    @Value("${enable}")
+    boolean enable;
 
-    public void addLog(LogEntity logEntity, boolean enable) throws Exception{
+    public void addLog(LogEntity logEntity) throws Exception{
         if (enable==true){
         if (logEntity.getCjsj() == null)
             logEntity.setCjsj(new Date());

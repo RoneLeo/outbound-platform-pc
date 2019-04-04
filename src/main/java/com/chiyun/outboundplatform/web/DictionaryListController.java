@@ -169,6 +169,7 @@ public class DictionaryListController {
         DictionarylistEntity entity = new DictionarylistEntity();
         entity.setZddm(zdxx.getZddm());
         entity.setZdmc(zdxx.getZdmc());
+        entity.setCtlx(zdxx.getZdlx());//类型同步
         entity.setZdid(zdid);
         entity.setCtmc(ctmc);
         if(!(ctdm==null)){
@@ -176,7 +177,7 @@ public class DictionaryListController {
         }
 
         entity.setZxbz("0");// 默认填写为0,未注销
-        entity.setCtlx("0"); //默认词条类型为可修改
+
 
 
         Map<String, Object> msg = idictionaryListService.save(entity);
@@ -220,11 +221,12 @@ public class DictionaryListController {
        DictionarylistEntity entity = new DictionarylistEntity();
        entity.setZddm(zdxx.getZddm());
        entity.setZdmc(zdxx.getZdmc());
+        entity.setCtlx(zdxx.getZdlx());//类型同步
        entity.setCtdm(ctdm);
        entity.setZdid(zdid);
        entity.setCtmc(ctmc);
        entity.setZxbz("0");// 默认填写为0,未注销
-       entity.setCtlx("1"); //默认词条类型为不可修改
+
 
        Map<String, Object> msg = idictionaryListService.save(entity);
        String str = msg.keySet().toString().replace("[", " ").replace("]", " ").trim();

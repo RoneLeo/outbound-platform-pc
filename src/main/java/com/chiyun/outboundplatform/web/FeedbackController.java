@@ -44,7 +44,6 @@ public class FeedbackController {
 
     @ApiOperation("添加")
     @RequestMapping("/add")
-    @ApiImplicitParam(name = "fkfj", value = "反馈附件", dataType = "MultipartFile", paramType = "query")
     public ApiResult<Object> add(FeedbackEntity entity, HttpServletRequest request) {
         if (entity.getRwid() == null) {
             return ApiResult.FAILURE("任务id不能为空");
@@ -142,4 +141,7 @@ public class FeedbackController {
         Page<FeedbackEntity> list = feedbackRepository.findAllByRwid(rwid, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
+
+
+
 }

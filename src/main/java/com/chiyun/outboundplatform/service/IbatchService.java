@@ -20,7 +20,9 @@ public interface IbatchService {
             , List<RemarkmsgEntity> remarkmsgEntityList);
 
     /**
-     *  统计字段组合、联系人及备注数目
+     * 统计字段组合、联系人及备注数目
      */
     Map countNum(String pcid);
+
+    List<Map<String, Object>> getBatchMap(String pcid);
 }

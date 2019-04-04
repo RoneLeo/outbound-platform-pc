@@ -11,6 +11,8 @@ import java.util.Objects;
 @Table(name = "log", schema = "ajjcxx", catalog = "")
 public class LogEntity {
     private int id;
+    @ApiModelProperty(value = "操作人id")
+    private int czrid;
     @ApiModelProperty(value = "操作人")
     private String czr;
     @ApiModelProperty(value = "操作事件")
@@ -29,6 +31,17 @@ public class LogEntity {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+
+    @Basic
+    @Column(name = "user_id")
+    public int getCzrid() {
+        return czrid;
+    }
+
+    public void setCzrid(int czrid) {
+        this.czrid = czrid;
     }
 
     @Basic

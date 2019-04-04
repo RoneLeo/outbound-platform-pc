@@ -10,6 +10,7 @@ import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,45 +28,37 @@ import java.util.List;
 
 @Api(description = "日志管理")
 @RestController
-@RequestMapping(value = "/log", method = {RequestMethod.POST, RequestMethod.GET})
+@RequestMapping(value = "/log",method = {RequestMethod.POST, RequestMethod.GET})
 public class LogController {
 
     @Resource
     private LogRepository logRepository;
 
-    public void add(String czr, String czsj) throws Exception {
-        LogEntity logEntity = new LogEntity();
-        logEntity.setCzr(czr);
-        logEntity.setCzsj(czsj);
-        logEntity.setCjsj(new Date());
-        logRepository.save(logEntity);
-    }
+    @Value("${enable}")
+    boolean enable;
 
-    public ApiResult addLog(LogEntity logEntity) {
+    public void addLog(LogEntity logEntity) throws Exception{
+        if (enable==true){
         if (logEntity.getCjsj() == null)
             logEntity.setCjsj(new Date());
-        try {
             logRepository.save(logEntity);
-        } catch (Exception e) {
-            return ApiResult.FAILURE("记录日志失败");
         }
-        return ApiResult.SUCCESS(logEntity);
     }
 
     @ApiOperation("删除日志")
     @RequestMapping("/delete")
-    public ApiResult<Object> delete(@RequestParam(required = true) @ApiParam(value = "数据id") int id) {
+    public ApiResult<Object> delete(@RequestParam(required = true) @ApiParam(value = "数据id") int id){
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
         ApiResult<Object> isLogin = SessionUtil.isLogin(session);
         if (isLogin.getResCode() < 200) return isLogin;
         //删除操作
         LogEntity oldLogEntity = logRepository.findById(id);
-        if (oldLogEntity == null) {
+        if(oldLogEntity==null){
             return ApiResult.FAILURE("没有该条数据");
         }
         int result = logRepository.deleteById(id);
-        if (result == 0) {
+        if (result==0){
             return ApiResult.FAILURE("删除失败");
         }
         return ApiResult.SUCCESS("删除成功");
@@ -77,7 +70,7 @@ public class LogController {
                                      @RequestParam(required = false) @ApiParam(value = "操作事件") String czsj,
                                      @RequestParam(required = false) @ApiParam(value = "开始时间(只传开始时间则查开始时间之后的数据)格式（2019-04-03 17:03:35）") Date kssj,
                                      @RequestParam(required = false) @ApiParam(value = "结束时间(只传结束时间则查结束时间之前的数据)格式（2019-04-03 17:03:35）") Date jssj,
-                                     @RequestParam int page, @RequestParam int pagesize) {
+                                     @RequestParam int page, @RequestParam int pagesize){
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
         ApiResult<Object> isLogin = SessionUtil.isLogin(session);

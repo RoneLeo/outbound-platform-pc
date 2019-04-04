@@ -48,12 +48,14 @@ public class LoggerAspect {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         HttpSession session = request.getSession();
         String mz = (String) session.getAttribute("mz");
+        int czrid = (int) session.getAttribute("id");
         try {
             LogEntity log = new LogEntity();
             log.setCzsj(getControllerMethodDescription(joinPoint));
             StringBuffer sb = new StringBuffer("请求方法:");
             sb.append(joinPoint.getTarget().getClass().getName()).append(".").append(joinPoint.getSignature().getName()).append("()");
             log.setBz(sb.toString());
+            log.setCzrid(czrid);
             log.setCzr(mz);
             loggerController.addLog(log);
         } catch (Exception e) {

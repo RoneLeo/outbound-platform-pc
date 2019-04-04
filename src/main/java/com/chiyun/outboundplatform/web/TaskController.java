@@ -25,10 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Api(description = "任务管理")
 @RequestMapping(value = "/task", method = {RequestMethod.POST, RequestMethod.GET})
@@ -187,12 +184,15 @@ public class TaskController {
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "rwjzsj"));
         Page<TaskEntity> list = taskRepository.findAllByRwzxrAndRwzt(ywyid, rwzt, pageable);
         // 查询案件的案人信息
-        List<Map<String, Object>> list1 = taskRepository.findAllByAjids(ywyid, rwzt);
-        //
-        Map<String, Object> map = new HashMap<>();
-        map.put("rwxx", list.getContent());
-        map.put("arxx", list1);
-        return ApiResult.SUCCESS(map);
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        for (TaskEntity entity : list) {
+            CasepeoplemessageEntity entity1 = casepeoplemessageRepository.findByAjid(entity.getAjid());
+            Map<String, Object> map = new HashMap<>();
+            map.put("rwxx", entity);
+            map.put("arxx", entity1);
+            mapList.add(map);
+        }
+        return ApiResult.SUCCESS(mapList);
     }
 
     @ApiOperation("业务员接单")

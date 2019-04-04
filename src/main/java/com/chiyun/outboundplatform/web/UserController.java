@@ -264,7 +264,6 @@ public class UserController {
     @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "查询所有用户")
     @RequestMapping("/findAll")
-    @ControllerLog(description = "查询所有用户")
     public ApiResult<Object> findAll(@RequestParam(required = false) @ApiParam(value = "状态（0-启用用户，1-注销用户,不传显示全部）") Integer zt,
                                      @RequestParam int page, @RequestParam int pagesize) throws Exception {
         //判断是否登录
@@ -297,7 +296,6 @@ public class UserController {
 
     @ApiOperation(value = "通过id查询用户")
     @RequestMapping("/findById")
-    @ControllerLog(description = "通过id查询用户")
     public ApiResult<Object> findById(int id) throws Exception {
         //判断是否登录
         HttpSession session = SessionHelper.getSession();

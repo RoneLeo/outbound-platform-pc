@@ -76,11 +76,6 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
      */
     Page<TaskEntity> findAllByRwzxrAndRwzt(Integer ywyid, Integer rwzt, Pageable pageable);
 
-    /**
-     *  查询业务员接单之后的根据任务状态查询的所有任务的任务id
-     */
-    @Query(value = "select * from casepeoplemessage where case_id in (select distinct case_id from task where task_people = ?1 and task_state = ?2) order by case_id desc ", nativeQuery = true)
-    List<Map<String, Object>> findAllByAjids(Integer ywyid, Integer rwzt);
 
     /**
      * 多条件查询:任务名称、任务截止时间、任务方式、任务状态、审核状态、任务执行人、任务完成时间

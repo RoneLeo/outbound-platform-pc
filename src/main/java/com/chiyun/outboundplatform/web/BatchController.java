@@ -2,6 +2,7 @@ package com.chiyun.outboundplatform.web;
 
 import com.chiyun.outboundplatform.common.ApiPageResult;
 import com.chiyun.outboundplatform.common.ApiResult;
+import com.chiyun.outboundplatform.common.ControllerLog;
 import com.chiyun.outboundplatform.common.MustLogin;
 import com.chiyun.outboundplatform.entity.BatchEntity;
 import com.chiyun.outboundplatform.entity.BatchrecordEntity;
@@ -162,17 +163,17 @@ public class BatchController {
         return ApiResult.SUCCESS("删除成功");
     }
 
-//    @MustLogin(rolerequired = {1, 2})
+    //    @MustLogin(rolerequired = {1, 2})
     @ApiOperation("通过模板id查询所有字段组合")
     @RequestMapping("/findAllZdzh")
     public ApiResult<Object> findAllZdzh(String pcid) {
         if (StringUtil.isNull(pcid)) {
             return ApiResult.FAILURE("模板id不能为空");
         }
-        return ApiPageResult.SUCCESS(ibatchService.countNum(pcid));
+        return ApiResult.SUCCESS(ibatchService.getBatchMap(pcid));
     }
 
-//    @MustLogin(rolerequired = {1, 2})
+    //    @MustLogin(rolerequired = {1, 2})
     @ApiOperation("查询所有模板")
     @RequestMapping("/findAll")
     public ApiResult<Object> findAll(int page, int pagesize) {
@@ -247,7 +248,6 @@ public class BatchController {
         //批量导入
         return ExcelImportUtils.batchImport(pcid, fileName, file, ibatchService, ajqy, ajlx);
     }
-
 
 
 }

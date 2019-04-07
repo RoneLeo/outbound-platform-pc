@@ -64,6 +64,12 @@ export default new Router({
                     meta: { title: '用户管理', keepAlive: true }
                 },
                 {
+                    path: '/logs',
+                    name: 'logs',
+                    component: resolve => require(['../components/page/Logs.vue'], resolve),
+                    meta: { title: '系统日志', keepAlive: true }
+                },
+                {
                     path: '/messages',
                     name: 'messages',
                     component: resolve => require(['../components/page/Messages.vue'], resolve),

@@ -34,6 +34,12 @@ export default new Router({
                     meta: { title: '案件管理',keepAlive: true}
                 },
                 {
+                    path: '/caseInfo',
+                    name: 'caseInfo',
+                    component: resolve => require(['../components/page/CaseInfo.vue'], resolve),
+                    meta: { title: '案件详情',keepAlive: true}
+                },
+                {
                     path: '/templates',
                     name: 'templates',
                     component: resolve => require(['../components/page/Templates.vue'], resolve),

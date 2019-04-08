@@ -189,7 +189,7 @@ public class TaskController {
             return ApiResult.FAILURE("业务员id不能为空");
         }
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "gxsj"));
-        Page<TaskEntity> list = taskRepository.findAllByRwzxrAndRwzt(ywyid, rwzt, pageable);
+        Page<TaskEntity> list = taskRepository.findAllByRwzxrAndRwztOrderByGxsjDesc(ywyid, rwzt, pageable);
         // 查询案件的案人信息
         List<Map<String, Object>> mapList = new ArrayList<>();
         for (TaskEntity entity : list) {

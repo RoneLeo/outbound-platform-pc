@@ -84,12 +84,12 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     /**
      *  通过任务执行人、任务状态查询
      */
-    Page<TaskEntity> findAllByRwzxrAndRwzt(Integer ywyid, Integer rwzt, Pageable pageable);
+    Page<TaskEntity> findAllByRwzxrAndRwztOrderByGxsjDesc(Integer ywyid, Integer rwzt, Pageable pageable);
 
     /**
      * 业务员单框查询
      */
-    @Query(value = "SELECT * FROM task WHERE CONCAT(task_name, task_time, task_money, task_description, task_way, task_state, check_remark, actual_money, task_people, complate_time, create_time, update_time) LIKE ?1 or CONCAT(task_name, task_time, task_money, task_description, task_way, task_state, check_remark, actual_money, task_people, complate_time, create_time, update_time) is null and case_id in (SELECT id from casebasemessage where area_id in (SELECT area_code from user where id = ?2)) ", nativeQuery = true)
+    @Query(value = "SELECT * FROM task WHERE CONCAT(task_name, task_time, task_money, task_description, task_way, task_state, check_remark, actual_money, task_people, complate_time, create_time, update_time) LIKE ?1 or CONCAT(task_name, task_time, task_money, task_description, task_way, task_state, check_remark, actual_money, task_people, complate_time, create_time, update_time) is null and case_id in (SELECT id from casebasemessage where area_id in (SELECT area_code from user where id = ?2)) order by update_time desc ", nativeQuery = true)
     Page<TaskEntity> findAllByCondition(String param, Integer ywyid, Pageable pageable);
 
     /**

@@ -214,7 +214,6 @@ public class UserController {
         return ApiResult.SUCCESS("删除成功");
     }
 
-    @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "修改用户")
     @RequestMapping("/update")
     @ControllerLog(description = "修改用户")

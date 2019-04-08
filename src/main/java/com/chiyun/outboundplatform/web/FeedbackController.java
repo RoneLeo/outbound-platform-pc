@@ -128,11 +128,10 @@ public class FeedbackController {
 
     @ApiOperation("根据任务id查询")
     @RequestMapping("/findAllByRwid")
-    public ApiResult<Object> findAllByRwid(Integer rwid, int page, int pagesize) {
+    public ApiResult<Object> findAllByRwid(Integer rwid) {
         if (rwid == null) {
             return ApiResult.FAILURE("任务id不能为空");
         }
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "fksj"));
         //
         List<Map<String, Object>> list = feedbackRepository.findAllByRwid(rwid);
         List<Map<String, Object>> list1 = new ArrayList<>();
@@ -148,8 +147,6 @@ public class FeedbackController {
             list1.add(map2);
         }
         return ApiResult.SUCCESS(list1);
-//        Page<FeedbackEntity> list = feedbackRepository.findAllByRwid(rwid, pageable);
-//        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
 

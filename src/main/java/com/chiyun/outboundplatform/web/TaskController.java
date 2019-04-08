@@ -203,6 +203,13 @@ public class TaskController {
         return ApiPageResult.SUCCESS(mapList, page, pagesize, mapList.size(), totalpage);
     }
 
+    @ApiOperation("业务员单框查询")
+    @RequestMapping("/findAllByYwyqyAndCondition")
+    public ApiResult<Object> findAllByYwyqyAndCondition(Integer ywyid) {
+
+        return ApiResult.SUCCESS();
+    }
+
     @ApiOperation("业务员接单")
     @RequestMapping("/order")
     @ApiImplicitParams({

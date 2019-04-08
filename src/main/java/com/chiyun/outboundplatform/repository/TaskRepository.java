@@ -116,6 +116,6 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
                                                                                          Integer rwfs, Integer rwzxr, Date beginWcsj, Date endWcsj,
                                                                                          Date beginCjsj, Date endCjsj, Pageable pageable);
 
-    @Query(value = "SELECT id,name,CASE WHEN zt IS NULL THEN 0 ELSE zt END zt,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM user LEFT JOIN (SELECT task_people uid ,task_state zt,count(*) sl FROM task  GROUP BY  task_people ,task_state)tuser ON id = uid", nativeQuery = true)
+    @Query(value = "SELECT id,name,CASE WHEN zt IS NULL THEN 0 ELSE zt END zt,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM user LEFT JOIN (SELECT task_people uid ,task_state zt,count(*) sl FROM task WHERE exists(SELECT 1 FROM casebasemessage WHERE case_id = casebasemessage.id AND show_state =1) GROUP BY  task_people ,task_state)tuser ON id = uid", nativeQuery = true)
     List<Map<String, Object>> peoplecount();
 }

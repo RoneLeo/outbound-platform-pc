@@ -67,7 +67,7 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
      * @param end
      * @Desc: 统计选择时间内案件状态数量
      */
-    @Query(value = "SELECT entrycode lx ,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM (SELECT entrycode FROM dictionarylist WHERE dictid = 1 )dic LEFT JOIN (SELECT case_state,count(*) sl FROM casebasemessage WHERE if(?1 is null,update_time =update_time,update_time >=?1)  AND if(?2 is null,update_time =update_time,update_time <=?2)GROUP BY case_state )mes ON case_state = entrycode ORDER BY entrycode ASC", nativeQuery = true)
+    @Query(value = "SELECT entrycode lx ,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM (SELECT entrycode FROM dictionarylist WHERE dictid = 1 )dic LEFT JOIN (SELECT case_state,count(*) sl FROM casebasemessage WHERE if(?1 is null,update_time =update_time,update_time >=?1)  AND if(?2 is null,update_time =update_time,update_time <=?2) AND show_state =1 GROUP BY case_state )mes ON case_state = entrycode ORDER BY entrycode ASC", nativeQuery = true)
     List<Map<String, Object>> getCaseCount(Date begin, Date end);
 
     /**
@@ -75,14 +75,14 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
      * @param end
      * @Desc: 统计选择时间内案件类型数量
      */
-    @Query(value = "SELECT entrycode lx ,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM (SELECT entrycode FROM dictionarylist WHERE dictid = 2 )dic LEFT JOIN (SELECT case_state,count(*) sl FROM casebasemessage WHERE if(?1 is null,update_time =update_time,update_time >=?1)  AND if(?2 is null,update_time =update_time,update_time <=?2)GROUP BY case_state )mes ON case_state = entrycode ORDER BY entrycode ASC", nativeQuery = true)
+    @Query(value = "SELECT entrycode lx ,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM (SELECT entrycode FROM dictionarylist WHERE dictid = 2 )dic LEFT JOIN (SELECT case_state,count(*) sl FROM casebasemessage WHERE if(?1 is null,update_time =update_time,update_time >=?1)  AND if(?2 is null,update_time =update_time,update_time <=?2) AND show_state =1 GROUP BY case_state )mes ON case_state = entrycode ORDER BY entrycode ASC", nativeQuery = true)
     List<Map<String, Object>> castTypeAnalysis(Date begin, Date end);
 
     /**
      * @param jd
      * @Desc: 统计选择季度内案件状态数量
      */
-    @Query(value = "SELECT entrycode lx ,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM (SELECT entrycode FROM dictionarylist WHERE dictid = 1 )dic LEFT JOIN (SELECT case_state,count(*) sl FROM casebasemessage WHERE quarter(update_time) = ?1 GROUP BY case_state )mes ON case_state = entrycode ORDER BY entrycode ASC", nativeQuery = true)
+    @Query(value = "SELECT entrycode lx ,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM (SELECT entrycode FROM dictionarylist WHERE dictid = 1 )dic LEFT JOIN (SELECT case_state,count(*) sl FROM casebasemessage WHERE quarter(update_time) = ?1 AND show_state =1  GROUP BY case_state )mes ON case_state = entrycode ORDER BY entrycode ASC", nativeQuery = true)
     List<Map<String, Object>> casequarter(int jd);
 }
 

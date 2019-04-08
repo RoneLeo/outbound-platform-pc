@@ -1,5 +1,6 @@
 package com.chiyun.outboundplatform.web;
 
+import com.chiyun.outboundplatform.common.ApiPageResult;
 import com.chiyun.outboundplatform.common.ApiResult;
 import com.chiyun.outboundplatform.common.SessionHelper;
 import com.chiyun.outboundplatform.entity.LogEntity;
@@ -77,7 +78,7 @@ public class LogController {
         if (isLogin.getResCode() < 200) return isLogin;
         //查询操作
         Pageable pageable = PageRequest.of(page - 1, pagesize, Sort.by(new Sort.Order(Sort.Direction.DESC, "create_time")));
-        Page<LogEntity> logEntityList;
+        Page<LogEntity> result;
         String userName, event;
         if (StringUtil.isNull(czr)) {
             userName = "%%";
@@ -91,18 +92,18 @@ public class LogController {
         }
         if (kssj == null && jssj == null) {
             //时间为空
-            logEntityList = logRepository.findByCzrAndCzsj(userName, event, pageable);
+            result = logRepository.findByCzrAndCzsj(userName, event, pageable);
         } else if (kssj == null) {
             //开始时间为空
-            logEntityList = logRepository.findByCzrAndCzsjAndJssj(userName, event, jssj, pageable);
+            result = logRepository.findByCzrAndCzsjAndJssj(userName, event, jssj, pageable);
         } else if (kssj == null) {
             //结束时间为空
-            logEntityList = logRepository.findByCzrAndCzsjAndKssj(userName, event, kssj, pageable);
+            result = logRepository.findByCzrAndCzsjAndKssj(userName, event, kssj, pageable);
         } else {
             //时间不为空
-            logEntityList = logRepository.findByCzrAndCzsjAndKssjAndJssj(userName, event, kssj, jssj, pageable);
+            result = logRepository.findByCzrAndCzsjAndKssjAndJssj(userName, event, kssj, jssj, pageable);
         }
-        return ApiResult.SUCCESS(logEntityList);
+        return ApiPageResult.SUCCESS(result.getContent(), page, pagesize, result.getTotalElements(), result.getTotalPages());
     }
 
 }

@@ -129,7 +129,7 @@
             },
             //导出
             handleExport(index, row) {
-                let url = this.$baseURL + '/batch/exportExcel?pcid=' + row.id;
+                let url = this.$baseURL + '/batch/exportExcel?pcid=' + row.pcid;
                 window.open(url);
             },
             //角色解析
@@ -152,13 +152,17 @@
                 this.$axios.post('batch/findAllZdzh', {pcid: row.pcid}).then( (res) => {
                     loading.close();
                     let data = res.data;
-                    for(let k in data){
-                        let zdidArr2 = data[k];
-                        if(zdidArr2.length){
-                            zdidArr2 = [zdidArr2[0]]; //防止多个相同字段不停叠加!
-                        }
-                        this.zdidArr[k] = zdidArr2;
+                    for(let i=0;i<data.length;i++){
+                        let field = data[i].type;
+                        this.zdidArr[field] = data[i].bhzd;
+                        // let zdidArr2 = data[k];
+                        // if(zdidArr2.length){
+                        //     zdidArr2 = [zdidArr2[0]]; //防止多个相同字段不停叠加!
+                        // }
+                        // this.zdidArr[k] = zdidArr2;
                     }
+                    console.log(this.zdidArr);
+
                     this.lxrNum = data.lxrNum;
                     this.bzNum = data.bzNum;
                     this.addFormVisible = true;
@@ -169,11 +173,12 @@
             saveData() {
                 this.$refs.dataForm.validate((valid) => {
                     if (valid) {
-                        console.log(this.dataForm, this.zdidArr,this.lxrNum,this.bzNum);
+                        console.log(this.zdidArr);
+                        //console.log(this.dataForm, this.zdidArr,this.lxrNum,this.bzNum);
                         let zdids = [];
                         let lxrNum = this.lxrNum;
                         let bzNum = this.bzNum;
-                        console.log(lxrNum,bzNum);
+                        //console.log(lxrNum,bzNum);
                         this.zdidArr.forEach((arr,index) => {
                             //联系人
                             if(index == 7) {  //联系人信息的时候，判断联系人数量

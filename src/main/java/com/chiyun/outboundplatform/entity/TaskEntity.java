@@ -21,8 +21,6 @@ public class TaskEntity {
     private Double rwyj;
     @ApiModelProperty(value = "任务描述")
     private String rwms;
-    @ApiModelProperty(value = "接单方式 1-自己接单 2-管理员派发")
-    private Integer jdfs;
     @ApiModelProperty(value = "任务方式")
     private Integer rwfs;
     @ApiModelProperty(value = "任务状态")
@@ -35,6 +33,8 @@ public class TaskEntity {
     private Integer rwzxr;
     @ApiModelProperty(value = "任务完成时间")
     private Date rwwcsj;
+    @ApiModelProperty(value = "任务创建时间")
+    private Date rwcjsj;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -98,16 +98,6 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "order_way")
-    public Integer getJdfs() {
-        return jdfs;
-    }
-
-    public void setJdfs(Integer jdfs) {
-        this.jdfs = jdfs;
-    }
-
-    @Basic
     @Column(name = "task_way")
     public Integer getRwfs() {
         return rwfs;
@@ -167,6 +157,16 @@ public class TaskEntity {
         this.rwwcsj = rwwcsj;
     }
 
+    @Basic
+    @Column(name = "create_time")
+    public Date getRwcjsj() {
+        return rwcjsj;
+    }
+
+    public void setRwcjsj(Date rwcjsj) {
+        this.rwcjsj = rwcjsj;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -178,17 +178,17 @@ public class TaskEntity {
                 Objects.equals(rwjzsj, entity.rwjzsj) &&
                 Objects.equals(rwyj, entity.rwyj) &&
                 Objects.equals(rwms, entity.rwms) &&
-                Objects.equals(jdfs, entity.jdfs) &&
                 Objects.equals(rwfs, entity.rwfs) &&
                 Objects.equals(rwzt, entity.rwzt) &&
                 Objects.equals(shbz, entity.shbz) &&
                 Objects.equals(sjyj, entity.sjyj) &&
                 Objects.equals(rwzxr, entity.rwzxr) &&
-                Objects.equals(rwwcsj, entity.rwwcsj);
+                Objects.equals(rwwcsj, entity.rwwcsj) &&
+                Objects.equals(rwcjsj, entity.rwcjsj);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, jdfs, rwfs, rwzt, shbz, sjyj, rwzxr, rwwcsj);
+        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, rwfs, rwzt, shbz, sjyj, rwzxr, rwwcsj, rwcjsj);
     }
 }

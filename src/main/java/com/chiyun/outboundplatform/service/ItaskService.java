@@ -30,17 +30,13 @@ public interface ItaskService {
      */
     Page<TaskEntity> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj,
                                         Integer rwfs, Integer rwzt, Integer rwzxr,
-                                        Date beginWcsj, Date endWcsj, Pageable pageable);
+                                        Date beginWcsj, Date endWcsj, Date beginCjsj, Date endCjsj, Pageable pageable);
 
     /**
      *  查询业务员本区域的任务
      */
     Page<TaskEntity> findAllByYwyqy(Integer qy, Pageable pageable);
 
-    /**
-     * 根据接单方式查询
-     */
-    Page<TaskEntity> findAllByJdfs(Integer jdfs, Integer rwzxr, Pageable pageable);
 
     /**
      *  统计业务员 已接收、已处理案件数、应得佣金及实际佣金

@@ -6,6 +6,7 @@ import com.chiyun.outboundplatform.entity.FeedbackEntity;
 import com.chiyun.outboundplatform.entity.FileEntity;
 import com.chiyun.outboundplatform.entity.TaskEntity;
 import com.chiyun.outboundplatform.repository.FeedbackRepository;
+import com.chiyun.outboundplatform.repository.FileRepository;
 import com.chiyun.outboundplatform.repository.UserReposity;
 import com.chiyun.outboundplatform.service.ItaskService;
 import com.chiyun.outboundplatform.utils.FileUtil;
@@ -23,12 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import static com.chiyun.outboundplatform.utils.FileUtil.addFile;
+import java.util.*;
 
 @Api(description = "反馈记录表")
 @RequestMapping(value = "/feedback", method = {RequestMethod.POST, RequestMethod.GET})
@@ -40,12 +36,13 @@ public class FeedbackController {
     @Resource
     private ItaskService itaskService;
     @Resource
+    private FileRepository fileRepository;
+    @Resource
     private FileController fileController;
 
     @ApiOperation("添加")
     @RequestMapping("/add")
-    @ApiImplicitParam(name = "fkfj", value = "反馈附件", dataType = "MultipartFile", paramType = "query")
-    public ApiResult<Object> add(FeedbackEntity entity, HttpServletRequest request) {
+    public ApiResult<Object> add(FeedbackEntity entity) {
         if (entity.getRwid() == null) {
             return ApiResult.FAILURE("任务id不能为空");
         }
@@ -55,17 +52,7 @@ public class FeedbackController {
         }
         entity.setFksj(new Date());
         entity.setFkzt(1);
-
-        List<MultipartFile> files = FileUtil.getfile(request);
-        String result = "";
-        if (files.size() != 0) {
-            for (MultipartFile file : files) {
-                FileEntity fileEntity = fileController.addFile(request, file);
-                result += fileEntity.getId() + ",";
-            }
-            result.substring(0, result.lastIndexOf(","));
-        }
-        entity.setFkfj(result);
+        entity.setFkfj(fileRepository.findAllIdByRwid(entity.getRwid()));
         try {
             feedbackRepository.save(entity);
         } catch (Exception e) {
@@ -134,12 +121,34 @@ public class FeedbackController {
 
     @ApiOperation("根据任务id查询")
     @RequestMapping("/findAllByRwid")
-    public ApiResult<Object> findAllByRwid(Integer rwid, int page, int pagesize) {
+    public ApiResult<Object> findAllByRwid(Integer rwid) {
         if (rwid == null) {
             return ApiResult.FAILURE("任务id不能为空");
         }
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "fksj"));
-        Page<FeedbackEntity> list = feedbackRepository.findAllByRwid(rwid, pageable);
-        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+        //
+        List<Map<String, Object>> list = feedbackRepository.findAllByRwid(rwid);
+        List<Map<String, Object>> list1 = new ArrayList<>();
+        for (Map<String, Object> map : list) {
+            Map<String, Object> map2 = new HashMap<>();
+            map2.putAll(map);
+            for (String key : map.keySet()) {
+                if (key.equals("fkfj")) {
+                    Map<String, Object> map1 = fileController.get((String) map.get(key));
+                    map2.put("fkfj", map1);
+                }
+            }
+            list1.add(map2);
+        }
+        return ApiResult.SUCCESS(list1);
     }
+
+
+    @ApiOperation("查询所有")
+    @RequestMapping("/findAll")
+    public ApiResult<Object> findAll() {
+        return ApiResult.SUCCESS(feedbackRepository.findAll());
+    }
+
+
+
 }

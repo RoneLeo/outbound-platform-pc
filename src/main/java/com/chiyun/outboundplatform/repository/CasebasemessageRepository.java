@@ -55,10 +55,10 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
     /**
      * 多条件查询：批次id、案件名称、案件类型、案件状态、案件区域、导入时间
      */
-    @Query(value = "select * from casebasemessage where IF(?1 != '', batch_id = ?1, 1=1) and case_name like ?2 and if(?3 is not null, case_type = ?3, 1 = 1) and if(?4 is not null, case_state = ?4, 1 = 1) and if(?5 is not null, area_id = ?5, 1 = 1) and import_time between ?6 and ?7 and show_state = '1'", nativeQuery = true)
+    @Query(value = "select * from casebasemessage where IF(?1 != '', batch_id = ?1, 1=1) and (?2 != '', case_name like ?2, case_name like '%%' or case_name is null) and if(?3 is not null, case_type = ?3, 1 = 1) and if(?4 is not null, case_state = ?4, 1 = 1) and if(?5 is not null, area_id = ?5, 1 = 1) and import_time between ?6 and ?7 and show_state = '1'", nativeQuery = true)
     Page<CasebasemessageEntity> findAllByConditionAndDrsjBetween(String pcid, String ajmc, Integer ajlx, Integer ajzt, Integer ajqy, Date begin, Date end, Pageable pageable);
 
-    @Query(value = "select * from casebasemessage where IF(?1 != '', batch_id = ?1, 1=1) and case_name like ?2 and if(?3 is not null, case_type = ?3, 1 = 1) and if(?4 is not null, case_state = ?4, 1 = 1) and if(?5 is not null, area_id = ?5, 1 = 1) and show_state = '1'", nativeQuery = true)
+    @Query(value = "select * from casebasemessage where IF(?1 != '', batch_id = ?1, 1=1) and if(?2 != '', case_name like ?2, case_name like '%%' or case_name is null)  and if(?3 is not null, case_type = ?3, 1 = 1) and if(?4 is not null, case_state = ?4, 1 = 1) and if(?5 is not null, area_id = ?5, 1 = 1) and show_state = '1'", nativeQuery = true)
     Page<CasebasemessageEntity> findAllByCondition(String pcid, String ajmc, Integer ajlx, Integer ajzt, Integer ajqy, Pageable pageable);
 
 }

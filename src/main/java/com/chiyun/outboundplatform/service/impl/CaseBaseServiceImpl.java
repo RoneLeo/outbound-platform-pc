@@ -69,9 +69,7 @@ public class CaseBaseServiceImpl implements IcaseBaseService {
 
     @Override
     public Page<CasebasemessageEntity> findAllByCondition(String pcid, String ajmc, Integer ajlx, Integer ajzt, Integer ajqy, Date begin, Date end, Pageable pageable) {
-        if (StringUtil.isNull(ajmc)) {
-            ajmc = "%%";
-        } else {
+        if (StringUtil.isNotNull(ajmc)) {
             ajmc = "%" + ajmc + "%";
         }
         if (begin == null && end == null) {

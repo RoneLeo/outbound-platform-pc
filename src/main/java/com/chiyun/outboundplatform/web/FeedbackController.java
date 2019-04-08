@@ -125,21 +125,16 @@ public class FeedbackController {
         if (rwid == null) {
             return ApiResult.FAILURE("任务id不能为空");
         }
-        //
-        List<Map<String, Object>> list = feedbackRepository.findAllByRwid(rwid);
-        List<Map<String, Object>> list1 = new ArrayList<>();
-        for (Map<String, Object> map : list) {
-            Map<String, Object> map2 = new HashMap<>();
-            map2.putAll(map);
-            for (String key : map.keySet()) {
-                if (key.equals("fkfj")) {
-                    Map<String, Object> map1 = fileController.get((String) map.get(key));
-                    map2.put("fkfj", map1);
-                }
+        Map<String, Object> map = feedbackRepository.findAllByRwid(rwid);
+        Map<String, Object> map2 = new HashMap<>();
+        map2.putAll(map);
+        for (String key : map.keySet()) {
+            if (key.equals("fkfj")) {
+                Map<String, Object> map1 = fileController.get((String) map.get(key));
+                map2.put("fkfj", map1);
             }
-            list1.add(map2);
         }
-        return ApiResult.SUCCESS(list1);
+        return ApiResult.SUCCESS(map2);
     }
 
 

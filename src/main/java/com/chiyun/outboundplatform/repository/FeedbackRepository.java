@@ -15,7 +15,7 @@ public interface FeedbackRepository extends JpaRepository<FeedbackEntity, Intege
 
 
     @Query(value = "select id, task_id rwid, feedback_people fzr, content fknr, attachment fkfj, feedback_state fkzt, feedback_time fksj from feedback where task_id = ?1", nativeQuery = true)
-    List<Map<String, Object>> findAllByRwid(Integer rwid);
+    Map<String, Object> findAllByRwid(Integer rwid);
 
     Page<FeedbackEntity> findAllByRwid(Integer rwid, Pageable pageable);
 

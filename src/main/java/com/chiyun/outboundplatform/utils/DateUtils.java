@@ -9,6 +9,7 @@ import java.util.Date;
  * Created by wazto on 2019/3/21.
  */
 public class DateUtils {
+    private static Calendar calendar = Calendar.getInstance();
     static SimpleDateFormat sdfall = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     static SimpleDateFormat sdfall2 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     static SimpleDateFormat sdfall3 = new SimpleDateFormat("yyyy/MM/dd HH:mm");
@@ -52,4 +53,39 @@ public class DateUtils {
     }
 
 
+    public static Date getMonthBegin(Date date) {
+        if (date == null)
+            return null;
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        System.out.print(calendar.getTime());
+        return calendar.getTime();
+    }
+
+    public static Date getMonthEnd(Date date) {
+        if (date == null)
+            return null;
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.add(Calendar.MONTH, 1);
+        calendar.add(Calendar.SECOND, -1);
+        System.out.print(calendar.getTime());
+        return calendar.getTime();
+    }
+
+    public static int getquarter(Date date) {
+        if (date != null)
+            calendar.setTime(date);
+        else
+            calendar.setTime(new Date());
+        return (calendar.get(Calendar.MONTH) + 3) / 3;
+    }
 }

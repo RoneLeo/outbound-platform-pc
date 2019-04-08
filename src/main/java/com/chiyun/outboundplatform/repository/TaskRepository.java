@@ -13,7 +13,7 @@ import java.util.Map;
 public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
     /**
-     *  保存
+     * 保存
      */
     TaskEntity save(TaskEntity entity);
 
@@ -25,7 +25,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     List<TaskEntity> findAllByAjid(Integer ajid);
 
     /**
-     *  根据案件id修改任务状态：注销
+     * 根据案件id修改任务状态：注销
      */
     @Query(value = "update task set task_state = '8' where case_id = ?1", nativeQuery = true)
     void resetByAjid(Integer ajid);
@@ -37,12 +37,12 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
 
     /**
-     *  业务员查询所有
+     * 业务员查询所有
      */
     Page<TaskEntity> findAllByRwzxrOrderByIdDesc(Integer rwzxr, Pageable pageable);
 
     /**
-     *  获取最早的任务截止时间和任务完成时间
+     * 获取最早的任务截止时间和任务完成时间
      */
     @Query(value = "select task_time from task order by task_time asc limit 1", nativeQuery = true)
     Date getEarliestRwjzsj();
@@ -64,7 +64,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
 
     /**
-     *  统计业务员 已接收、已处理案件数、应得佣金及实际佣金
+     * 统计业务员 已接收、已处理案件数、应得佣金及实际佣金
      */
     @Query(value = "select count(id) from task where task_people = ?1 and task_state = ?2", nativeQuery = true)
     int countAllByRwzxrAndRwzt(Integer rwzxr, Integer rwzt);
@@ -76,13 +76,13 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     Double sumAllSjyjByRwzxr(Integer rwzxr);
 
     /**
-     *  通过案件id统计任务佣金
+     * 通过案件id统计任务佣金
      */
     @Query(value = "select sum(task_money) from task where case_id = ?1", nativeQuery = true)
     Double sumAllRwyjByAjid(Integer ajid);
 
     /**
-     *  通过任务执行人、任务状态查询
+     * 通过任务执行人、任务状态查询
      */
     Page<TaskEntity> findAllByRwzxrAndRwztOrderByGxsjDesc(Integer ywyid, Integer rwzt, Pageable pageable);
 
@@ -102,9 +102,8 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
             "if(?6 is not null, task_people = ?6, 1 = 1) and " +
             "create_time between ?7 and ?8", nativeQuery = true)
     Page<TaskEntity> findAllByConditionAndRwjzsjBetweenAndRwcjsjBetween(String rwmc, Date beginJzsj, Date endJzsj,
-                                        Integer rwfs, Integer rwzt, Integer rwzxr,
-                                        Date beginCjsj, Date endCjsj, Pageable pageable);
-
+                                                                        Integer rwfs, Integer rwzt, Integer rwzxr,
+                                                                        Date beginCjsj, Date endCjsj, Pageable pageable);
 
 
     @Query(value = "select * from task where task_name like ?1 and " +
@@ -114,7 +113,9 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
             "complate_time between ?6 and ?7 and " +
             "create_time between ?8 and ?9 and task_state = '4'", nativeQuery = true)
     Page<TaskEntity> findAllByConditionAndRwjzsjBetweenAAndRwcjsjBetweenAndRwcjsjBetween(String rwmc, Date beginJzsj, Date endJzsj,
-                                        Integer rwfs, Integer rwzxr, Date beginWcsj, Date endWcsj,
-                                                        Date beginCjsj, Date endCjsj, Pageable pageable);
+                                                                                         Integer rwfs, Integer rwzxr, Date beginWcsj, Date endWcsj,
+                                                                                         Date beginCjsj, Date endCjsj, Pageable pageable);
 
+    @Query(value = "SELECT id,name,CASE WHEN zt IS NULL THEN 0 ELSE zt END zt,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM user LEFT JOIN (SELECT task_people uid ,task_state zt,count(*) sl FROM task  GROUP BY  task_people ,task_state)tuser ON id = uid", nativeQuery = true)
+    List<Map<String, Object>> peoplecount();
 }

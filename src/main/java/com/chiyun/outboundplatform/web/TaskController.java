@@ -60,11 +60,15 @@ public class TaskController {
             return ApiResult.FAILURE("任务截止时间不能早于当前时间");
         }
         entity.setRwzt(1);
+        entity.setRwcjsj(now);
+        entity.setGxsj(now);
         // 判断任务佣金是否超过案件佣金
         double ajyj = casebasemessageRepository.findById(entity.getAjid()).get().getAjyj();
-        double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid());
-        if (ajyj < rwzyj) {
-            return ApiResult.FAILURE("任务总佣金已超过案件佣金，添加失败");
+        if (taskRepository.findAllByAjid(ajid).size() > 0) {
+            double rwyj = taskRepository.sumAllRwyjByAjid(entity.getAjid());
+            if (ajyj < rwyj) {
+                return ApiResult.FAILURE("任务总佣金已超过案件佣金，添加失败");
+            }
         }
         try {
             itaskService.save(entity);
@@ -168,7 +172,7 @@ public class TaskController {
         if (entity == null) {
             return ApiResult.FAILURE("该业务员不存在");
         }
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "gxsj"));
         Page<TaskEntity> list = itaskService.findAllByYwyqy(Integer.parseInt(entity.getSzxzqdm()), pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
@@ -183,7 +187,7 @@ public class TaskController {
         if (ywyid == null) {
             return ApiResult.FAILURE("业务员id不能为空");
         }
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "rwjzsj"));
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "gxsj"));
         Page<TaskEntity> list = taskRepository.findAllByRwzxrAndRwzt(ywyid, rwzt, pageable);
         // 查询案件的案人信息
         List<Map<String, Object>> mapList = new ArrayList<>();
@@ -194,19 +198,18 @@ public class TaskController {
             map.put("arxx", entity1);
             mapList.add(map);
         }
-        int totalpage = 0;
-        if (mapList.size() % pagesize == 0) {
-            totalpage = mapList.size()/pagesize;
-        } else {
-            totalpage = mapList.size()/pagesize + 1;
-        }
-        return ApiPageResult.SUCCESS(mapList, page, pagesize, mapList.size(), totalpage);
+        return ApiPageResult.SUCCESS(mapList, page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
     @ApiOperation("业务员单框查询")
     @RequestMapping("/findAllByYwyqyAndCondition")
-    public ApiResult<Object> findAllByYwyqyAndCondition(Integer ywyid) {
-
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "param", value = "参数", dataType = "Integer", paramType = "query")
+    })
+    public ApiResult<Object> findAllByYwyqyAndCondition(Integer ywyid, String param, int page, int pagesize) {
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "rwcjsj"));
+        Page<TaskEntity> list = taskRepository.findAllByCondition(param, ywyid, pageable);
         return ApiResult.SUCCESS();
     }
 

@@ -35,6 +35,8 @@ public class TaskEntity {
     private Date rwwcsj;
     @ApiModelProperty(value = "任务创建时间")
     private Date rwcjsj;
+    @ApiModelProperty(value = "数据更新时间")
+    private Date gxsj;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -167,6 +169,16 @@ public class TaskEntity {
         this.rwcjsj = rwcjsj;
     }
 
+    @Basic
+    @Column(name = "update_time")
+    public Date getGxsj() {
+        return gxsj;
+    }
+
+    public void setGxsj(Date gxsj) {
+        this.gxsj = gxsj;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -184,11 +196,12 @@ public class TaskEntity {
                 Objects.equals(sjyj, entity.sjyj) &&
                 Objects.equals(rwzxr, entity.rwzxr) &&
                 Objects.equals(rwwcsj, entity.rwwcsj) &&
-                Objects.equals(rwcjsj, entity.rwcjsj);
+                Objects.equals(rwcjsj, entity.rwcjsj) &&
+                Objects.equals(gxsj, entity.gxsj);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, rwfs, rwzt, shbz, sjyj, rwzxr, rwwcsj, rwcjsj);
+        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, rwfs, rwzt, shbz, sjyj, rwzxr, rwwcsj, rwcjsj, gxsj);
     }
 }

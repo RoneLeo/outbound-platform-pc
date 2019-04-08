@@ -22,6 +22,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
      */
     Page<TaskEntity> findAllByRwzt(Integer rwzt, Pageable pageable);
 
+    List<TaskEntity> findAllByAjid(Integer ajid);
 
     /**
      *  根据案件id修改任务状态：注销
@@ -77,7 +78,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     /**
      *  通过案件id统计任务佣金
      */
-    @Query(value = "select sum (task_money) from task where case_id = ?1", nativeQuery = true)
+    @Query(value = "select sum(task_money) from task where case_id = ?1", nativeQuery = true)
     Double sumAllRwyjByAjid(Integer ajid);
 
     /**
@@ -85,6 +86,11 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
      */
     Page<TaskEntity> findAllByRwzxrAndRwzt(Integer ywyid, Integer rwzt, Pageable pageable);
 
+    /**
+     * 业务员单框查询
+     */
+    @Query(value = "SELECT * FROM task WHERE CONCAT(task_name, task_time, task_money, task_description, task_way, task_state, check_remark, actual_money, task_people, complate_time, create_time) LIKE ?1 and task_people = ?2", nativeQuery = true)
+    Page<TaskEntity> findAllByCondition(String param, Integer ywyid, Pageable pageable);
 
     /**
      * 多条件查询:任务名称、任务截止时间、任务方式、任务状态、任务执行人、任务完成时间
@@ -111,17 +117,4 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
                                         Integer rwfs, Integer rwzxr, Date beginWcsj, Date endWcsj,
                                                         Date beginCjsj, Date endCjsj, Pageable pageable);
 
-    @Query(value = "select * from task where task_name like ?1 and " +
-            "if(?2 is not null, task_way = ?2, 1 = 1) and " +
-            "if(?3 is not null, task_state = ?3, 1 = 1) and " +
-            "if(?4 is not null, task_people = ?4, 1 = 1) and " +
-            "complate_time between ?5 and ?6", nativeQuery = true)
-    Page<TaskEntity> findAllByConditionAndRwwcsjBetween(String rwmc, Integer rwfs, Integer rwzt,
-                                                        Integer rwzxr, Date beginWcsj, Date endWcsj, Pageable pageable);
-
-    @Query(value = "select * from task where task_name like ?1 and " +
-            "if(?2 is not null, task_way = ?2, 1 = 1) and " +
-            "if(?3 is not null, task_state = ?3, 1 = 1) and " +
-            "if(?4 is not null, task_people = ?4, 1 = 1)", nativeQuery = true)
-    Page<TaskEntity> findAllByCondition(String rwmc, Integer rwfs, Integer rwzt, Integer rwzxr, Pageable pageable);
 }

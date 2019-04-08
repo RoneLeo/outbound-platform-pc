@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.*;
 
 
@@ -183,6 +184,7 @@ public class UserController {
         userEntity.setCjsj(new Date());
         userEntity.setZt(0);
         userEntity.setMm(MD5Util.MD5("666666"));
+        userEntity.setZje(new BigDecimal("0"));
         UserEntity userEntity1 = userReposity.save(userEntity);
         String sqm = CodeUtil.toSerialCode(userEntity1.getId());
         userEntity1.setSqm(sqm);
@@ -214,7 +216,6 @@ public class UserController {
         return ApiResult.SUCCESS("删除成功");
     }
 
-    @MustLogin(rolerequired = {1, 3})
     @ApiOperation(value = "修改用户")
     @RequestMapping("/update")
     @ControllerLog(description = "修改用户")

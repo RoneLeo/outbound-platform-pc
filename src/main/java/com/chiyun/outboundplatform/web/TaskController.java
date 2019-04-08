@@ -13,6 +13,7 @@ import com.chiyun.outboundplatform.repository.UserReposity;
 import com.chiyun.outboundplatform.service.IcaseBaseService;
 import com.chiyun.outboundplatform.service.IdictionaryListService;
 import com.chiyun.outboundplatform.service.ItaskService;
+import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -208,9 +209,17 @@ public class TaskController {
             @ApiImplicitParam(name = "param", value = "参数", dataType = "Integer", paramType = "query")
     })
     public ApiResult<Object> findAllByYwyqyAndCondition(Integer ywyid, String param, int page, int pagesize) {
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "rwcjsj"));
+        if (ywyid == null) {
+            return ApiResult.FAILURE("业务员id不能为空");
+        }
+        if (StringUtil.isNull(param)) {
+            param = "%%";
+        } else {
+            param = "%" + param + "%";
+        }
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "update_time"));
         Page<TaskEntity> list = taskRepository.findAllByCondition(param, ywyid, pageable);
-        return ApiResult.SUCCESS();
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
     @ApiOperation("业务员接单")

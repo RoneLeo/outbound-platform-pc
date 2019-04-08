@@ -69,7 +69,7 @@ public class FileController {
                 // 图片格式：BMP、JPG、JPEG、PNG、GIF
                 listPhoto.add(wedz);
             } else if (hzm.equals("AVI") | hzm.equals("MOV") | hzm.equals("RMVB") | hzm.equals("RM")
-                    | hzm.equals("FLV") | hzm.equals("MP4") | hzm.equals("3GP")) {
+                    | hzm.equals("FLV") | hzm.equals("MP4") | hzm.equals("3GP") | hzm.equals("WEBM")) {
                 // 视频格式：AVI、mov、rmvb、rm、FLV、mp4、3GP
                 listVideo.add(wedz);
             } else if (hzm.equals("WAV") | hzm.equals("MIDI") | hzm.equals("CDA") | hzm.equals("MP3") | hzm.equals("WMA")) {

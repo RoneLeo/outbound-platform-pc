@@ -6,6 +6,7 @@ import com.chiyun.outboundplatform.entity.FeedbackEntity;
 import com.chiyun.outboundplatform.entity.FileEntity;
 import com.chiyun.outboundplatform.entity.TaskEntity;
 import com.chiyun.outboundplatform.repository.FeedbackRepository;
+import com.chiyun.outboundplatform.repository.FileRepository;
 import com.chiyun.outboundplatform.repository.UserReposity;
 import com.chiyun.outboundplatform.service.ItaskService;
 import com.chiyun.outboundplatform.utils.FileUtil;
@@ -35,11 +36,13 @@ public class FeedbackController {
     @Resource
     private ItaskService itaskService;
     @Resource
+    private FileRepository fileRepository;
+    @Resource
     private FileController fileController;
 
     @ApiOperation("添加")
     @RequestMapping("/add")
-    public ApiResult<Object> add(FeedbackEntity entity, HttpServletRequest request) {
+    public ApiResult<Object> add(FeedbackEntity entity) {
         if (entity.getRwid() == null) {
             return ApiResult.FAILURE("任务id不能为空");
         }
@@ -49,17 +52,7 @@ public class FeedbackController {
         }
         entity.setFksj(new Date());
         entity.setFkzt(1);
-
-        List<MultipartFile> files = FileUtil.getfile(request);
-        String result = "";
-        if (files.size() != 0) {
-            for (MultipartFile file : files) {
-                FileEntity fileEntity = fileController.addFile(request, file);
-                result += fileEntity.getId() + ",";
-            }
-            result.substring(0, result.lastIndexOf(","));
-        }
-        entity.setFkfj(result);
+        entity.setFkfj(fileRepository.findAllIdByRwid(entity.getRwid()));
         try {
             feedbackRepository.save(entity);
         } catch (Exception e) {

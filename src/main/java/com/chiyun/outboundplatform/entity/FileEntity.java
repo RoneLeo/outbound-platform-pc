@@ -9,6 +9,7 @@ public class FileEntity {
     private Integer id;
     private String wjmc;
     private String wjdz;
+    private Integer rwid;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,18 +42,29 @@ public class FileEntity {
         this.wjdz = wjdz;
     }
 
+    @Basic
+    @Column(name = "task_id")
+    public Integer getRwid() {
+        return rwid;
+    }
+
+    public void setRwid(Integer rwid) {
+        this.rwid = rwid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof FileEntity)) return false;
         FileEntity that = (FileEntity) o;
-        return id == that.id &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(wjmc, that.wjmc) &&
-                Objects.equals(wjdz, that.wjdz);
+                Objects.equals(wjdz, that.wjdz) &&
+                Objects.equals(rwid, that.rwid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, wjmc, wjdz);
+        return Objects.hash(id, wjmc, wjdz, rwid);
     }
 }

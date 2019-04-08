@@ -3,6 +3,7 @@ package com.chiyun.outboundplatform.web;
 import com.chiyun.outboundplatform.entity.FileEntity;
 import com.chiyun.outboundplatform.repository.FileRepository;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,14 +19,16 @@ import java.util.List;
 import java.util.Map;
 
 @Api(description = "文件管理")
-@RestController
 @RequestMapping(value = "/file", method = {RequestMethod.POST, RequestMethod.GET})
+@RestController
 public class FileController {
 
     @Resource
     private FileRepository fileRepository;
 
-    public FileEntity addFile(HttpServletRequest request, MultipartFile file) {
+    @ApiOperation("添加")
+    @RequestMapping("/add")
+    public FileEntity addFile(Integer rwid, MultipartFile file, HttpServletRequest request) {
         String filename = file.getOriginalFilename();
         String path = request.getSession().getServletContext().getRealPath("/upload/");
         File dest = new File(path + filename);
@@ -37,6 +40,7 @@ public class FileController {
         try {
             file.transferTo(dest);
             fileEntity.setWjmc(filename);
+            fileEntity.setRwid(rwid);
             fileEntity.setWjdz("upload/" + filename);
             fileRepository.save(fileEntity);
         } catch (IOException e) {
@@ -59,7 +63,7 @@ public class FileController {
             FileEntity entity = fileRepository.findById(id).get();
             String wedz = entity.getWjdz();
             // 获取后缀名
-            String hzm = wedz.substring(wedz.lastIndexOf(".")).toUpperCase();
+            String hzm = wedz.substring(wedz.lastIndexOf(".") + 1).toUpperCase();
 
             if (hzm.equals("BMP") | hzm.equals("JPG") | hzm.equals("JPEG") | hzm.equals("PNG") | hzm.equals("GIF")) {
                 // 图片格式：BMP、JPG、JPEG、PNG、GIF

@@ -1,5 +1,6 @@
 package com.chiyun.outboundplatform.web;
 
+import com.chiyun.outboundplatform.common.ApiPageResult;
 import com.chiyun.outboundplatform.common.ApiResult;
 import com.chiyun.outboundplatform.service.impl.SatisticsServiceImpl;
 import com.chiyun.outboundplatform.utils.DateUtils;
@@ -7,6 +8,9 @@ import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +20,7 @@ import javax.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by wazto on 2019/4/8.
@@ -83,9 +88,12 @@ public class StatisticsController {
 
     @ApiOperation("用户案件完成情况统计分析,月度")
     @RequestMapping("/people/Analysis")
-    public ApiResult peoplecount() {
+    public ApiResult peoplecount(@RequestParam @ApiParam("页码") int page,
+                                 @RequestParam @ApiParam("分页大小") int pagesize) {
+        Pageable pageable = PageRequest.of(page - 1, pagesize);
         try {
-            return ApiResult.SUCCESS(satisticsService.peoplecount());
+            Page<Map<String, Object>> list = satisticsService.peoplecount(pageable);
+            return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
         } catch (Exception e) {
             e.printStackTrace();
             return ApiResult.FAILURE("统计失败，请重试");

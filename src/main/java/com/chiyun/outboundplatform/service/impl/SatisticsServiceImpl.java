@@ -4,10 +4,13 @@ import com.chiyun.outboundplatform.repository.CasebasemessageRepository;
 import com.chiyun.outboundplatform.repository.DictionaryListRepository;
 import com.chiyun.outboundplatform.repository.TaskRepository;
 import com.chiyun.outboundplatform.utils.DateUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by wazto on 2019/4/8.
@@ -61,7 +64,7 @@ public class SatisticsServiceImpl {
      *
      * @return
      */
-    public Object peoplecount() {
-        return taskRepository.peoplecount();
+    public Page<Map<String, Object>> peoplecount(Pageable pageable) {
+        return taskRepository.peoplecount(pageable);
     }
 }

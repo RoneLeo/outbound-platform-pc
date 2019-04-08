@@ -116,6 +116,8 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
                                                                                          Integer rwfs, Integer rwzxr, Date beginWcsj, Date endWcsj,
                                                                                          Date beginCjsj, Date endCjsj, Pageable pageable);
 
-    @Query(value = "SELECT id,name,CASE WHEN zt IS NULL THEN 0 ELSE zt END zt,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM user LEFT JOIN (SELECT task_people uid ,task_state zt,count(*) sl FROM task WHERE exists(SELECT 1 FROM casebasemessage WHERE case_id = casebasemessage.id AND show_state =1) GROUP BY  task_people ,task_state)tuser ON id = uid", nativeQuery = true)
-    List<Map<String, Object>> peoplecount();
+    @Query(value = "SELECT id,name,group_concat(sl ORDER BY zt ASC) sl FROM (SELECT id,name,zt,sl FROM user LEFT JOIN (\n" +
+            "                             SELECT uid,zt,sum(sl) sl FROM ( SELECT uid,entrycode zt,CASE WHEN zt = entrycode THEN sl ELSE 0 END  sl FROM (SELECT task_people uid ,task_state zt,count(*) sl FROM task WHERE exists(SELECT 1 FROM user WHERE task_people = user.id) and exists(SELECT 1 FROM casebasemessage WHERE case_id = casebasemessage.id AND show_state =1) GROUP BY  task_people ,task_state)a ,dictionarylist WHERE dictid=9)udg GROUP BY uid,zt\n" +
+            "                                         )se ON id = uid ORDER BY id ASC ,zt ASC)be GROUP BY id,name", nativeQuery = true, countQuery = "SELECT count(*) FROM user")
+    Page<Map<String, Object>> peoplecount(Pageable pageable);
 }

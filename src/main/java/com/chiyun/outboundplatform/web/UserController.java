@@ -284,9 +284,9 @@ public class UserController {
         }
         if ("1".equals(js)) {
             result = userReposity.findByZtIn(ztList, pageable);
-        } else if ("2".equals(js)) {
+        } else if ("3".equals(js)) {
             //List<Integer> a=new ArrayList<>();
-            int jsArray[] = {2, 4};
+            int jsArray[] = {3, 4};
             result = userReposity.findByJsInAndZtInAndSzxzqdm(jsArray, ztList, session.getAttribute("szxzqdm").toString(), pageable);
         } else {
             return ApiResult.FAILURE("没有权限查看用户");

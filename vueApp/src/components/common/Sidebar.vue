@@ -78,6 +78,11 @@
                         index: 'users',
                         title: '用户管理'
                     },
+                    {
+                        icon: 'el-icon-lx-calendar',
+                        index: 'logs',
+                        title: '系统日志'
+                    },
 
                     /*
                     {

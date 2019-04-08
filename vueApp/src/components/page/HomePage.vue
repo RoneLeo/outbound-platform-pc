@@ -223,11 +223,11 @@
             handleListener(){
                 bus.$on('collapse', this.handleBus);
                 // 调用renderChart方法对图表进行重新渲染
-                window.addEventListener('resize', this.renderChart)
+                //window.addEventListener('resize', this.renderChart)
             },
             handleBus(msg){
                 setTimeout(() => {
-                    this.renderChart()
+                    //this.renderChart()
                 }, 300);
             },
             renderChart(){

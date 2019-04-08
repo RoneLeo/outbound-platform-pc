@@ -55,6 +55,13 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     @Query(value = "select complate_time from task order by complate_time desc limit 1", nativeQuery = true)
     Date getLatestRwwcsj();
 
+    @Query(value = "select create_time from task order by create_time desc limit 1", nativeQuery = true)
+    Date getLatestRwcjsj();
+
+    @Query(value = "select create_time from task order by create_time desc limit 1", nativeQuery = true)
+    Date getEarliestRwcjsj();
+
+
     /**
      *  统计业务员 已接收、已处理案件数、应得佣金及实际佣金
      */
@@ -87,18 +94,22 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
             "if(?4 is not null, task_way = ?4, 1 = 1) and " +
             "if(?5 is not null, task_state = ?5, 1 = 1) and " +
             "if(?6 is not null, task_people = ?6, 1 = 1) and " +
-            "complate_time between ?7 and ?8", nativeQuery = true)
-    Page<TaskEntity> findAllByConditionAndRwjzsjBetweenAndRwwcsjBetween(String rwmc, Date beginJzsj, Date endJzsj,
+            "create_time between ?7 and ?8", nativeQuery = true)
+    Page<TaskEntity> findAllByConditionAndRwjzsjBetweenAndRwcjsjBetween(String rwmc, Date beginJzsj, Date endJzsj,
                                         Integer rwfs, Integer rwzt, Integer rwzxr,
-                                        Date beginWcsj, Date endWcsj, Pageable pageable);
+                                        Date beginCjsj, Date endCjsj, Pageable pageable);
+
+
 
     @Query(value = "select * from task where task_name like ?1 and " +
             "task_time between ?2 and ?3 and " +
             "if(?4 is not null, task_way = ?4, 1 = 1) and " +
-            "if(?5 is not null, task_state = ?5, 1 = 1) and " +
-            "if(?6 is not null, task_people = ?6, 1 = 1)", nativeQuery = true)
-    Page<TaskEntity> findAllByConditionAndRwjzsjBetween(String rwmc, Date beginJzsj, Date endJzsj,
-                                        Integer rwfs, Integer rwzt, Integer rwzxr, Pageable pageable);
+            "if(?5 is not null, task_people = ?5, 1 = 1) and " +
+            "complate_time between ?6 and ?7 and " +
+            "create_time between ?8 and ?9 and task_state = '4'", nativeQuery = true)
+    Page<TaskEntity> findAllByConditionAndRwjzsjBetweenAAndRwcjsjBetweenAndRwcjsjBetween(String rwmc, Date beginJzsj, Date endJzsj,
+                                        Integer rwfs, Integer rwzxr, Date beginWcsj, Date endWcsj,
+                                                        Date beginCjsj, Date endCjsj, Pageable pageable);
 
     @Query(value = "select * from task where task_name like ?1 and " +
             "if(?2 is not null, task_way = ?2, 1 = 1) and " +

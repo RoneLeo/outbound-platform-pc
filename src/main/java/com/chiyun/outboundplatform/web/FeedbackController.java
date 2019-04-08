@@ -23,11 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
-
-import static com.chiyun.outboundplatform.utils.FileUtil.addFile;
 
 @Api(description = "反馈记录表")
 @RequestMapping(value = "/feedback", method = {RequestMethod.POST, RequestMethod.GET})
@@ -154,6 +150,13 @@ public class FeedbackController {
         return ApiResult.SUCCESS(list1);
 //        Page<FeedbackEntity> list = feedbackRepository.findAllByRwid(rwid, pageable);
 //        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
+
+
+    @ApiOperation("查询所有")
+    @RequestMapping("/findAll")
+    public ApiResult<Object> findAll() {
+        return ApiResult.SUCCESS(feedbackRepository.findAll());
     }
 
 

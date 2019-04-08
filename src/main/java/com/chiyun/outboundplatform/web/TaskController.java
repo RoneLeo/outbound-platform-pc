@@ -144,14 +144,16 @@ public class TaskController {
             @ApiImplicitParam(name = "rwzt", value = "任务状态id", dataType = "Integer", paramType = "query"),
             @ApiImplicitParam(name = "rwzxr", value = "任务执行人id", dataType = "Integer", paramType = "query"),
             @ApiImplicitParam(name = "beginWcsj", value = "任务完成时间的开始时间", dataType = "Date", paramType = "query"),
-            @ApiImplicitParam(name = "endWcsj", value = "任务完成时间的开始时间", dataType = "Date", paramType = "query")
+            @ApiImplicitParam(name = "endWcsj", value = "任务完成时间的结束时间", dataType = "Date", paramType = "query"),
+            @ApiImplicitParam(name = "beginCjsj", value = "任务创建的开始时间", dataType = "Date", paramType = "query"),
+            @ApiImplicitParam(name = "endCjsj", value = "任务创建的结束时间", dataType = "Date", paramType = "query")
     })
     public ApiResult<Object> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj,
                                                 Integer rwfs, Integer rwzt, Integer rwzxr,
-                                                Date beginWcsj, Date endWcsj, int page, int pagesize) {
+                                                Date beginWcsj, Date endWcsj, Date beginCjsj, Date endCjsj, int page, int pagesize) {
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
         Page<TaskEntity> list = itaskService.findAllByCondition(rwmc, beginJzsj, endJzsj, rwfs,
-                rwzt, rwzxr, beginWcsj, endWcsj, pageable);
+                rwzt, rwzxr, beginWcsj, endWcsj, beginCjsj, endCjsj, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 

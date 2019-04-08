@@ -38,68 +38,42 @@ public class TaskServiceImpl implements ItaskService {
 
     @Override
     public Page<TaskEntity> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj, Integer rwfs,
-                                               Integer rwzt, Integer rwzxr, Date beginWcsj, Date endWcsj, Pageable pageable) {
+                                               Integer rwzt, Integer rwzxr, Date beginWcsj, Date endWcsj,
+                                               Date beginCjsj, Date endCjsj, Pageable pageable) {
         if (StringUtil.isNull(rwmc)) {
             rwmc = "%%";
         } else {
             rwmc = "%" + rwmc + "%";
         }
-        if (beginJzsj == null && endJzsj == null && beginWcsj == null && endWcsj == null) {
-            return taskRepository.findAllByCondition(rwmc, rwfs, rwzt, rwzxr, pageable);
+        if (beginJzsj == null) {
+            beginJzsj = taskRepository.getEarliestRwjzsj();
+        }
+        if (endJzsj == null) {
+            endJzsj = taskRepository.getLatestRwjzsj();
+        }
+        if (beginCjsj == null) {
+            beginCjsj = taskRepository.getEarliestRwcjsj();
+        }
+        if (endCjsj == null) {
+            endCjsj = taskRepository.getLatestRwcjsj();
+        }
+
+        if (beginWcsj == null && endWcsj == null) {
+            //
+            return taskRepository.findAllByConditionAndRwjzsjBetweenAndRwcjsjBetween(rwmc, beginJzsj, endJzsj,
+                    rwfs, rwzt, rwzxr, beginCjsj, endCjsj, pageable);
         } else {
-            if ((beginJzsj != null || endJzsj != null) && (beginWcsj == null && endWcsj == null)) {
-                beginJzsj = getTime(beginJzsj, endJzsj, 1, 1);
-                endJzsj = getTime(beginJzsj, endJzsj, 1, 2);
-                return taskRepository.findAllByConditionAndRwjzsjBetween(rwmc, beginJzsj, endJzsj,
-                        rwfs, rwzt, rwzxr, pageable);
-            } else if ((beginJzsj == null && endJzsj == null) && (beginWcsj != null || endWcsj != null)) {
-                beginWcsj = getTime(beginWcsj, endWcsj, 2, 1);
-                endWcsj = getTime(beginWcsj, endWcsj, 2,2);
-                return taskRepository.findAllByConditionAndRwwcsjBetween(rwmc, rwfs, rwzt, rwzxr,
-                        beginWcsj, endWcsj, pageable);
-            } else {
-                beginJzsj = getTime(beginJzsj, endJzsj, 1, 1);
-                endJzsj = getTime(beginJzsj, endJzsj, 1, 2);
-                beginWcsj = getTime(beginWcsj, endWcsj, 2, 1);
-                endWcsj = getTime(beginWcsj, endWcsj, 2,2);
-                return taskRepository.findAllByConditionAndRwjzsjBetweenAndRwwcsjBetween(rwmc, beginJzsj, endJzsj,
-                        rwfs, rwzt, rwzxr, beginWcsj, endWcsj, pageable);
+            if (beginWcsj == null) {
+                beginWcsj = taskRepository.getEarliestRwwcsj();
             }
+            if (endWcsj == null) {
+                endWcsj = taskRepository.getLatestRwwcsj();
+            }
+            return taskRepository.findAllByConditionAndRwjzsjBetweenAAndRwcjsjBetweenAndRwcjsjBetween(
+                    rwmc, beginJzsj, endJzsj, rwfs, rwzxr, beginWcsj, endWcsj, beginCjsj, endCjsj, pageable);
         }
 
     }
-
-    /**
-     * @param begin
-     * @param end
-     * @param flag 1-任务截止时间 2-任务完成时间
-     * @param flag2 1-返回begin 2-返回end
-     * @return
-     */
-    public Date getTime(Date begin, Date end, int flag, int flag2) {
-        if (flag == 1) {
-            // 任务截止时间
-            if (begin == null && end != null) {
-                begin = taskRepository.getEarliestRwjzsj();
-            } else if (begin != null && end == null) {
-                end = taskRepository.getLatestRwjzsj();
-            }
-        } else {
-            // 任务完成时间
-            if (begin == null && end != null) {
-                begin = taskRepository.getEarliestRwwcsj();
-            } else if (begin != null && end == null) {
-                end = taskRepository.getLatestRwwcsj();
-            }
-        }
-        if (flag2 == 1) {
-            // begin
-            return begin;
-        } else {
-            return end;
-        }
-    }
-
 
     @Override
     public Page<TaskEntity> findAllByYwyqy(Integer qy, Pageable pageable) {

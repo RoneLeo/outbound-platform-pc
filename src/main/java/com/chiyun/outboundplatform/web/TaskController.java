@@ -67,7 +67,7 @@ public class TaskController {
         double ajyj = casebasemessageRepository.findById(entity.getAjid()).get().getAjyj();
         if (taskRepository.findAllByAjid(ajid).size() > 0) {
             // 任务总佣金
-            double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid());
+            double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid()) + entity.getRwyj();
             if (ajyj < rwzyj) {
                 return ApiResult.FAILURE("任务总佣金已超过案件佣金，添加失败");
             }
@@ -101,7 +101,7 @@ public class TaskController {
         double ajyj = casebasemessageRepository.findById(entity.getAjid()).get().getAjyj();
         if (taskRepository.findAllByAjid(entity.getAjid()).size() > 0) {
             // 任务总佣金
-            double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid());
+            double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid()) + entity.getRwyj();
             if (ajyj < rwzyj) {
                 return ApiResult.FAILURE("任务总佣金已超过案件佣金，修改失败");
             }
@@ -265,7 +265,7 @@ public class TaskController {
         return ApiResult.SUCCESS(map);
     }
 
-    @ApiOperation("区域管理员指派任务")
+    @ApiOperation("区域管理员指派或改派任务")
     @RequestMapping("/appoint")
     @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query")
     public ApiResult<Object> appoint(Integer ywyid, Integer id) {
@@ -273,8 +273,8 @@ public class TaskController {
             return ApiResult.FAILURE("id和业务员id不能为空");
         }
         TaskEntity entity = taskRepository.findById(id).get();
-        if (entity.getRwzt() != 1) {
-            return ApiResult.FAILURE("该任务非新建任务，不能指派");
+        if (entity.getRwzt() != 1 && entity.getRwzt() != 2) {
+            return ApiResult.FAILURE("该任务不能指派或改派");
         }
         entity.setRwzxr(ywyid);
         entity.setRwzt(2);
@@ -283,10 +283,11 @@ public class TaskController {
         try {
             taskRepository.save(entity);
         } catch (Exception e) {
-            return ApiResult.FAILURE("指派失败");
+            return ApiResult.FAILURE("操作失败");
         }
-        return ApiResult.SUCCESS("指派成功");
+        return ApiResult.SUCCESS("操作成功");
     }
+
 
     @ApiOperation("区域管理员审核并修改任务信息")
     @RequestMapping("/check")

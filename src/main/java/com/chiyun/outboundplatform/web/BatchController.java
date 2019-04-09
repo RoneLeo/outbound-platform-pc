@@ -75,6 +75,7 @@ public class BatchController {
             entity.setJczdid(fieldcasebaseEntity.getId());
             entity.setSort(i + 1);
             entity.setPcid(String.valueOf(now));
+            System.out.println("i:" + zdidslist.get(i));
             try {
                 batchRecordRepository.save(entity);
             } catch (Exception e) {

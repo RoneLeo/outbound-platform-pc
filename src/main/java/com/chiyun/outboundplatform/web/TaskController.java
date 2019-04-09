@@ -13,6 +13,7 @@ import com.chiyun.outboundplatform.repository.UserReposity;
 import com.chiyun.outboundplatform.service.IcaseBaseService;
 import com.chiyun.outboundplatform.service.IdictionaryListService;
 import com.chiyun.outboundplatform.service.ItaskService;
+import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -60,11 +61,17 @@ public class TaskController {
             return ApiResult.FAILURE("任务截止时间不能早于当前时间");
         }
         entity.setRwzt(1);
+        entity.setRwcjsj(now);
+        entity.setGxsj(now);
         // 判断任务佣金是否超过案件佣金
         double ajyj = casebasemessageRepository.findById(entity.getAjid()).get().getAjyj();
-        double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid());
-        if (ajyj < rwzyj) {
-            return ApiResult.FAILURE("任务总佣金已超过案件佣金，添加失败");
+        if (taskRepository.findAllByAjid(ajid).size() > 0) {
+            // 任务总佣金
+            double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid());
+            if (ajyj < rwzyj) {
+                return ApiResult.FAILURE("任务总佣金已超过案件佣金，添加失败");
+            }
+            entity.setRwyj(StringUtil.getMoneyDouble(entity.getRwyj()));
         }
         try {
             itaskService.save(entity);
@@ -87,21 +94,15 @@ public class TaskController {
         }
         // 判断任务佣金是否超过案件佣金
         double ajyj = casebasemessageRepository.findById(entity.getAjid()).get().getAjyj();
-        double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid());
-        if (ajyj < rwzyj) {
-            return ApiResult.FAILURE("任务总佣金已超过案件佣金，添加失败");
-        }
-        // 如果执行人不为空，则修改任务状态
-        if (entity.getRwzxr() != null) {
-            // 修改状态
-            if (entity.getRwzt() == null) {
-                entity.setRwzt(1);
-            } else {
-                entity.setRwzt(entity.getRwzt());
+        if (taskRepository.findAllByAjid(entity.getAjid()).size() > 0) {
+            // 任务总佣金
+            double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid());
+            if (ajyj < rwzyj) {
+                return ApiResult.FAILURE("任务总佣金已超过案件佣金，修改失败");
             }
-        } else {
-            entity.setRwzt(1);
+            entity.setRwyj(StringUtil.getMoneyDouble(entity.getRwyj()));
         }
+        entity.setGxsj(now);
         try {
             itaskService.save(entity);
         } catch (Exception e) {
@@ -144,14 +145,16 @@ public class TaskController {
             @ApiImplicitParam(name = "rwzt", value = "任务状态id", dataType = "Integer", paramType = "query"),
             @ApiImplicitParam(name = "rwzxr", value = "任务执行人id", dataType = "Integer", paramType = "query"),
             @ApiImplicitParam(name = "beginWcsj", value = "任务完成时间的开始时间", dataType = "Date", paramType = "query"),
-            @ApiImplicitParam(name = "endWcsj", value = "任务完成时间的开始时间", dataType = "Date", paramType = "query")
+            @ApiImplicitParam(name = "endWcsj", value = "任务完成时间的结束时间", dataType = "Date", paramType = "query"),
+            @ApiImplicitParam(name = "beginCjsj", value = "任务创建的开始时间", dataType = "Date", paramType = "query"),
+            @ApiImplicitParam(name = "endCjsj", value = "任务创建的结束时间", dataType = "Date", paramType = "query")
     })
     public ApiResult<Object> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj,
                                                 Integer rwfs, Integer rwzt, Integer rwzxr,
-                                                Date beginWcsj, Date endWcsj, int page, int pagesize) {
+                                                Date beginWcsj, Date endWcsj, Date beginCjsj, Date endCjsj, int page, int pagesize) {
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
         Page<TaskEntity> list = itaskService.findAllByCondition(rwmc, beginJzsj, endJzsj, rwfs,
-                rwzt, rwzxr, beginWcsj, endWcsj, pageable);
+                rwzt, rwzxr, beginWcsj, endWcsj, beginCjsj, endCjsj, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
@@ -162,12 +165,8 @@ public class TaskController {
         if (ywyid == null) {
             return ApiResult.FAILURE("业务员id不能为空");
         }
-        UserEntity entity = userReposity.findById(ywyid);
-        if (entity == null) {
-            return ApiResult.FAILURE("该业务员不存在");
-        }
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
-        Page<TaskEntity> list = itaskService.findAllByYwyqy(Integer.parseInt(entity.getSzxzqdm()), pageable);
+        Pageable pageable = PageRequest.of(page - 1, pagesize);
+        Page<TaskEntity> list = taskRepository.findAllByRwzxrOrderByRwztDesc(ywyid, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
@@ -181,8 +180,8 @@ public class TaskController {
         if (ywyid == null) {
             return ApiResult.FAILURE("业务员id不能为空");
         }
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "rwjzsj"));
-        Page<TaskEntity> list = taskRepository.findAllByRwzxrAndRwzt(ywyid, rwzt, pageable);
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "gxsj"));
+        Page<TaskEntity> list = taskRepository.findAllByRwzxrAndRwztOrderByGxsjDesc(ywyid, rwzt, pageable);
         // 查询案件的案人信息
         List<Map<String, Object>> mapList = new ArrayList<>();
         for (TaskEntity entity : list) {
@@ -192,13 +191,27 @@ public class TaskController {
             map.put("arxx", entity1);
             mapList.add(map);
         }
-        int totalpage = 0;
-        if (mapList.size() % pagesize == 0) {
-            totalpage = mapList.size()/pagesize;
-        } else {
-            totalpage = mapList.size()/pagesize + 1;
+        return ApiPageResult.SUCCESS(mapList, page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
+
+    @ApiOperation("业务员单框查询")
+    @RequestMapping("/findAllByYwyqyAndCondition")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "param", value = "参数", dataType = "Integer", paramType = "query")
+    })
+    public ApiResult<Object> findAllByYwyqyAndCondition(Integer ywyid, String param, int page, int pagesize) {
+        if (ywyid == null) {
+            return ApiResult.FAILURE("业务员id不能为空");
         }
-        return ApiPageResult.SUCCESS(mapList, page, pagesize, mapList.size(), totalpage);
+        if (StringUtil.isNull(param)) {
+            param = "%%";
+        } else {
+            param = "%" + param + "%";
+        }
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "update_time"));
+        Page<TaskEntity> list = taskRepository.findAllByCondition(param, ywyid, pageable);
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
     @ApiOperation("业务员接单")
@@ -221,6 +234,8 @@ public class TaskController {
         // 任务状态：3-接单
         entity.setRwzt(3);
         entity.setRwzxr(ywyid);
+        //
+        entity.setGxsj(new Date());
         try {
             itaskService.save(entity);
         } catch (Exception e) {
@@ -242,6 +257,7 @@ public class TaskController {
 
     @ApiOperation("区域管理员指派任务")
     @RequestMapping("/appoint")
+    @ApiImplicitParam(name = "rwzxr", value = "业务员id", dataType = "Integer", paramType = "query")
     public ApiResult<Object> appoint(Integer ywyid, Integer id) {
         if (id == null || ywyid == null) {
             return ApiResult.FAILURE("id和业务员id不能为空");
@@ -249,6 +265,7 @@ public class TaskController {
         TaskEntity entity = taskRepository.findById(id).get();
         entity.setRwzxr(ywyid);
         entity.setRwzt(2);
+        entity.setGxsj(new Date());
         try {
             taskRepository.save(entity);
         } catch (Exception e) {
@@ -259,24 +276,42 @@ public class TaskController {
 
     @ApiOperation("区域管理员审核并修改任务信息")
     @RequestMapping("/check")
-    public ApiResult<Object> check(Integer id, Integer shzt, String shbz, Double sjyj) {
-        if (id == null || shzt == null) {
-            return ApiResult.FAILURE("id和审核状态不能为空");
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "rwzt", value = "任务状态 5-审核未通过 6-审核通过", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "shbz", value = "审核备注", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "sjyj", value = "实际佣金", dataType = "Double", paramType = "query")
+    })
+    public ApiResult<Object> check(Integer id, Integer rwzt, String shbz, Double sjyj) {
+        if (id == null) {
+            return ApiResult.FAILURE("id不能为空");
         }
         TaskEntity entity = itaskService.findById(id);
-        entity.setRwzt(5);
+        entity.setRwzt(rwzt);
         entity.setShbz(shbz);
-        // 判断实际佣金
-        if (sjyj > entity.getRwyj()) {
-            return ApiResult.FAILURE("任务实际所得佣金不应大于任务佣金");
+        if (rwzt == 5) {
+            entity.setSjyj(0.00);
+        } else {
+            // 判断实际佣金
+            if (sjyj > entity.getRwyj()) {
+                return ApiResult.FAILURE("任务实际所得佣金不应大于任务佣金");
+            }
+            entity.setSjyj(StringUtil.getMoneyDouble(sjyj));
         }
-        entity.setSjyj(sjyj);
+        entity.setGxsj(new Date());
         try {
             itaskService.save(entity);
         } catch (Exception e) {
             return ApiResult.FAILURE("修改失败");
         }
         return ApiResult.SUCCESS("修改成功");
+    }
+
+
+    @ApiOperation("财务人员统计业务员实际总佣金")
+    @RequestMapping("/countSjyj")
+    public ApiResult<Object> countSjyj(Integer ywyid) {
+//        double sjzyj =
+        return ApiResult.SUCCESS();
     }
 
 }

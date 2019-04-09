@@ -30,12 +30,8 @@ public interface ItaskService {
      */
     Page<TaskEntity> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj,
                                         Integer rwfs, Integer rwzt, Integer rwzxr,
-                                        Date beginWcsj, Date endWcsj, Pageable pageable);
+                                        Date beginWcsj, Date endWcsj, Date beginCjsj, Date endCjsj, Pageable pageable);
 
-    /**
-     *  查询业务员本区域的任务
-     */
-    Page<TaskEntity> findAllByYwyqy(Integer qy, Pageable pageable);
 
 
     /**

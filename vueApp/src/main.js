@@ -55,6 +55,7 @@ axios.interceptors.response.use(
             }
             else if(data.resCode == 101){
                 Message.error('该用户在其他地方登录');
+                location.href = 'login'
             }
             else if(data.resCode == 102){
                 Message.error('重复登录!!!!!');

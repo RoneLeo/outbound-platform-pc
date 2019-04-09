@@ -50,7 +50,7 @@
                         subs: [
                             {
                                 index: 'templates',
-                                title: '批次管理'
+                                title: '模板批次'
                             },
                             {
                                 index: 'cases',

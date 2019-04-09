@@ -124,8 +124,8 @@
                 <el-tab-pane label="案件任务信息">
                     <el-table :data="tableData" class="table" ref="multipleTable">
                         <el-table-column prop="rwmc" label="任务名称"></el-table-column>
-                        <el-table-column prop="rwzt" label="任务状态"></el-table-column>
-                        <el-table-column prop="rwfs" label="任务方式"></el-table-column>
+                        <el-table-column prop="rwzt" label="任务状态":formatter="RwztFormatter"></el-table-column>
+                        <el-table-column prop="rwfs" label="任务方式":formatter="RwfsFormatter"></el-table-column>
                         <el-table-column prop="rwzxr" label="任务执行人"></el-table-column>
                         <el-table-column prop="rwyj" label="任务佣金"></el-table-column>
                         <el-table-column prop="sjyj" label="实际佣金"></el-table-column>
@@ -297,11 +297,26 @@
                         this.$router.push('/login');
                     }
                 });
+                this.$axios.post('/dict/findDictListByZddm',{zddm:'D_SYS_RWFSDM',zxbz:0}).then((res)=>{
+                    if(res.resCode==200){
+                        this.rwfss=res.data;
+                    }else if(res.resCode==100){
+                        this.$router.push('/login');
+                    }
+                });
+                this.$axios.post('/dict/findDictListByZddm',{zddm:'D_SYS_RWZTDM',zxbz:0}).then((res)=>{
+                    if(res.resCode==200){
+                        this.rwzts=res.data;
+                    }else if(res.resCode==100){
+                        this.$router.push('/login');
+                    }
+                });
                 this.$axios.post('/batch/findAll',{page:1,pagesize: 1000}).then((res) => {
                     if(res.resCode == 200){
                         this.pcs = res.data;
                     }
                 });
+
             },
 
 
@@ -343,6 +358,12 @@
             },
             AjqyFormatter(row) {
                 return util.dictParse(row.ajqy, this.qys);
+            },
+            RwztFormatter(row){
+                return util.dictParse(row.rwzt,this.rwzts);
+            },
+            RwfsFormatter(row){
+                return util.dictParse(row.rwfs,this.rwfss);
             },
             saveImport(){
                 let param = new FormData();

@@ -30,6 +30,8 @@ import java.util.Map;
 @RequestMapping(value = "/statistics", method = {RequestMethod.POST, RequestMethod.GET})
 public class StatisticsController {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private static SimpleDateFormat formatternew = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     @Resource
     private SatisticsServiceImpl satisticsService;
 
@@ -99,5 +101,20 @@ public class StatisticsController {
             return ApiResult.FAILURE("统计失败，请重试");
         }
 
+    }
+
+    @ApiOperation("统计选定时间内案件的变化情况,按日统计")
+    @RequestMapping("/case/count")
+    public ApiResult casecount(Date begin, Date end) {
+        String bdate = formatter.format(begin).concat(" 00:00:00");
+        String edate = formatter.format(end).concat(" 23:59:59");
+        try {
+            begin = formatternew.parse(bdate);
+            end = formatternew.parse(edate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return ApiResult.FAILURE("时间转换失败，请重试");
+        }
+        return ApiResult.SUCCESS(satisticsService.casecount(begin, end));
     }
 }

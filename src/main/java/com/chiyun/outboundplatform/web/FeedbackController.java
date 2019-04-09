@@ -47,6 +47,9 @@ public class FeedbackController {
             return ApiResult.FAILURE("任务id不能为空");
         }
         TaskEntity taskEntity = itaskService.findById(entity.getRwid());
+        if (taskEntity.getRwzt() != 3) {
+            return ApiResult.FAILURE("该任务不是已接单任务，不能反馈");
+        }
         if (entity.getFkr() == null) {
             return ApiResult.FAILURE("反馈人不能为空");
         }

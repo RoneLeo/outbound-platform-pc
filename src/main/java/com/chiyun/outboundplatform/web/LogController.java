@@ -6,6 +6,7 @@ import com.chiyun.outboundplatform.common.SessionHelper;
 import com.chiyun.outboundplatform.entity.LogEntity;
 import com.chiyun.outboundplatform.entity.UserEntity;
 import com.chiyun.outboundplatform.repository.LogRepository;
+import com.chiyun.outboundplatform.utils.OtherUtils;
 import com.chiyun.outboundplatform.utils.SessionUtil;
 import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.Api;
@@ -79,17 +80,8 @@ public class LogController {
         //查询操作
         Pageable pageable = PageRequest.of(page - 1, pagesize, Sort.by(new Sort.Order(Sort.Direction.DESC, "create_time")));
         Page<LogEntity> result;
-        String userName, event;
-        if (StringUtil.isNull(czr)) {
-            userName = "%%";
-        } else {
-            userName = "%" + czr + "%";
-        }
-        if (StringUtil.isNull(czsj)) {
-            event = "%%";
-        } else {
-            event = "%" + czsj + "%";
-        }
+        String userName=OtherUtils.nullReplace(czr);
+        String event=OtherUtils.nullReplace(czsj);
         if (kssj == null && jssj == null) {
             //时间为空
             result = logRepository.findByCzrAndCzsj(userName, event, pageable);

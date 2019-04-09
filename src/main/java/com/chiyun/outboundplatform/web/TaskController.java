@@ -73,6 +73,11 @@ public class TaskController {
             }
             entity.setRwyj(StringUtil.getMoneyDouble(entity.getRwyj()));
         }
+        //
+        if (entity.getRwzxr() != null) {
+            entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getYhm());
+            entity.setRwzt(2);
+        }
         try {
             itaskService.save(entity);
         } catch (Exception e) {
@@ -101,6 +106,9 @@ public class TaskController {
                 return ApiResult.FAILURE("任务总佣金已超过案件佣金，修改失败");
             }
             entity.setRwyj(StringUtil.getMoneyDouble(entity.getRwyj()));
+        }
+        if (entity.getRwzxr() != null) {
+            entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getYhm());
         }
         entity.setGxsj(now);
         try {
@@ -143,18 +151,18 @@ public class TaskController {
             @ApiImplicitParam(name = "endJzsj", value = "任务截止时间的结束时间", dataType = "Date", paramType = "query"),
             @ApiImplicitParam(name = "rwfs", value = "任务方式id", dataType = "Integer", paramType = "query"),
             @ApiImplicitParam(name = "rwzt", value = "任务状态id", dataType = "Integer", paramType = "query"),
-            @ApiImplicitParam(name = "rwzxr", value = "任务执行人id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "rwzxrmc", value = "任务执行人名称", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "beginWcsj", value = "任务完成时间的开始时间", dataType = "Date", paramType = "query"),
             @ApiImplicitParam(name = "endWcsj", value = "任务完成时间的结束时间", dataType = "Date", paramType = "query"),
             @ApiImplicitParam(name = "beginCjsj", value = "任务创建的开始时间", dataType = "Date", paramType = "query"),
             @ApiImplicitParam(name = "endCjsj", value = "任务创建的结束时间", dataType = "Date", paramType = "query")
     })
     public ApiResult<Object> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj,
-                                                Integer rwfs, Integer rwzt, Integer rwzxr,
+                                                Integer rwfs, Integer rwzt, String rwzxrmc,
                                                 Date beginWcsj, Date endWcsj, Date beginCjsj, Date endCjsj, int page, int pagesize) {
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
         Page<TaskEntity> list = itaskService.findAllByCondition(rwmc, beginJzsj, endJzsj, rwfs,
-                rwzt, rwzxr, beginWcsj, endWcsj, beginCjsj, endCjsj, pageable);
+                rwzt, rwzxrmc, beginWcsj, endWcsj, beginCjsj, endCjsj, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
@@ -235,6 +243,8 @@ public class TaskController {
         entity.setRwzt(3);
         entity.setRwzxr(ywyid);
         //
+        entity.setRwzxrmc(userReposity.findById(ywyid).getYhm());
+        //
         entity.setGxsj(new Date());
         try {
             itaskService.save(entity);
@@ -257,14 +267,18 @@ public class TaskController {
 
     @ApiOperation("区域管理员指派任务")
     @RequestMapping("/appoint")
-    @ApiImplicitParam(name = "rwzxr", value = "业务员id", dataType = "Integer", paramType = "query")
+    @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query")
     public ApiResult<Object> appoint(Integer ywyid, Integer id) {
         if (id == null || ywyid == null) {
             return ApiResult.FAILURE("id和业务员id不能为空");
         }
         TaskEntity entity = taskRepository.findById(id).get();
+        if (entity.getRwzt() != 1) {
+            return ApiResult.FAILURE("该任务非新建任务，不能指派");
+        }
         entity.setRwzxr(ywyid);
         entity.setRwzt(2);
+        entity.setRwzxrmc(userReposity.findById(ywyid).getYhm());
         entity.setGxsj(new Date());
         try {
             taskRepository.save(entity);
@@ -286,6 +300,9 @@ public class TaskController {
             return ApiResult.FAILURE("id不能为空");
         }
         TaskEntity entity = itaskService.findById(id);
+        if (entity.getRwzt() != 4) {
+            return ApiResult.FAILURE("该任务不是待审核任务，不能审核");
+        }
         entity.setRwzt(rwzt);
         entity.setShbz(shbz);
         if (rwzt == 5) {
@@ -310,8 +327,27 @@ public class TaskController {
     @ApiOperation("财务人员统计业务员实际总佣金")
     @RequestMapping("/countSjyj")
     public ApiResult<Object> countSjyj(Integer ywyid) {
-//        double sjzyj =
-        return ApiResult.SUCCESS();
+        List<Map<String, Double>> map = new ArrayList<>();
+        if (ywyid == null) {
+            map = taskRepository.sumAllSjyjByAjid();
+        } else {
+            map = taskRepository.sumSjyjByAjid(ywyid);
+        }
+        return ApiResult.SUCCESS(map);
+    }
+
+    @ApiOperation("财务人员确认已发放佣金")
+    @RequestMapping("/checkFfyj")
+    public ApiResult<Object> checkFfyj(List<Integer> ids) {
+        if (ids.size() < 1) {
+            return ApiResult.FAILURE("未选择确认的任务");
+        }
+        try {
+            taskRepository.updateRwztByIdIn(ids);
+        } catch (Exception e) {
+            return ApiResult.FAILURE("确认失败");
+        }
+        return ApiResult.SUCCESS("确认成功");
     }
 
 }

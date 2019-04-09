@@ -47,6 +47,8 @@ public class UserEntity {
     private Date bdsj;
     @ApiModelProperty(value="授权码")
     private String sqm;
+    @ApiModelProperty(value="备注")
+    private String bz;
     @ApiModelProperty(value="总金额")
     private BigDecimal zje;
     @ApiModelProperty(value="创建时间")
@@ -244,6 +246,16 @@ public class UserEntity {
     }
 
     @Basic
+    @Column(name = "remarks")
+    public String getBz() {
+        return bz;
+    }
+
+    public void setBz(String bz) {
+        this.bz = bz;
+    }
+
+    @Basic
     @Column(name = "total")
     public BigDecimal getZje() {
         return zje;
@@ -280,6 +292,7 @@ public class UserEntity {
                 Objects.equals(dz, that.dz) &&
                 Objects.equals(szxzqdm, that.szxzqdm) &&
                 Objects.equals(zt, that.zt) &&
+                Objects.equals(bz, that.bz) &&
                 Objects.equals(js, that.js)&&
                 Objects.equals(sqm, that.sqm);
     }
@@ -287,6 +300,6 @@ public class UserEntity {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, yhm, mm, lx, mz, lxdh, yx, xb, nl, dz, szxzqdm, zt, js, sqm);
+        return Objects.hash(id, yhm, mm, lx, mz, lxdh, yx, xb, nl, dz, szxzqdm, zt, bz, js, sqm);
     }
 }

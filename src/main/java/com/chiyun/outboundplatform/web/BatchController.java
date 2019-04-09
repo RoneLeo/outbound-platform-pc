@@ -202,7 +202,7 @@ public class BatchController {
         List<Map<String, Object>> firstList = batchRepository.findAllByPcid(pcid);
         // 获取默认字段个数
         int num = fieldCaseBaseRepository.countFieldcasebaseEntitiesByJcxxlx(0);
-        String sheetname = "模板信息表";
+        String sheetname = batchRepository.findByPcid(pcid).getPcmc();
         HSSFWorkbook workbook = ExcelUtil.getHSSFWorkbook(sheetname, title, firstList, num, null);
         String fileName = sheetname + ".xls";
         response.addHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("UTF-8"), "ISO8859-1"));

@@ -24,22 +24,13 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
     List<TaskEntity> findAllByAjid(Integer ajid);
 
+    Page<TaskEntity> findAllByAjidOrderByRwcjsj(Integer ajid, Pageable pageable);
+
     /**
      * 根据案件id修改任务状态：注销
      */
     @Query(value = "update task set task_state = '8' where case_id = ?1", nativeQuery = true)
     void resetByAjid(Integer ajid);
-
-    /**
-     * 通过案件id查询任务
-     */
-    Page<TaskEntity> findAllByRwztInAndAjidInOrderByRwztDesc(List<Integer> rwzts, List<Integer> ajids, Pageable pageable);
-
-
-    /**
-     * 业务员查询所有
-     */
-    Page<TaskEntity> findAllByRwzxrOrderByIdDesc(Integer rwzxr, Pageable pageable);
 
     /**
      * 获取最早的任务截止时间和任务完成时间
@@ -76,6 +67,23 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     Double sumAllSjyjByRwzxr(Integer rwzxr);
 
     /**
+     *  通过案件id、业务员id和任务状态统计业务员实际佣金
+     */
+    @Query(value = "SELECT case_id as ajid, sum(actual_money) as ajsjyj from task WHERE task_state = '6' and task_people = ?1 GROUP BY case_id ORDER BY case_id", nativeQuery = true)
+    List<Map<String, Double>> sumSjyjByAjid(Integer ywyid);
+
+    @Query(value = "SELECT case_id as ajid, task_people as rwzxr, sum(actual_money) as ajsjyj from task WHERE task_state = '6' GROUP BY task_people, case_id ORDER BY task_people, case_id", nativeQuery = true)
+    List<Map<String, Double>> sumAllSjyjByAjid();
+
+
+    /**
+     *  财务人员确认已发放佣金，批量修改
+     */
+    @Query(value = "update task set task_state = '7' where id in ?1", nativeQuery = true)
+    void updateRwztByIdIn(List<Integer> ids);
+
+
+    /**
      * 通过案件id统计任务佣金
      */
     @Query(value = "select sum(task_money) from task where case_id = ?1", nativeQuery = true)
@@ -96,27 +104,27 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     Page<TaskEntity> findAllByCondition(String param, Integer ywyid, Pageable pageable);
 
     /**
-     * 多条件查询:任务名称、任务截止时间、任务方式、任务状态、任务执行人、任务完成时间
+     * 多条件查询:任务名称、任务截止时间、任务方式、任务状态、任务执行人名称、任务完成时间
      */
     @Query(value = "select * from task where task_name like ?1 and " +
             "task_time between ?2 and ?3 and " +
             "if(?4 is not null, task_way = ?4, 1 = 1) and " +
             "if(?5 is not null, task_state = ?5, 1 = 1) and " +
-            "if(?6 is not null, task_people = ?6, 1 = 1) and " +
+            "task_people like ?6 and " +
             "create_time between ?7 and ?8", nativeQuery = true)
     Page<TaskEntity> findAllByConditionAndRwjzsjBetweenAndRwcjsjBetween(String rwmc, Date beginJzsj, Date endJzsj,
-                                                                        Integer rwfs, Integer rwzt, Integer rwzxr,
+                                                                        Integer rwfs, Integer rwzt, String rwzxrmc,
                                                                         Date beginCjsj, Date endCjsj, Pageable pageable);
 
 
     @Query(value = "select * from task where task_name like ?1 and " +
             "task_time between ?2 and ?3 and " +
             "if(?4 is not null, task_way = ?4, 1 = 1) and " +
-            "if(?5 is not null, task_people = ?5, 1 = 1) and " +
+            "task_people like ?5 and  " +
             "complate_time between ?6 and ?7 and " +
             "create_time between ?8 and ?9 and task_state = '4'", nativeQuery = true)
     Page<TaskEntity> findAllByConditionAndRwjzsjBetweenAAndRwcjsjBetweenAndRwcjsjBetween(String rwmc, Date beginJzsj, Date endJzsj,
-                                                                                         Integer rwfs, Integer rwzxr, Date beginWcsj, Date endWcsj,
+                                                                                         Integer rwfs, String rwzxrmc, Date beginWcsj, Date endWcsj,
                                                                                          Date beginCjsj, Date endCjsj, Pageable pageable);
 
     @Query(value = "SELECT id,name,group_concat(sl ORDER BY zt ASC) sl FROM (SELECT id,name,zt,sl FROM user LEFT JOIN (\n" +

@@ -4,10 +4,15 @@ import com.chiyun.outboundplatform.common.ApiPageResult;
 import com.chiyun.outboundplatform.common.ApiResult;
 import com.chiyun.outboundplatform.entity.CasebasemessageAllEntity;
 import com.chiyun.outboundplatform.entity.CasebasemessageEntity;
+import com.chiyun.outboundplatform.entity.TaskEntity;
+import com.chiyun.outboundplatform.entity.UserEntity;
 import com.chiyun.outboundplatform.repository.BatchRepository;
 import com.chiyun.outboundplatform.repository.CasebasemessageRepository;
+import com.chiyun.outboundplatform.repository.TaskRepository;
+import com.chiyun.outboundplatform.repository.UserReposity;
 import com.chiyun.outboundplatform.service.IcaseBaseService;
 import com.chiyun.outboundplatform.service.IdictionaryListService;
+import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +43,10 @@ public class CaseBaseMsgController {
     private BatchRepository batchRepository;
     @Resource
     private IdictionaryListService idictionaryListService;
+    @Resource
+    private TaskRepository taskRepository;
+    @Resource
+    private UserReposity userReposity;
 
     @RequestMapping("/findAllInfoById")
     @ApiOperation("根据id获取案件关联信息")
@@ -65,14 +74,16 @@ public class CaseBaseMsgController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
-//    @RequestMapping("/findAllByPchAndPage")
-//    @ApiOperation("根据批次id 分页获取案件信息")
-//    @ApiImplicitParam(name = "pcid",value = "批次id",dataType = "String", paramType = "query")
-//    public ApiResult<Object> findAllByPchAndPage(String pcid, int page, int pagesize, HttpSession session) {
-//        Pageable pageable = PageRequest.of(page - 1, pagesize);
-//        Page<CasebasemessageEntity> list = icaseBaseService.findAllByPcidAndPage(pcid, pageable);
-//        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
-//    }
+    @ApiOperation("通过案件id查询任务")
+    @RequestMapping("/findAllTaskByAjid")
+    public ApiResult<Object> findAllByAjidOrderByRwcjsj(Integer ajid, int page, int pagesize) {
+        if (ajid == null) {
+            return ApiResult.FAILURE("案件id不能为空");
+        }
+        Pageable pageable = PageRequest.of(page - 1, pagesize);
+        Page<TaskEntity> list = taskRepository.findAllByAjidOrderByRwcjsj(ajid, pageable);
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
 
     @ApiOperation("修改")
     @RequestMapping("/update")
@@ -105,20 +116,6 @@ public class CaseBaseMsgController {
         return ApiResult.SUCCESS("删除成功");
     }
 
-//    @ApiOperation("根据区域查询")
-//    @RequestMapping("/findAllByAjqy")
-//    @ApiImplicitParam(name = "ajqy",value = "案件区域id",dataType = "Integer", paramType = "query")
-//    public ApiResult<Object> findAllByAjqy(Integer ajqy, int page, int pagesize) {
-//        if (ajqy == null) {
-//            return ApiResult.FAILURE("未选择案件区域");
-//        }
-//        if (idictionaryListService.findById(ajqy) == null) {
-//            return ApiResult.FAILURE("该案件区域不存在");
-//        }
-//        Pageable pageable = PageRequest.of(page - 1, pagesize, Sort.by(new Sort.Order(Sort.Direction.DESC, "id")));
-//        Page<CasebasemessageEntity> list = casebasemessageRepository.findAllByAjqy(ajqy, pageable);
-//        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
-//    }
 
     @ApiOperation("修改案件状态")
     @RequestMapping("/updateAjzt")
@@ -159,5 +156,18 @@ public class CaseBaseMsgController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
+
+
+    @ApiOperation("登录用户查询本区域案件")
+    @RequestMapping("/findAllByAjqy")
+    public ApiResult<Object> findAllByAjqy(HttpSession session, int page, int pagesize) {
+        Integer id = (Integer) session.getAttribute("id");
+        if (id == null) {
+            return ApiResult.FAILURE("未登录");
+        }
+        Pageable pageable = PageRequest.of(page - 1, pagesize);
+        Page<CasebasemessageEntity> list = casebasemessageRepository.findAllByYhid(id, pageable);
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
 
 }

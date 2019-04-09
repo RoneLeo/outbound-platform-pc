@@ -38,12 +38,17 @@ public class TaskServiceImpl implements ItaskService {
 
     @Override
     public Page<TaskEntity> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj, Integer rwfs,
-                                               Integer rwzt, Integer rwzxr, Date beginWcsj, Date endWcsj,
+                                               Integer rwzt, String rwzxrmc, Date beginWcsj, Date endWcsj,
                                                Date beginCjsj, Date endCjsj, Pageable pageable) {
         if (StringUtil.isNull(rwmc)) {
             rwmc = "%%";
         } else {
             rwmc = "%" + rwmc + "%";
+        }
+        if (StringUtil.isNull(rwzxrmc)) {
+            rwzxrmc = "%%";
+        } else {
+            rwzxrmc = "%" + rwzxrmc + "%";
         }
         if (beginJzsj == null) {
             beginJzsj = taskRepository.getEarliestRwjzsj();
@@ -61,7 +66,7 @@ public class TaskServiceImpl implements ItaskService {
         if (beginWcsj == null && endWcsj == null) {
             //
             return taskRepository.findAllByConditionAndRwjzsjBetweenAndRwcjsjBetween(rwmc, beginJzsj, endJzsj,
-                    rwfs, rwzt, rwzxr, beginCjsj, endCjsj, pageable);
+                    rwfs, rwzt, rwzxrmc, beginCjsj, endCjsj, pageable);
         } else {
             if (beginWcsj == null) {
                 beginWcsj = taskRepository.getEarliestRwwcsj();
@@ -70,7 +75,7 @@ public class TaskServiceImpl implements ItaskService {
                 endWcsj = taskRepository.getLatestRwwcsj();
             }
             return taskRepository.findAllByConditionAndRwjzsjBetweenAAndRwcjsjBetweenAndRwcjsjBetween(
-                    rwmc, beginJzsj, endJzsj, rwfs, rwzxr, beginWcsj, endWcsj, beginCjsj, endCjsj, pageable);
+                    rwmc, beginJzsj, endJzsj, rwfs, rwzxrmc, beginWcsj, endWcsj, beginCjsj, endCjsj, pageable);
         }
 
     }

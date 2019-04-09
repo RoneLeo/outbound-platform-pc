@@ -100,7 +100,7 @@ public class UserController {
     @ApiOperation(value = "微信小程序登录")
     @RequestMapping("/weLogin")
     @ControllerLog(description = "微信小程序登录")
-    public ApiResult<Object> weLogin(@ApiParam(value = "授权码") String sqm, String encryptedData, String iv, String code, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ApiResult<Object> weLogin(@ApiParam(value = "授权码") String sqm, String encryptedData, String iv, String code, HttpServletRequest request) throws Exception {
         Map<String, Object> map = weChatLogin(code, encryptedData, iv);
         if (map.get("status").toString() == "0") {
             return ApiResult.FAILURE(map.get("msg").toString());
@@ -124,7 +124,7 @@ public class UserController {
                     //授权码查询出来的数据有人绑定
                     return ApiResult.FAILURE("授权码已有人使用，请核实");
                 }
-                if (userEntity.getZt() == 1) {
+                if (userEntity1.getZt() == 1) {
                     return ApiResult.FAILURE("该帐号已注销，请联系管理员");
                 }
                 //使用授权码绑定帐号
@@ -138,9 +138,9 @@ public class UserController {
                     return ApiResult.FAILURE("数据添加失败");
                 }
                 SessionUtil.put(String.valueOf(result1.getId()), sessionId);
-                session.setAttribute("id", userEntity.getId());
-                session.setAttribute("mz", userEntity.getMz());
-                session.setAttribute("szxzqdm", userEntity.getSzxzqdm());
+                session.setAttribute("id", result1.getId());
+                session.setAttribute("mz", result1.getMz());
+                session.setAttribute("szxzqdm", result1.getSzxzqdm());
                 result.put("userEntity", result1);
             }
         } else {
@@ -310,6 +310,22 @@ public class UserController {
         return ApiResult.SUCCESS(oldUserEntity);
     }
 
+    @MustLogin(rolerequired = {3})
+    @ApiOperation(value = "区域主管通过所在行政区查询业务员等用户")
+    @RequestMapping("/fingByAreacodeAndName")
+    public ApiResult<Object> fingByAreacodeAndName(@RequestParam(required = false) @ApiParam(value = "用户真实名字") String mz) throws Exception {
+        //判断是否登录
+        HttpSession session = SessionHelper.getSession();
+        ApiResult<Object> isLogin = SessionUtil.isLogin(session);
+        if (isLogin.getResCode() < 200) return isLogin;
+        /* 查询用户 */
+       String areaCode = String.valueOf(session.getAttribute("szxzqdm"));
+       String name = OtherUtils.nullReplace(mz);
+        int jsArray[] = {3, 4};
+        List<UserEntity> userEntityList = userReposity.findByJsInAndMzLikeAndSzxzqdm(jsArray, name, areaCode);
+        return ApiResult.SUCCESS(userEntityList);
+    }
+
     @ApiOperation(value = "退出登录")
     @RequestMapping("/outLogin")
     @ControllerLog(description = "退出登录")
@@ -419,5 +435,7 @@ public class UserController {
         String result = CodeUtil.toSerialCode(id);
         return result;
     }
+
+
 
 }

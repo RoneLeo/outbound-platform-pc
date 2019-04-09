@@ -126,7 +126,7 @@
                         <el-table-column prop="rwmc" label="任务名称"></el-table-column>
                         <el-table-column prop="rwzt" label="任务状态":formatter="RwztFormatter"></el-table-column>
                         <el-table-column prop="rwfs" label="任务方式":formatter="RwfsFormatter"></el-table-column>
-                        <el-table-column prop="rwzxr" label="任务执行人"></el-table-column>
+                        <el-table-column prop="rwzxrmc" label="任务执行人"></el-table-column>
                         <el-table-column prop="rwyj" label="任务佣金"></el-table-column>
                         <el-table-column prop="sjyj" label="实际佣金"></el-table-column>
                         <el-table-column prop="rwjzsj" label="任务截止时间"></el-table-column>
@@ -322,6 +322,7 @@
 
             backToCaseList(){
                 this.$router.push({name:'cases'});
+
             },
             clearCondition() {
                 this.selectedDates = [];
@@ -339,6 +340,8 @@
             },
             handleTask(index, row) {
                 //alert('指派任务')
+                 console.log(row);
+                 let rwid=row.id;
                 this.assignedModelVisible = true;
                 
             },

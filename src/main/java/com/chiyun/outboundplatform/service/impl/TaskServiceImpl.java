@@ -75,17 +75,6 @@ public class TaskServiceImpl implements ItaskService {
 
     }
 
-    @Override
-    public Page<TaskEntity> findAllByYwyqy(Integer qy, Pageable pageable) {
-        // 获取该区域所有案件id
-        List<Integer> ajids = casebasemessageRepository.findIdsByAjqy(qy);
-        // 获取所有任务
-        List<Integer> rwzts = new ArrayList<>();
-        rwzts.add(1);
-        rwzts.add(2);
-        Page<TaskEntity> list = taskRepository.findAllByRwztInAndAjidInOrderByRwztDesc(rwzts, ajids, pageable);
-        return list;
-    }
 
     @Override
     public Map<String, Object> countYwyRwxx(Integer rwzxr) {

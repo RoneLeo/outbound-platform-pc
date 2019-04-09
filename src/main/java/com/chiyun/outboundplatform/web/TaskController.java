@@ -73,6 +73,11 @@ public class TaskController {
             }
             entity.setRwyj(StringUtil.getMoneyDouble(entity.getRwyj()));
         }
+        //
+        if (entity.getRwzxr() != null) {
+            entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getYhm());
+            entity.setRwzt(2);
+        }
         try {
             itaskService.save(entity);
         } catch (Exception e) {
@@ -268,6 +273,9 @@ public class TaskController {
             return ApiResult.FAILURE("id和业务员id不能为空");
         }
         TaskEntity entity = taskRepository.findById(id).get();
+        if (entity.getRwzt() != 1) {
+            return ApiResult.FAILURE("该任务非新建任务，不能指派");
+        }
         entity.setRwzxr(ywyid);
         entity.setRwzt(2);
         entity.setRwzxrmc(userReposity.findById(ywyid).getYhm());
@@ -292,6 +300,9 @@ public class TaskController {
             return ApiResult.FAILURE("id不能为空");
         }
         TaskEntity entity = itaskService.findById(id);
+        if (entity.getRwzt() != 4) {
+            return ApiResult.FAILURE("该任务不是待审核任务，不能审核");
+        }
         entity.setRwzt(rwzt);
         entity.setShbz(shbz);
         if (rwzt == 5) {

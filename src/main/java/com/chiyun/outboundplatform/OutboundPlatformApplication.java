@@ -46,7 +46,6 @@ public class OutboundPlatformApplication {
             }
         };
     }
-/*
 
     @Bean
     public TomcatServletWebServerFactory servletContainer() {
@@ -56,8 +55,7 @@ public class OutboundPlatformApplication {
                 SecurityConstraint constraint = new SecurityConstraint();
                 constraint.setUserConstraint("CONFIDENTIAL");
                 SecurityCollection collection = new SecurityCollection();
-                collection.addPattern("*/
-/*");
+                collection.addPattern("*/");
                 constraint.addCollection(collection);
                 context.addConstraint(constraint);
             }
@@ -77,7 +75,4 @@ public class OutboundPlatformApplication {
         connector.setRedirectPort(443);
         return connector;
     }
-
-*/
-
 }

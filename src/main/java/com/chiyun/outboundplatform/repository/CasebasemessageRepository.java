@@ -41,8 +41,8 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
     /**
      * 通过区域查询案件id
      */
-    @Query(value = "select distinct id from casebasemessage where area_id = ?1 and show_state = '1'", nativeQuery = true)
-    List<Integer> findIdsByAjqy(Integer ajqy);
+    @Query(value = "select * from casebasemessage where area_id in (select area_code from user where id = ?1) order by import_time", nativeQuery = true)
+    Page<CasebasemessageEntity> findAllByYhid(Integer yhid, Pageable pageable);
 
     /**
      * 获取最早和最晚的时间

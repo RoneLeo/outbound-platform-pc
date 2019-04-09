@@ -24,6 +24,8 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
     List<TaskEntity> findAllByAjid(Integer ajid);
 
+    Page<TaskEntity> findAllByAjidOrderByRwcjsj(Integer ajid, Pageable pageable);
+
     /**
      * 根据案件id修改任务状态：注销
      */

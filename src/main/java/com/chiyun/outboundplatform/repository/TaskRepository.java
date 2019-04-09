@@ -31,17 +31,6 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     void resetByAjid(Integer ajid);
 
     /**
-     * 通过案件id查询任务
-     */
-    Page<TaskEntity> findAllByRwztInAndAjidInOrderByRwztDesc(List<Integer> rwzts, List<Integer> ajids, Pageable pageable);
-
-
-    /**
-     * 业务员查询所有
-     */
-    Page<TaskEntity> findAllByRwzxrOrderByIdDesc(Integer rwzxr, Pageable pageable);
-
-    /**
      * 获取最早的任务截止时间和任务完成时间
      */
     @Query(value = "select task_time from task order by task_time asc limit 1", nativeQuery = true)
@@ -113,27 +102,27 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     Page<TaskEntity> findAllByCondition(String param, Integer ywyid, Pageable pageable);
 
     /**
-     * 多条件查询:任务名称、任务截止时间、任务方式、任务状态、任务执行人、任务完成时间
+     * 多条件查询:任务名称、任务截止时间、任务方式、任务状态、任务执行人名称、任务完成时间
      */
     @Query(value = "select * from task where task_name like ?1 and " +
             "task_time between ?2 and ?3 and " +
             "if(?4 is not null, task_way = ?4, 1 = 1) and " +
             "if(?5 is not null, task_state = ?5, 1 = 1) and " +
-            "if(?6 is not null, task_people = ?6, 1 = 1) and " +
+            "task_people like ?6 and " +
             "create_time between ?7 and ?8", nativeQuery = true)
     Page<TaskEntity> findAllByConditionAndRwjzsjBetweenAndRwcjsjBetween(String rwmc, Date beginJzsj, Date endJzsj,
-                                                                        Integer rwfs, Integer rwzt, Integer rwzxr,
+                                                                        Integer rwfs, Integer rwzt, String rwzxrmc,
                                                                         Date beginCjsj, Date endCjsj, Pageable pageable);
 
 
     @Query(value = "select * from task where task_name like ?1 and " +
             "task_time between ?2 and ?3 and " +
             "if(?4 is not null, task_way = ?4, 1 = 1) and " +
-            "if(?5 is not null, task_people = ?5, 1 = 1) and " +
+            "task_people like ?5 and  " +
             "complate_time between ?6 and ?7 and " +
             "create_time between ?8 and ?9 and task_state = '4'", nativeQuery = true)
     Page<TaskEntity> findAllByConditionAndRwjzsjBetweenAAndRwcjsjBetweenAndRwcjsjBetween(String rwmc, Date beginJzsj, Date endJzsj,
-                                                                                         Integer rwfs, Integer rwzxr, Date beginWcsj, Date endWcsj,
+                                                                                         Integer rwfs, String rwzxrmc, Date beginWcsj, Date endWcsj,
                                                                                          Date beginCjsj, Date endCjsj, Pageable pageable);
 
     @Query(value = "SELECT id,name,group_concat(sl ORDER BY zt ASC) sl FROM (SELECT id,name,zt,sl FROM user LEFT JOIN (\n" +

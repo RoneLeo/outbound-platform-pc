@@ -102,6 +102,9 @@ public class TaskController {
             }
             entity.setRwyj(StringUtil.getMoneyDouble(entity.getRwyj()));
         }
+        if (entity.getRwzxr() != null) {
+            entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getYhm());
+        }
         entity.setGxsj(now);
         try {
             itaskService.save(entity);
@@ -143,18 +146,18 @@ public class TaskController {
             @ApiImplicitParam(name = "endJzsj", value = "任务截止时间的结束时间", dataType = "Date", paramType = "query"),
             @ApiImplicitParam(name = "rwfs", value = "任务方式id", dataType = "Integer", paramType = "query"),
             @ApiImplicitParam(name = "rwzt", value = "任务状态id", dataType = "Integer", paramType = "query"),
-            @ApiImplicitParam(name = "rwzxr", value = "任务执行人id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "rwzxrmc", value = "任务执行人名称", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "beginWcsj", value = "任务完成时间的开始时间", dataType = "Date", paramType = "query"),
             @ApiImplicitParam(name = "endWcsj", value = "任务完成时间的结束时间", dataType = "Date", paramType = "query"),
             @ApiImplicitParam(name = "beginCjsj", value = "任务创建的开始时间", dataType = "Date", paramType = "query"),
             @ApiImplicitParam(name = "endCjsj", value = "任务创建的结束时间", dataType = "Date", paramType = "query")
     })
     public ApiResult<Object> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj,
-                                                Integer rwfs, Integer rwzt, Integer rwzxr,
+                                                Integer rwfs, Integer rwzt, String rwzxrmc,
                                                 Date beginWcsj, Date endWcsj, Date beginCjsj, Date endCjsj, int page, int pagesize) {
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
         Page<TaskEntity> list = itaskService.findAllByCondition(rwmc, beginJzsj, endJzsj, rwfs,
-                rwzt, rwzxr, beginWcsj, endWcsj, beginCjsj, endCjsj, pageable);
+                rwzt, rwzxrmc, beginWcsj, endWcsj, beginCjsj, endCjsj, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
@@ -235,6 +238,8 @@ public class TaskController {
         entity.setRwzt(3);
         entity.setRwzxr(ywyid);
         //
+        entity.setRwzxrmc(userReposity.findById(ywyid).getYhm());
+        //
         entity.setGxsj(new Date());
         try {
             itaskService.save(entity);
@@ -257,7 +262,7 @@ public class TaskController {
 
     @ApiOperation("区域管理员指派任务")
     @RequestMapping("/appoint")
-    @ApiImplicitParam(name = "rwzxr", value = "业务员id", dataType = "Integer", paramType = "query")
+    @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query")
     public ApiResult<Object> appoint(Integer ywyid, Integer id) {
         if (id == null || ywyid == null) {
             return ApiResult.FAILURE("id和业务员id不能为空");
@@ -265,6 +270,7 @@ public class TaskController {
         TaskEntity entity = taskRepository.findById(id).get();
         entity.setRwzxr(ywyid);
         entity.setRwzt(2);
+        entity.setRwzxrmc(userReposity.findById(ywyid).getYhm());
         entity.setGxsj(new Date());
         try {
             taskRepository.save(entity);

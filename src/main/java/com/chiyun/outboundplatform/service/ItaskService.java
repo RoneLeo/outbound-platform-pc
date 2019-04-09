@@ -32,10 +32,6 @@ public interface ItaskService {
                                         Integer rwfs, Integer rwzt, Integer rwzxr,
                                         Date beginWcsj, Date endWcsj, Date beginCjsj, Date endCjsj, Pageable pageable);
 
-    /**
-     *  查询业务员本区域的任务
-     */
-    Page<TaskEntity> findAllByYwyqy(Integer qy, Pageable pageable);
 
 
     /**

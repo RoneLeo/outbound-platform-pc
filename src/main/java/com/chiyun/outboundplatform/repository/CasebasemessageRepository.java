@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by wazto on 2019/3/21.
@@ -20,31 +21,31 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
     Page<CasebasemessageEntity> findAllByPcidAndXszt(String pcid, Integer xszt, Pageable pageable);
 
     /**
-     *  查询所有
+     * 查询所有
      */
     List<CasebasemessageEntity> findAll();
 
     /**
-     *  保存
+     * 保存
      */
     CasebasemessageEntity save(CasebasemessageEntity entity);
 
     Page<CasebasemessageEntity> findAllByXszt(Integer xszt, Pageable pageable);
 
     /**
-     *  修改状态
+     * 修改状态
      */
     @Query(value = "update casebasemessage set show_state = 1 where id = ?1", nativeQuery = true)
     void updateXszt(Integer id);
 
     /**
-     *  通过区域查询案件id
+     * 通过区域查询案件id
      */
-    @Query(value = "select distinct id from casebasemessage where area_id = ?1 and show_state = '1'", nativeQuery = true)
-    List<Integer> findIdsByAjqy(Integer ajqy);
+    @Query(value = "select * from casebasemessage where area_id in (select area_code from user where id = ?1) order by import_time", nativeQuery = true)
+    Page<CasebasemessageEntity> findAllByYhid(Integer yhid, Pageable pageable);
 
     /**
-     *  获取最早和最晚的时间
+     * 获取最早和最晚的时间
      */
     @Query(value = "select import_time from casebasemessage order by import_time asc limit 1", nativeQuery = true)
     Date getEarliestTime();
@@ -61,6 +62,47 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
     @Query(value = "select * from casebasemessage where IF(?1 != '', batch_id = ?1, 1=1) and if(?2 != '', case_name like ?2, case_name like '%%' or case_name is null)  and if(?3 is not null, case_type = ?3, 1 = 1) and if(?4 is not null, case_state = ?4, 1 = 1) and if(?5 is not null, area_id = ?5, 1 = 1) and show_state = '1'", nativeQuery = true)
     Page<CasebasemessageEntity> findAllByCondition(String pcid, String ajmc, Integer ajlx, Integer ajzt, Integer ajqy, Pageable pageable);
 
+    /**
+     * @param begin
+     * @param end
+     * @Desc: 统计选择时间内案件状态数量
+     */
+    @Query(value = "SELECT entrycode lx ,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM (SELECT entrycode FROM dictionarylist WHERE dictid = 1 )dic LEFT JOIN (SELECT case_state,count(*) sl FROM casebasemessage WHERE if(?1 is null,update_time =update_time,update_time >=?1)  AND if(?2 is null,update_time =update_time,update_time <=?2) AND show_state =1 GROUP BY case_state )mes ON case_state = entrycode ORDER BY entrycode ASC", nativeQuery = true)
+    List<Map<String, Object>> getCaseCount(Date begin, Date end);
+
+    /**
+     * @param begin
+     * @param end
+     * @Desc: 统计选择时间内案件类型数量
+     */
+    @Query(value = "SELECT entrycode lx ,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM (SELECT entrycode FROM dictionarylist WHERE dictid = 2 )dic LEFT JOIN (SELECT case_state,count(*) sl FROM casebasemessage WHERE if(?1 is null,update_time =update_time,update_time >=?1)  AND if(?2 is null,update_time =update_time,update_time <=?2) AND show_state =1 GROUP BY case_state )mes ON case_state = entrycode ORDER BY entrycode ASC", nativeQuery = true)
+    List<Map<String, Object>> castTypeAnalysis(Date begin, Date end);
+
+    /**
+     * @param jd
+     * @Desc: 统计选择季度内案件状态数量
+     */
+    @Query(value = "SELECT entrycode lx ,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM (SELECT entrycode FROM dictionarylist WHERE dictid = 1 )dic LEFT JOIN (SELECT case_state,count(*) sl FROM casebasemessage WHERE quarter(update_time) = ?1 AND show_state =1  GROUP BY case_state )mes ON case_state = entrycode ORDER BY entrycode ASC", nativeQuery = true)
+    List<Map<String, Object>> casequarter(int jd);
+
+    /**
+     * @param begin
+     * @param end
+     * @Desc: 统计选定时间内案件的变化情况, 按日统计
+     */
+    @Query(value = "SELECT sj,sum(xjsl) xjsl,sum(wcsl) wcsl FROM (SELECT date_format(import_time, '%Y-%m-%d') sj,count(*)xjsl,count(NULL)  wcsl\n" +
+            " FROM casebasemessage WHERE import_time BETWEEN ?1 AND ?2  AND show_state =1 GROUP BY date_format(import_time, '%Y-%m-%d')\n" +
+            " UNION\n" +
+            " SELECT date_format(update_time, '%Y-%m-%d') sj,  count(NULL)xjsl,count(CASE WHEN  case_state >=5 THEN 1 END) wcsl\n" +
+            " FROM casebasemessage WHERE update_time BETWEEN ?1 AND ?2 AND show_state =1 GROUP BY date_format(update_time, '%Y-%m-%d'))bugd GROUP BY sj ORDER BY sj ASC", nativeQuery = true)
+    List<Map<String, Object>> casecount(Date begin, Date end);
+
+    /**
+     * @param begin
+     * @Desc: 统计选定时间前案件的未完成数量
+     */
+    @Query(value = "SELECT count(*) FROM casebasemessage WHERE  import_time <?1 AND case_state <5 AND show_state =1", nativeQuery = true)
+    int countAllByDrsjAndaAndAjzt(Date begin);
 }
 
 

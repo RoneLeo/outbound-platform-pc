@@ -47,9 +47,10 @@ public class LoggerAspect {
     public void doAfter(JoinPoint joinPoint) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         HttpSession session = request.getSession();
+        try {
         String mz = (String) session.getAttribute("mz");
         int czrid = (int) session.getAttribute("id");
-        try {
+
             LogEntity log = new LogEntity();
             log.setCzsj(getControllerMethodDescription(joinPoint));
             StringBuffer sb = new StringBuffer("请求方法:");

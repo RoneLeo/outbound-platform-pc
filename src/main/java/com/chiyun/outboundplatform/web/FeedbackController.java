@@ -60,6 +60,7 @@ public class FeedbackController {
         }
         // 修改任务状态:已接单-待审核
         taskEntity.setRwzt(4);
+        taskEntity.setGxsj(new Date());
         try {
             itaskService.save(taskEntity);
         } catch (Exception e) {

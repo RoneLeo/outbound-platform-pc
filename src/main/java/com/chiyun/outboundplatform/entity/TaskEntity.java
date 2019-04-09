@@ -29,12 +29,16 @@ public class TaskEntity {
     private String shbz;
     @ApiModelProperty(value = "实际佣金")
     private Double sjyj;
-    @ApiModelProperty(value = "任务执行人")
+    @ApiModelProperty(value = "任务执行人id")
     private Integer rwzxr;
+    @ApiModelProperty(value = "任务执行人名称")
+    private String rwzxrmc;
     @ApiModelProperty(value = "任务完成时间")
     private Date rwwcsj;
     @ApiModelProperty(value = "任务创建时间")
     private Date rwcjsj;
+    @ApiModelProperty(value = "数据更新时间")
+    private Date gxsj;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -138,13 +142,23 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "task_people")
+    @Column(name = "task_peopleId")
     public Integer getRwzxr() {
         return rwzxr;
     }
 
     public void setRwzxr(Integer rwzxr) {
         this.rwzxr = rwzxr;
+    }
+
+    @Basic
+    @Column(name = "task_people")
+    public String getRwzxrmc() {
+        return rwzxrmc;
+    }
+
+    public void setRwzxrmc(String rwzxrmc) {
+        this.rwzxrmc = rwzxrmc;
     }
 
     @Basic
@@ -167,6 +181,16 @@ public class TaskEntity {
         this.rwcjsj = rwcjsj;
     }
 
+    @Basic
+    @Column(name = "update_time")
+    public Date getGxsj() {
+        return gxsj;
+    }
+
+    public void setGxsj(Date gxsj) {
+        this.gxsj = gxsj;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -183,12 +207,14 @@ public class TaskEntity {
                 Objects.equals(shbz, entity.shbz) &&
                 Objects.equals(sjyj, entity.sjyj) &&
                 Objects.equals(rwzxr, entity.rwzxr) &&
+                Objects.equals(rwzxrmc, entity.rwzxrmc) &&
                 Objects.equals(rwwcsj, entity.rwwcsj) &&
-                Objects.equals(rwcjsj, entity.rwcjsj);
+                Objects.equals(rwcjsj, entity.rwcjsj) &&
+                Objects.equals(gxsj, entity.gxsj);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, rwfs, rwzt, shbz, sjyj, rwzxr, rwwcsj, rwcjsj);
+        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, rwfs, rwzt, shbz, sjyj, rwzxr, rwzxrmc, rwwcsj, rwcjsj, gxsj);
     }
 }

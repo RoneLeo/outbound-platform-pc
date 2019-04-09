@@ -29,13 +29,9 @@ public interface ItaskService {
      * 多条件查询:任务名称、任务截止时间、任务方式、任务状态、任务执行人、任务完成时间
      */
     Page<TaskEntity> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj,
-                                        Integer rwfs, Integer rwzt, Integer rwzxr,
+                                        Integer rwfs, Integer rwzt, String rwzxrmc,
                                         Date beginWcsj, Date endWcsj, Date beginCjsj, Date endCjsj, Pageable pageable);
 
-    /**
-     *  查询业务员本区域的任务
-     */
-    Page<TaskEntity> findAllByYwyqy(Integer qy, Pageable pageable);
 
 
     /**

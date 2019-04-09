@@ -30,7 +30,7 @@
             <el-tabs type="border-card">
                 <el-tab-pane label="案件基本信息">
                     <div id="caseInfo">
-                        <el-form class="case-detail-form" ref="detailForm" :model="form" label-width="120px" label-position="right">
+                        <el-form class="case-detail-form" ref="caseForm" :model="caseForm" label-width="120px" label-position="right">
                             <div class="case-item clearfix">
                                 <div class="case-title">基本信息</div>
                                 <el-form-item :label="baseCaseJson.ajmc">
@@ -432,14 +432,6 @@
             //************
             // 保存编辑
             saveEdit() {
-                let url = '/user/add';
-                if(this.caseForm.uuid) {
-                    url = '/user/update';
-                }
-                this.$axios.post(url ,this.$qs.stringify(Object.assign({}, this.form))).then((res) => {
-                    this.$message.success(res.resMsg);
-                    this.getData();
-                });
             },
             // 确定删除
             deleteRow(){

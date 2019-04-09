@@ -320,7 +320,7 @@ public class TaskController {
     }
 
     @ApiOperation("财务人员确认已发放佣金")
-    @RequestMapping("/countSjyj")
+    @RequestMapping("/checkFfyj")
     public ApiResult<Object> checkFfyj(List<Integer> ids) {
         if (ids.size() < 1) {
             return ApiResult.FAILURE("未选择确认的任务");

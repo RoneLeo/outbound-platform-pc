@@ -39,4 +39,6 @@ public interface UserReposity extends CrudRepository<UserEntity, Long> {
     UserEntity findById(int id);
 
     UserEntity findByYhm(String yhm);
+
+    List<UserEntity> findByJsInAndMzLikeAndSzxzqdm(int js[], String mz, String szxzqdm);
 }

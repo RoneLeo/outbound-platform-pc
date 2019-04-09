@@ -102,6 +102,9 @@ public class TaskController {
             }
             entity.setRwyj(StringUtil.getMoneyDouble(entity.getRwyj()));
         }
+        if (entity.getRwzxr() != null) {
+            entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getYhm());
+        }
         entity.setGxsj(now);
         try {
             itaskService.save(entity);
@@ -235,6 +238,8 @@ public class TaskController {
         entity.setRwzt(3);
         entity.setRwzxr(ywyid);
         //
+        entity.setRwzxrmc(userReposity.findById(ywyid).getYhm());
+        //
         entity.setGxsj(new Date());
         try {
             itaskService.save(entity);
@@ -265,6 +270,7 @@ public class TaskController {
         TaskEntity entity = taskRepository.findById(id).get();
         entity.setRwzxr(ywyid);
         entity.setRwzt(2);
+        entity.setRwzxrmc(userReposity.findById(ywyid).getYhm());
         entity.setGxsj(new Date());
         try {
             taskRepository.save(entity);

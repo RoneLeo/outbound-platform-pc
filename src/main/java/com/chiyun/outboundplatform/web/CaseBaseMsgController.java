@@ -75,8 +75,8 @@ public class CaseBaseMsgController {
     }
 
     @ApiOperation("通过案件id查询任务")
-    @RequestMapping("/find")
-    public ApiResult<Object> f(Integer ajid, int page, int pagesize) {
+    @RequestMapping("/findAllTaskByAjid")
+    public ApiResult<Object> findAllByAjidOrderByRwcjsj(Integer ajid, int page, int pagesize) {
         if (ajid == null) {
             return ApiResult.FAILURE("案件id不能为空");
         }

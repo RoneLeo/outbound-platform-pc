@@ -216,6 +216,13 @@ public class DictionaryListController {
         if (id == 0) {
             return ApiResult.FAILURE("主键键不能为空");
         }
+        DictionarylistEntity entity = idictionaryListService.findById(id);
+        if (entity == null) {
+            return ApiResult.FAILURE("注销失败,未找到对应的词条");
+        }
+        if( entity.getCtlx().equals("1")){
+            return ApiResult.FAILURE("注销失败,改词条不允许变更");
+        }
         int cn = idictionaryListService.cancellationDicListById(id);
         if (cn == 1) {
             return ApiResult.SUCCESS("注销成功");
@@ -233,6 +240,13 @@ public class DictionaryListController {
     public ApiResult<Object> activationDicListById(Integer id) {
         if (id == 0) {
             return ApiResult.FAILURE("主键不能为空");
+        }
+        DictionarylistEntity entity = idictionaryListService.findById(id);
+        if (entity == null) {
+            return ApiResult.FAILURE("激活失败,未找到对应的词条");
+        }
+        if( entity.getCtlx().equals("1")){
+            return ApiResult.FAILURE("激活失败,改词条不允许变更");
         }
         int cn = idictionaryListService.unCancellationDicListById(id);
         if (cn == 1) {

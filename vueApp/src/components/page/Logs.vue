@@ -2,19 +2,16 @@
     <div>
         <div class="container">
             <el-form :inline="true" :model="searchForm" class="demo-form-inline" size="mini" label-width="90px" >
-
-
                 <el-form-item label="操作时间段">
                     <el-date-picker
                             v-model="selectedDates"
-                            type="daterange"
-                            align="right"
-                            unlink-panels
+                            type="datetimerange"
+                            :picker-options="pickerOptions2"
                             range-separator="至"
-                            start-placeholder="开始时间"
-                            end-placeholder="结束时间"
-                            value-format="yyyy-MM-dd"
-                            :picker-options="pickerOptions2">
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            align="right">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="操作用户">
@@ -34,8 +31,8 @@
         <div class="container">
             <el-table :data="tableData" class="table" ref="multipleTable">
                 <el-table-column prop="czr" label="操作用户"></el-table-column>
-                <el-table-column prop="cznr" label="操作内容"></el-table-column>
-                <el-table-column prop="czsj" label="操作时间"></el-table-column>
+                <el-table-column prop="czsj" label="操作内容"></el-table-column>
+                <el-table-column prop="cjsj" label="操作时间"></el-table-column>
             </el-table>
             <div class="pagination">
                 <el-pagination
@@ -105,6 +102,9 @@
         methods: {
             getDataByCondition() {
                 this.currentPage = 1;
+                this.getLogsData();
+            },
+            getLogsData(){
                 let param = {
                     page: this.currentPage,
                     pagesize: this.pageSize,
@@ -114,8 +114,6 @@
                     jssj: this.selectedDates[1],
 
                 };
-
-
                 this.$axios.post('log/findAll',param).then(res => {
                     this.tableData = res.data;
                     this.total = res.counts;
@@ -123,15 +121,15 @@
             },
             clearCondition() {
                 this.selectedDates = [];
-                this.searchInput = {};
+                this.searchForm = {};
             },
             handleSizeChange(val) {
                 this.pageSize = val;
-                this.getDataByCondition();
+                this.getLogsData();
             },
             handleCurrentChange(val) {
                 this.currentPage = val;
-                this.getDataByCondition()
+                this.getLogsData()
             }
         }
     }

@@ -84,6 +84,25 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
      */
     @Query(value = "SELECT entrycode lx ,CASE WHEN sl IS NULL THEN 0 ELSE sl END sl FROM (SELECT entrycode FROM dictionarylist WHERE dictid = 1 )dic LEFT JOIN (SELECT case_state,count(*) sl FROM casebasemessage WHERE quarter(update_time) = ?1 AND show_state =1  GROUP BY case_state )mes ON case_state = entrycode ORDER BY entrycode ASC", nativeQuery = true)
     List<Map<String, Object>> casequarter(int jd);
+
+    /**
+     * @param begin
+     * @param end
+     * @Desc: 统计选定时间内案件的变化情况, 按日统计
+     */
+    @Query(value = "SELECT sj,sum(xjsl) xjsl,sum(wcsl) wcsl FROM (SELECT date_format(import_time, '%Y-%m-%d') sj,count(*)xjsl,count(NULL)  wcsl\n" +
+            " FROM casebasemessage WHERE import_time BETWEEN ?1 AND ?2  AND show_state =1 GROUP BY date_format(import_time, '%Y-%m-%d')\n" +
+            " UNION\n" +
+            " SELECT date_format(update_time, '%Y-%m-%d') sj,  count(NULL)xjsl,count(CASE WHEN  case_state >=5 THEN 1 END) wcsl\n" +
+            " FROM casebasemessage WHERE update_time BETWEEN ?1 AND ?2 AND show_state =1 GROUP BY date_format(update_time, '%Y-%m-%d'))bugd GROUP BY sj ORDER BY sj ASC", nativeQuery = true)
+    List<Map<String, Object>> casecount(Date begin, Date end);
+
+    /**
+     * @param begin
+     * @Desc: 统计选定时间前案件的未完成数量
+     */
+    @Query(value = "SELECT count(*) FROM casebasemessage WHERE  import_time <?1 AND case_state <5 AND show_state =1", nativeQuery = true)
+    int countAllByDrsjAndaAndAjzt(Date begin);
 }
 
 

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,5 +68,17 @@ public class SatisticsServiceImpl {
      */
     public Page<Map<String, Object>> peoplecount(Pageable pageable) {
         return taskRepository.peoplecount(pageable);
+    }
+
+    /**
+     * 统计选定时间内案件的变化情况,按日统计
+     *
+     * @return
+     */
+    public Map<String, Object> casecount(Date begin, Date end) {
+        Map map = new HashMap();
+        map.put("ajsj", casebasemessageRepository.casecount(begin, end));
+        map.put("wwcsl", casebasemessageRepository.countAllByDrsjAndaAndAjzt(begin));
+        return map;
     }
 }

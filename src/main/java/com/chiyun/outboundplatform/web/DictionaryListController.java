@@ -321,7 +321,8 @@ public class DictionaryListController {
         if (entity == null) {
             return ApiResult.FAILURE("更新失败,未找到对应的词条");
         }
-        if(ctdm!=0){
+
+        if(ctdm!=null&&ctdm!=0){
             entity.setCtdm(ctdm);
         }
         if(StringUtil.isNotNull(ctmc)){

@@ -1,7 +1,28 @@
 <template>
     <div>
         <div class="container">
-            <h3>{{caseTitle}} </h3>
+            <div class="case-desc clearfix">
+                <div class="left">
+                    <span class="pre">案件名称:</span>
+                    <span class="val">{{caseInfo.ajmc}}</span>，
+                </div>
+                <div class="left">
+                    <span class="pre">案件状态:</span>
+                    <span class="val">{{caseInfo.ajztmc}}</span>，
+                </div>
+                <div class="left">
+                    <span class="pre">案件类型:</span>
+                    <span class="val">{{caseInfo.ajlxmc}}</span>，
+                </div>
+                <div class="left">
+                    <span class="pre">案件区域:</span>
+                    <span class="val">{{caseInfo.ajqymc}}</span>，
+                </div>
+                <div class="left">
+                    <span class="pre">总佣金:</span>
+                    <span class="val">{{caseInfo.ajyj}}</span>
+                </div>
+            </div>
         </div>
         <div class="case-info">
             <el-button class="return-btn" type="success" @click="backToCaseList">返回案件列表</el-button>
@@ -9,7 +30,7 @@
             <el-tabs type="border-card">
                 <el-tab-pane label="案件基本信息">
                     <div id="caseInfo">
-                        <el-form class="case-detail-form" ref="detailForm" :model="form" label-width="120px" label-position="right">
+                        <el-form class="case-detail-form" ref="caseForm" :model="caseForm" label-width="120px" label-position="right">
                             <div class="case-item clearfix">
                                 <div class="case-title">基本信息</div>
                                 <el-form-item :label="baseCaseJson.ajmc">
@@ -121,25 +142,27 @@
                         </el-form>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane label="案件任务信息">
+                <el-tab-pane :label="`案件任务信息(`+total+`)`">
+                    <div>
+                        <el-button size="mini" type="success" @click="taskModelVisible=true;taskForm={}">添加任务</el-button>
+                    </div>
                     <el-table :data="tableData" class="table" ref="multipleTable">
                         <el-table-column prop="rwmc" label="任务名称"></el-table-column>
-                        <el-table-column prop="rwzt" label="任务状态":formatter="RwztFormatter"></el-table-column>
-                        <el-table-column prop="rwfs" label="任务方式":formatter="RwfsFormatter"></el-table-column>
+                        <el-table-column prop="rwzt" label="任务状态" :formatter="rwztFormatter"></el-table-column>
+                        <el-table-column prop="rwfs" label="任务方式" :formatter="rwfsFormatter"></el-table-column>
                         <el-table-column prop="rwzxrmc" label="任务执行人"></el-table-column>
                         <el-table-column prop="rwyj" label="任务佣金"></el-table-column>
                         <el-table-column prop="sjyj" label="实际佣金"></el-table-column>
                         <el-table-column prop="rwjzsj" label="任务截止时间"></el-table-column>
                         <el-table-column prop="rwwcsj" label="任务完成时间"></el-table-column>
-                        <el-table-column prop="shbz" label="审核备注"></el-table-column>
                         <el-table-column prop="rwms" label="任务描述"></el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column label="操作" width="150">
                             <template slot-scope="scope">
                                 <el-button size="mini" type="text" @click="handleTask(scope.$index, scope.row)">
-                                    指派
+                                    任务指派
                                 </el-button>
-                                <el-button size="mini" type="primary" @click="handleTaskRecord(scope.$index, scope.row)">
-                                    记录
+                                <el-button size="mini" type="text" @click="handleTaskRecord(scope.$index, scope.row)">
+                                    反馈记录
                                 </el-button>
                             </template>
                         </el-table-column>
@@ -174,16 +197,100 @@
                 <el-button @click="recordModelVisible = false">关 闭</el-button>
             </div>
         </el-dialog>
+
         <!--任务指派-->
-        <el-dialog title="指派任务" :visible.sync="assignedModelVisible" width="50%">
-            <div>
-                <h3>请选择任务接收人</h3>
-                <div></div>
-            </div>
+        <el-dialog class="assign-task" title="指派任务" :visible.sync="assignedModelVisible" width="30%">
+            <el-form  label-width="120px" >
+                <el-form-item style="width:100%;" label="任务接收人员">
+                    <el-select v-model="taskPersonId" placeholder="请选择">
+                        <el-option
+                                v-for="item in ywyArr"
+                                :key="item.id"
+                                :label="item.mz"
+                                :value="item.id" >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="assignedModelVisible = false">关 闭</el-button>
+                <el-button @click="assignedModelVisible = false">取 消</el-button>
+                <el-button @click="assignTask" type="primary">指 派</el-button>
             </div>
         </el-dialog>
+
+        <!--任务添加,编辑-->
+        <el-dialog  title="任务信息" :visible.sync="taskModelVisible" width="60%">
+            <el-form class="task-form clearfix" ref="taskForm" :model="taskForm" label-width="120px" >
+                <el-form-item label="任务名称" prop="rwmc"
+                              :rules="[{ required: true, message: '任务名称不能为空', trigger: 'blur' }]">
+                    <el-input v-model="taskForm.rwmc"></el-input>
+                </el-form-item>
+                <el-form-item label="任务佣金" prop="rwyj">
+                    <el-input v-model="taskForm.rwyj"></el-input>
+                </el-form-item>
+
+                <el-form-item label="任务方式">
+                    <el-select v-model="taskForm.rwfs" placeholder="请选择">
+                        <el-option
+                                v-for="item in rwfsArr"
+                                :key="item.ctdm"
+                                :label="item.ctmc"
+                                :value="item.ctdm">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="任务状态">
+                    <el-select v-model="taskForm.rwzt" placeholder="请选择">
+                        <el-option
+                                v-for="item in rwztArr"
+                                :key="item.ctdm"
+                                :label="item.ctmc"
+                                :value="item.ctdm">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="截止时间" prop="rwjzsj">
+                    <el-date-picker
+                            v-model="taskForm.rwjzsj"
+                            type="datetime">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="完成时间" prop="rwjzsj">
+                    <el-input v-model="taskForm.rwwcsj" readonly></el-input>
+                </el-form-item>
+                <el-form-item class="el-form-item-1" label="任务描述">
+                    <el-input type="textarea" v-model="taskForm.rwms"></el-input>
+                </el-form-item>
+
+                <div class="clearfix">
+                    <el-form-item label="立即指派">
+                        <el-switch v-model="taskForm.isAssign"></el-switch>
+                    </el-form-item>
+                    <template v-if="taskForm.isAssign">
+                        <el-form-item label="任务接收人">
+                            <el-select v-model="taskForm.rwzxr" placeholder="请选择">
+                                <el-option
+                                        v-for="item in ywyArr"
+                                        :key="item.id"
+                                        :label="item.mz"
+                                        :value="item.id" >
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </template>
+
+                </div>
+                <el-form-item class="el-form-item-1" label="审核备注">
+                    <el-input type="textarea" readonly v-model="taskForm.shbz"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="taskModelVisible = false">取 消</el-button>
+                <el-button @click="saveTask" type="primary">保 存</el-button>
+            </div>
+        </el-dialog>
+
+
     </div>
 </template>
 
@@ -194,72 +301,48 @@
         name: 'caseInfo',
         data() {
             return {
+                taskPersonId: '',
+                ywyArr: [], //业务员
+                rwfsArr: [], //任务方式
+                rwztArr: [], //任务状态
+                caseInfo: {},
                 caseForm: {},
+                taskForm: {},
                 caseTitle: '',
                 taskTitle: '任务一的记录信息',
                 recordModelVisible: false,
                 assignedModelVisible: false,
-
-                /******/
-
-
-                tableData: [],
-                modelVisible: false,
-                form: {},
-                importForm: {},
-                file: {},
-                importModelVisible: false,
-                qys: [],
+                taskModelVisible: false,
                 ajlxs: [],
                 ajzts:[],
-                pcs: [],
+                ajqys: [],
+                taskId:'',
+                tableData: [],
                 pageSize: 15,
                 currentPage: 1,
                 total: 0,
                 baseCaseJson: baseCaseJson,
-                searchInput: {},
-                selectedDates: [],
-                pickerOptions2: {
-                    shortcuts: [{
-                        text: '最近一周',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近一个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近三个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }]
-                },
             }
         },
         created() {
             this.getCaseInfo();
             this.getDictData();
             this.getTaskData();
+            this.getPerson();
         },
 
         methods: {
+            //获取业务员信息
+            getPerson(){
+                this.$axios.get('user/fingByAreacodeAndName').then(res => {
+                    this.ywyArr = res.data;
+                })
+            },
             getCaseInfo(){
-                let caseInfo = this.$route.params;
-                this.caseTitle = caseInfo.ajmc;
-                if(caseInfo.id){
-                    this.$axios.get('/casebase/findAllInfoById?id=' + caseInfo.id).then(res => {
+                this.caseInfo = this.$route.params;
+                this.caseInfo.ajqymc = util.dictParse(this.caseInfo.ajqy, this.ajqys);
+                if(this.caseInfo.id){
+                    this.$axios.get('/casebase/findAllInfoById?id=' + this.caseInfo.id).then(res => {
                         this.caseForm = Object.assign({}, res.data);
                     });
                 }
@@ -269,81 +352,49 @@
 
             },
             getTaskData(){
-                this.$axios.post('task/findAllByCondition', {page: this.currentPage, pagesize: this.pageSize}).then(res => {
+                this.$axios.post('casebase/findAllTaskByAjid', {ajid:this.caseInfo.id,page: this.currentPage, pagesize: this.pageSize}).then(res => {
                     this.tableData = res.data;
                     this.total = res.counts;
                 })
             },
-
             getDictData(){
-                this.$axios.post('/dict/findDictListByZddm', {zddm: 'D_SYS_AJQYDM', zxbz: 0}).then((res) => {
-                    if(res.resCode == 200){
-                        this.qys = res.data;
-                    }else if(res.resCode == 100) {
-                        this.$router.push('/login');
-                    }
+                this.$axios.post('/dict/findDictListByZddm', {zddm: 'D_SYS_AJQYDM'}).then((res) => {
+                    this.ajqys = res.data;
+                    this.caseInfo.ajqymc = util.dictParse(this.caseInfo.ajqy, this.ajqys);
                 });
-                this.$axios.post('/dict/findDictListByZddm', {zddm: 'D_SYS_AJLXDM', zxbz: 0}).then((res) => {
-                    if(res.resCode == 200){
-                        this.ajlxs = res.data;
-                    }else if(res.resCode == 100) {
-                        this.$router.push('/login');
-                    }
+                this.$axios.post('/dict/findDictListByZddm', {zddm: 'D_SYS_AJLXDM'}).then((res) => {
+                    this.ajlxs = res.data;
+                    this.caseInfo.ajlxmc = util.dictParse(this.caseInfo.ajlx, this.ajlxs);
                 });
-                this.$axios.post('/dict/findDictListByZddm', {zddm: 'D_SYS_AJZTDM', zxbz: 0}).then((res) => {
-                    if(res.resCode == 200){
-                        this.ajzts = res.data;
-                    }else if(res.resCode == 100) {
-                        this.$router.push('/login');
-                    }
+                this.$axios.post('/dict/findDictListByZddm', {zddm: 'D_SYS_AJZTDM'}).then((res) => {
+                    this.ajzts = res.data;
+                    this.caseInfo.ajztmc = util.dictParse(this.caseInfo.ajzt, this.ajzts);
                 });
-                this.$axios.post('/dict/findDictListByZddm',{zddm:'D_SYS_RWFSDM',zxbz:0}).then((res)=>{
-                    if(res.resCode==200){
-                        this.rwfss=res.data;
-                    }else if(res.resCode==100){
-                        this.$router.push('/login');
-                    }
+                //任务方式
+                this.$axios.post('/dict/findDictListByZddm', {zddm: 'D_SYS_RWFSDM'}).then((res) => {
+                    this.rwfsArr = res.data;
                 });
-                this.$axios.post('/dict/findDictListByZddm',{zddm:'D_SYS_RWZTDM',zxbz:0}).then((res)=>{
-                    if(res.resCode==200){
-                        this.rwzts=res.data;
-                    }else if(res.resCode==100){
-                        this.$router.push('/login');
-                    }
-                });
-                this.$axios.post('/batch/findAll',{page:1,pagesize: 1000}).then((res) => {
-                    if(res.resCode == 200){
-                        this.pcs = res.data;
-                    }
+                //任务状态
+                this.$axios.post('/dict/findDictListByZddm', {zddm: 'D_SYS_RWZTDM'}).then((res) => {
+                    this.rwztArr = res.data;
                 });
 
             },
-
 
             backToCaseList(){
                 this.$router.push({name:'cases'});
-
             },
-            clearCondition() {
-                this.selectedDates = [];
-                this.searchInput = {};
-                this.getData();
-            },
-            searchByCondition() {
-                this.currentPage = 1;
-                this.$axios.post('/casebase/findAllByCondition',Object.assign({}, {page: this.currentPage, pagesize: this.pageSize,begin: this.selectedDates[0], end: this.selectedDates[1]}, this.searchInput)).then(res => {
-                    if(res.resCode == 200) {
-                        this.tableData = res.data;
-                        this.total = res.counts;
-                    }
+            assignTask(){
+                this.$axios.post('task/appoint', {id: this.taskId,ywyid:this.taskPersonId}).then(res => {
+                    this.assignedModelVisible = false;
+                    this.$message.success('指派成功!');
+                    this.getTaskData();
                 })
             },
             handleTask(index, row) {
-                //alert('指派任务')
-                 console.log(row);
-                 let rwid=row.id;
+                this.taskId = row.id;
                 this.assignedModelVisible = true;
-                
+
             },
             handleTaskRecord(index, row) {
                 console.log(row);
@@ -353,95 +404,6 @@
                     this.recordModelVisible = true;
                 })
             },
-            AjlxFormatter(row) {
-                return util.dictParse(row.ajlx, this.ajlxs);
-            },
-            AjztFormatter(row) {
-                return util.dictParse(row.ajzt, this.ajzts);
-            },
-            AjqyFormatter(row) {
-                return util.dictParse(row.ajqy, this.qys);
-            },
-            RwztFormatter(row){
-                return util.dictParse(row.rwzt,this.rwzts);
-            },
-            RwfsFormatter(row){
-                return util.dictParse(row.rwfs,this.rwfss);
-            },
-            saveImport(){
-                let param = new FormData();
-                param.append('pcid', this.importForm.pcid);
-                param.append('ajqy', this.importForm.ajqy);
-                param.append('ajlx', this.importForm.ajlx);
-                param.append('file', this.file);
-                let config = {
-                    headers:{'Content-Type':'multipart/form-data'}
-                };
-                this.$axios.post('/batch/importExcel', param, config).then(res => {
-                    if(res.resCode == 200){
-                        this.$message.success('案件导入成功!');
-                        this.importModelVisible = false;
-                    }
-                });
-            },
-            handlerUpload(e) {
-                this.file = e.target.files[0];
-            },
-            importCase() {
-                this.importModelVisible = true;
-                this.importForm = {}
-            },
-            closeClear() {
-                this.$refs.importForm.resetFields()
-                this.$refs.detailForm.resetFields()
-            },
-
-            search() {
-                this.is_search = true;
-            },
-            add(){
-                this.form = {
-                };
-                this.modelVisible = true;
-            },
-
-            handleOrder(index, row) {
-                this.$router.push({name:'order', params: row});
-            },
-            handleDelete(index, row) {
-                this.$confirm('此操作将注销本案件, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.$axios.post('/user/delete', this.$qs.stringify({uuid: row.uuid})).then((res) => {
-                        this.getData();
-                        this.$message.success('已删除！');
-                    });
-                }).catch(() => {
-                });
-            },
-            handleSelectionChange(val) {
-                this.multipleSelection = val;
-            },
-            // 保存编辑
-            saveEdit() {
-                let url = '/user/add';
-                if(this.caseForm.uuid) {
-                    url = '/user/update';
-                }
-                this.$axios.post(url ,this.$qs.stringify(Object.assign({}, this.form))).then((res) => {
-                    this.$message.success(res.resMsg);
-                    this.modelVisible = false;
-                    this.getData();
-                });
-            },
-            // 确定删除
-            deleteRow(){
-                this.tableData.splice(this.idx, 1);
-                this.$message.success('删除成功');
-                this.delVisible = false;
-            },
             handleSizeChange(val) {
                 this.pageSize = val;
                 this.getData();
@@ -449,13 +411,68 @@
             handleCurrentChange(val) {
                 this.currentPage = val;
                 this.getData()
-            }
+            },
+            saveTask(){
+                let param = this.taskForm;
+                param.ajid = this.caseInfo.id;
+                this.$axios.post('task/add', param).then(res => {
+                    this.taskModelVisible = false;
+                    this.getTaskData();
+                })
+            },
+            rwztFormatter(row) {
+                return util.dictParse(row.rwzt, this.rwztArr);
+            },
+            rwfsFormatter(row) {
+                return util.dictParse(row.rwfs, this.rwfsArr);
+            },
+
+
+
+            //************
+            // 保存编辑
+            saveEdit() {
+            },
+            // 确定删除
+            deleteRow(){
+                this.tableData.splice(this.idx, 1);
+                this.$message.success('删除成功');
+                this.delVisible = false;
+            },
+
         }
     }
 
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
+    .task-form{
+        .el-form-item{
+            float:left;
+            width: 50%;
+        }
+        .el-form-item-1{
+            width: 100%;
+        }
+    }
+    .case-desc{
+        padding: 5px 0;
+        .left{
+            margin-right: 15px;
+            color: #454545;
+            .val{
+                color: #00ab00;
+                font-weight: bold;
+            }
+        }
+    }
+    .assign-task{
+        .el-select{
+            width: 100%;
+            display: inline-block;
+        }
+    }
+
     .case-info{
         position: relative;
         .return-btn{

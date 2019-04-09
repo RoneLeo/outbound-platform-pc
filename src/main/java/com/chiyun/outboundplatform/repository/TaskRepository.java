@@ -76,6 +76,23 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     Double sumAllSjyjByRwzxr(Integer rwzxr);
 
     /**
+     *  通过案件id、业务员id和任务状态统计业务员实际佣金
+     */
+    @Query(value = "SELECT case_id as ajid, sum(actual_money) as ajsjyj from task WHERE task_state = '6' and task_people = ?1 GROUP BY case_id ORDER BY case_id", nativeQuery = true)
+    List<Map<String, Double>> sumSjyjByAjid(Integer ywyid);
+
+    @Query(value = "SELECT case_id as ajid, task_people as rwzxr, sum(actual_money) as ajsjyj from task WHERE task_state = '6' GROUP BY task_people, case_id ORDER BY task_people, case_id", nativeQuery = true)
+    List<Map<String, Double>> sumAllSjyjByAjid();
+
+
+    /**
+     *  财务人员确认已发放佣金，批量修改
+     */
+    @Query(value = "update task set task_state = '7' where id in ?1", nativeQuery = true)
+    void updateRwztByIdIn(List<Integer> ids);
+
+
+    /**
      * 通过案件id统计任务佣金
      */
     @Query(value = "select sum(task_money) from task where case_id = ?1", nativeQuery = true)

@@ -310,8 +310,27 @@ public class TaskController {
     @ApiOperation("财务人员统计业务员实际总佣金")
     @RequestMapping("/countSjyj")
     public ApiResult<Object> countSjyj(Integer ywyid) {
-//        double sjzyj =
-        return ApiResult.SUCCESS();
+        List<Map<String, Double>> map = new ArrayList<>();
+        if (ywyid == null) {
+            map = taskRepository.sumAllSjyjByAjid();
+        } else {
+            map = taskRepository.sumSjyjByAjid(ywyid);
+        }
+        return ApiResult.SUCCESS(map);
+    }
+
+    @ApiOperation("财务人员确认已发放佣金")
+    @RequestMapping("/countSjyj")
+    public ApiResult<Object> checkFfyj(List<Integer> ids) {
+        if (ids.size() < 1) {
+            return ApiResult.FAILURE("未选择确认的任务");
+        }
+        try {
+            taskRepository.updateRwztByIdIn(ids);
+        } catch (Exception e) {
+            return ApiResult.FAILURE("确认失败");
+        }
+        return ApiResult.SUCCESS("确认成功");
     }
 
 }

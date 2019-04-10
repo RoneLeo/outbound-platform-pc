@@ -22,7 +22,7 @@ public interface FieldCaseBaseRepository extends JpaRepository<FieldcasebaseEnti
     /**
      *  查询所有默认字段
      */
-    @Query(value = "select fieldCname from fieldcasebase where basetype = 0", nativeQuery = true)
+    @Query(value = "select fieldCname from fieldcasebase where basetype = 0 ORDER BY id", nativeQuery = true)
     List<String> findAllZdzwmc();
 
     /**

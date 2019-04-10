@@ -155,12 +155,18 @@ public class CaseBaseMsgController {
         // 判断权限，如果是区域管理员，则只能查询本区域
         Integer id = (Integer) session.getAttribute("id");
         UserEntity userEntity = userReposity.findById(id);
-        if (userEntity.getJs() == 3) {
-            // 区域管理员
-            ajqy = Integer.parseInt(userEntity.getSzxzqdm());
-        }
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
-        Page<CasebasemessageEntity> list = icaseBaseService.findAllByCondition(pcid, ajmc, ajlx, ajzt, ajqy, begin, end, pageable);
+        Page<CasebasemessageEntity> list = null;
+        if (StringUtil.isNull(pcid) && StringUtil.isNull(ajmc) && ajlx == null &&
+                ajzt == null && ajqy == null && begin == null && end == null) {
+            list = casebasemessageRepository.findAllByYhid(id, pageable);
+        } else {
+            if (userEntity.getJs() == 3) {
+                // 区域管理员
+                ajqy = Integer.parseInt(userEntity.getSzxzqdm());
+            }
+            list = icaseBaseService.findAllByCondition(pcid, ajmc, ajlx, ajzt, ajqy, begin, end, pageable);
+        }
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 

@@ -27,6 +27,12 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     Page<TaskEntity> findAllByAjidOrderByRwcjsj(Integer ajid, Pageable pageable);
 
     /**
+     *  根据id修改任务状态
+     */
+    @Query(value = "update task set task_state = ?1 where id = ?2", nativeQuery = true)
+    void updateRwztById(Integer rwzt, Integer id);
+
+    /**
      * 根据案件id修改任务状态：注销
      */
     @Query(value = "update task set task_state = '8' where case_id = ?1", nativeQuery = true)
@@ -74,6 +80,13 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
     @Query(value = "SELECT case_id as ajid, task_people as rwzxr, sum(actual_money) as ajsjyj from task WHERE task_state = '6' GROUP BY task_peopleId, case_id ORDER BY task_peopleId, case_id", nativeQuery = true)
     List<Map<String, Double>> sumAllSjyjByAjid();
+
+
+    /**
+     *  通过案件id查询任务是否都已完成
+     */
+    @Query(value = "select distinct id from task where case_id = ?1 and task_state in (1, 2, 3)", nativeQuery = true)
+    List<Integer> findAllIdByAjidAndAjztIn(Integer ajid);
 
 
     /**

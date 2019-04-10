@@ -32,10 +32,7 @@ public class FileController {
 
     @ApiOperation("添加")
     @RequestMapping("/add")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "rwid", value = "任务id", dataType = "Integer", paramType = "query"),
-            @ApiImplicitParam(name = "file", value = "附件", dataType = "MultipartFile", paramType = "query")
-    })
+    @ApiImplicitParam(name = "rwid", value = "任务id", dataType = "Integer", paramType = "query")
     public FileEntity addFile(Integer rwid, MultipartFile file, HttpServletRequest request) {
         String filename = file.getOriginalFilename();
         String path = request.getSession().getServletContext().getRealPath("/upload/");

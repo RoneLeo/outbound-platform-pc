@@ -86,6 +86,11 @@ public class TaskController {
         } catch (Exception e) {
             return ApiResult.FAILURE("添加任务失败");
         }
+        try {
+            casebasemessageRepository.updateAjztById(2, entity.getAjid());
+        } catch (Exception e) {
+            return ApiResult.FAILURE("修改案件状态失败");
+        }
         return ApiResult.SUCCESS("添加成功");
     }
 

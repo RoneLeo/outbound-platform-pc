@@ -25,6 +25,9 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
      */
     List<CasebasemessageEntity> findAll();
 
+    @Query(value = "update casebasemessage set case_state = ?1 where id = ?2", nativeQuery = true)
+    void updateAjztById(Integer ajzt, Integer id);
+
     /**
      * 保存
      */

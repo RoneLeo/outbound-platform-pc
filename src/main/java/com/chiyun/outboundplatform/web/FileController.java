@@ -1,9 +1,12 @@
 package com.chiyun.outboundplatform.web;
 
+import com.chiyun.outboundplatform.common.ApiResult;
 import com.chiyun.outboundplatform.entity.FileEntity;
 import com.chiyun.outboundplatform.repository.FileRepository;
 import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +32,10 @@ public class FileController {
 
     @ApiOperation("添加")
     @RequestMapping("/add")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "rwid", value = "任务id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "file", value = "附件", dataType = "MultipartFile", paramType = "query")
+    })
     public FileEntity addFile(Integer rwid, MultipartFile file, HttpServletRequest request) {
         String filename = file.getOriginalFilename();
         String path = request.getSession().getServletContext().getRealPath("/upload/");
@@ -49,6 +56,20 @@ public class FileController {
         }
         return fileEntity;
     }
+
+    @ApiOperation("通过任务id查询")
+    @RequestMapping("/findAllByRwid")
+    @ApiImplicitParam(name = "rwid", value = "任务id", dataType = "Integer", paramType = "query")
+    public ApiResult<Object> findAllByRwid(Integer rwid) {
+        List<FileEntity> list = null;
+        if (rwid == null) {
+            list = fileRepository.findAll();
+        } else {
+            list = fileRepository.findAllByRwid(rwid);
+        }
+        return ApiResult.SUCCESS(list);
+    }
+
 
     /**
      *  将文件分类查询显示

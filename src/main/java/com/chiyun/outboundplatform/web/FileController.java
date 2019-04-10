@@ -2,6 +2,7 @@ package com.chiyun.outboundplatform.web;
 
 import com.chiyun.outboundplatform.entity.FileEntity;
 import com.chiyun.outboundplatform.repository.FileRepository;
+import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,25 +58,28 @@ public class FileController {
         List<String> listPhoto = new ArrayList<>();
         List<String> listVideo = new ArrayList<>();
         List<String> listAudio = new ArrayList<>();
-        String[] idss = ids.split(",");
-        for (int i = 0; i < idss.length; i ++) {
-            Integer id = Integer.parseInt(idss[i]);
-            FileEntity entity = fileRepository.findById(id).get();
-            String wedz = entity.getWjdz();
-            // 获取后缀名
-            String hzm = wedz.substring(wedz.lastIndexOf(".") + 1).toUpperCase();
+        if (StringUtil.isNotNull(ids)) {
+            String[] idss = ids.split(",");
+            for (int i = 0; i < idss.length; i ++) {
+                Integer id = Integer.parseInt(idss[i]);
+                FileEntity entity = fileRepository.findById(id).get();
+                String wedz = entity.getWjdz();
+                // 获取后缀名
+                String hzm = wedz.substring(wedz.lastIndexOf(".") + 1).toUpperCase();
 
-            if (hzm.equals("BMP") | hzm.equals("JPG") | hzm.equals("JPEG") | hzm.equals("PNG") | hzm.equals("GIF")) {
-                // 图片格式：BMP、JPG、JPEG、PNG、GIF
-                listPhoto.add(wedz);
-            } else if (hzm.equals("AVI") | hzm.equals("MOV") | hzm.equals("RMVB") | hzm.equals("RM")
-                    | hzm.equals("FLV") | hzm.equals("MP4") | hzm.equals("3GP") | hzm.equals("WEBM")) {
-                // 视频格式：AVI、mov、rmvb、rm、FLV、mp4、3GP
-                listVideo.add(wedz);
-            } else if (hzm.equals("AAC") | hzm.equals("WAV") | hzm.equals("MIDI") | hzm.equals("CDA") | hzm.equals("MP3") | hzm.equals("WMA")) {
-                // 音频格式：WAV 、MIDI、CDA、MP3、WMA、MP4
-                listAudio.add(wedz);
+                if (hzm.equals("BMP") | hzm.equals("JPG") | hzm.equals("JPEG") | hzm.equals("PNG") | hzm.equals("GIF")) {
+                    // 图片格式：BMP、JPG、JPEG、PNG、GIF
+                    listPhoto.add(wedz);
+                } else if (hzm.equals("AVI") | hzm.equals("MOV") | hzm.equals("RMVB") | hzm.equals("RM")
+                        | hzm.equals("FLV") | hzm.equals("MP4") | hzm.equals("3GP") | hzm.equals("WEBM")) {
+                    // 视频格式：AVI、mov、rmvb、rm、FLV、mp4、3GP
+                    listVideo.add(wedz);
+                } else if (hzm.equals("AAC") | hzm.equals("WAV") | hzm.equals("MIDI") | hzm.equals("CDA") | hzm.equals("MP3") | hzm.equals("WMA")) {
+                    // 音频格式：WAV 、MIDI、CDA、MP3、WMA、MP4
+                    listAudio.add(wedz);
+                }
             }
+
         }
         map.put("photo", listPhoto);
         map.put("video", listVideo);

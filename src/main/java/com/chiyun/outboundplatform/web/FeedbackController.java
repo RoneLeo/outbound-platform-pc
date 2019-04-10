@@ -10,6 +10,7 @@ import com.chiyun.outboundplatform.repository.FileRepository;
 import com.chiyun.outboundplatform.repository.UserReposity;
 import com.chiyun.outboundplatform.service.ItaskService;
 import com.chiyun.outboundplatform.utils.FileUtil;
+import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +40,8 @@ public class FeedbackController {
     private FileRepository fileRepository;
     @Resource
     private FileController fileController;
+    @Resource
+    private UserReposity userReposity;
 
     @ApiOperation("添加")
     @RequestMapping("/add")
@@ -53,6 +56,7 @@ public class FeedbackController {
         if (entity.getFkr() == null) {
             return ApiResult.FAILURE("反馈人不能为空");
         }
+        entity.setFkrxm(userReposity.findById(entity.getFkr()).getMz());
         entity.setFksj(new Date());
         entity.setFkzt(1);
         entity.setFkfj(fileRepository.findAllIdByRwid(entity.getRwid()));
@@ -71,6 +75,40 @@ public class FeedbackController {
         }
         return ApiResult.SUCCESS(entity);
     }
+
+    @ApiOperation("修改")
+    @RequestMapping("/update")
+    public ApiResult<Object> update(FeedbackEntity entity) {
+        if (entity.getRwid() == null) {
+            return ApiResult.FAILURE("任务id不能为空");
+        }
+        TaskEntity taskEntity = itaskService.findById(entity.getRwid());
+        if (taskEntity.getRwzt() != 3) {
+            return ApiResult.FAILURE("该任务不是已接单任务，不能反馈");
+        }
+        if (entity.getFkr() == null) {
+            return ApiResult.FAILURE("反馈人不能为空");
+        }
+        entity.setFkrxm(userReposity.findById(entity.getFkr()).getMz());
+        entity.setFksj(new Date());
+        entity.setFkzt(1);
+        entity.setFkfj(fileRepository.findAllIdByRwid(entity.getRwid()));
+        try {
+            feedbackRepository.save(entity);
+        } catch (Exception e) {
+            return ApiResult.FAILURE("添加失败");
+        }
+        // 修改任务状态:已接单-待审核
+        taskEntity.setRwzt(4);
+        taskEntity.setGxsj(new Date());
+        try {
+            itaskService.save(taskEntity);
+        } catch (Exception e) {
+            return ApiResult.FAILURE("修改任务状态失败");
+        }
+        return ApiResult.SUCCESS(entity);
+    }
+
 
     @ApiOperation("批量删除")
     @RequestMapping("/delete")
@@ -134,7 +172,8 @@ public class FeedbackController {
         map2.putAll(map);
         for (String key : map.keySet()) {
             if (key.equals("fkfj")) {
-                Map<String, Object> map1 = fileController.get((String) map.get(key));
+                String value = (String) map.get(key);
+                Map<String, Object> map1 = fileController.get(value);
                 map2.put("fkfj", map1);
             }
         }

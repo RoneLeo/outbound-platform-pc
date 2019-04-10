@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -75,9 +76,11 @@ public class TaskController {
         }
         //
         if (entity.getRwzxr() != null) {
-            entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getYhm());
+            entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getMz());
             entity.setRwzt(2);
         }
+        // 将其他数据设置为null
+
         try {
             itaskService.save(entity);
         } catch (Exception e) {
@@ -108,7 +111,7 @@ public class TaskController {
             entity.setRwyj(StringUtil.getMoneyDouble(entity.getRwyj()));
         }
         if (entity.getRwzxr() != null) {
-            entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getYhm());
+            entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getMz());
         }
         entity.setGxsj(now);
         try {
@@ -243,7 +246,7 @@ public class TaskController {
         entity.setRwzt(3);
         entity.setRwzxr(ywyid);
         //
-        entity.setRwzxrmc(userReposity.findById(ywyid).getYhm());
+        entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getMz());
         //
         entity.setGxsj(new Date());
         try {
@@ -278,7 +281,7 @@ public class TaskController {
         }
         entity.setRwzxr(ywyid);
         entity.setRwzt(2);
-        entity.setRwzxrmc(userReposity.findById(ywyid).getYhm());
+        entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getMz());
         entity.setGxsj(new Date());
         try {
             taskRepository.save(entity);
@@ -296,7 +299,9 @@ public class TaskController {
             @ApiImplicitParam(name = "shbz", value = "审核备注", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "sjyj", value = "实际佣金", dataType = "Double", paramType = "query")
     })
-    public ApiResult<Object> check(Integer id, Integer rwzt, String shbz, Double sjyj) {
+    public ApiResult<Object> check(Integer id, Integer rwzt, String shbz, Double sjyj, HttpSession session) {
+        Integer userid = (Integer) session.getAttribute("id");
+
         if (id == null) {
             return ApiResult.FAILURE("id不能为空");
         }
@@ -315,6 +320,10 @@ public class TaskController {
             }
             entity.setSjyj(StringUtil.getMoneyDouble(sjyj));
         }
+        //
+        entity.setShrid(userid);
+        entity.setShrxm(userReposity.findById(userid).getMz());
+        //
         entity.setGxsj(new Date());
         try {
             itaskService.save(entity);

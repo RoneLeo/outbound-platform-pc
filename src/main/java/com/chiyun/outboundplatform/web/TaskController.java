@@ -51,9 +51,9 @@ public class TaskController {
 
     @ApiOperation("区域管理员添加任务添加")
     @RequestMapping("/add")
-    @ApiImplicitParam(name = "ajid",value = "案件id",dataType = "int", paramType = "query")
-    public ApiResult<Object> add(TaskEntity entity, Integer ajid) {
-        if (ajid == null) {
+//    @ApiImplicitParam(name = "ajid",value = "案件id",dataType = "Integer", paramType = "query")
+    public ApiResult<Object> add(TaskEntity entity) {
+        if (entity.getAjid() == null) {
             return ApiResult.FAILURE("案件id不能为空");
         }
         // 判断时间
@@ -66,7 +66,7 @@ public class TaskController {
         entity.setGxsj(now);
         // 判断任务佣金是否超过案件佣金
         double ajyj = casebasemessageRepository.findById(entity.getAjid()).get().getAjyj();
-        if (taskRepository.findAllByAjid(ajid).size() > 0) {
+        if (taskRepository.findAllByAjid(entity.getAjid()).size() > 0) {
             // 任务总佣金
             double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid()) + entity.getRwyj();
             if (ajyj < rwzyj) {
@@ -86,10 +86,14 @@ public class TaskController {
         } catch (Exception e) {
             return ApiResult.FAILURE("添加任务失败");
         }
-        try {
-            casebasemessageRepository.updateAjztById(2, entity.getAjid());
-        } catch (Exception e) {
-            return ApiResult.FAILURE("修改案件状态失败");
+        CasebasemessageEntity entity1 = casebasemessageRepository.findById(entity.getAjid()).get();
+        if (entity1.getAjzt() != 2) {
+            entity1.setAjzt(2);
+            try {
+                casebasemessageRepository.save(entity1);
+            } catch (Exception e) {
+                return ApiResult.FAILURE("修改案件状态失败");
+            }
         }
         return ApiResult.SUCCESS("添加成功");
     }

@@ -4,7 +4,9 @@ import com.chiyun.outboundplatform.entity.TaskEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -30,12 +32,16 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
      *  根据id修改任务状态
      */
     @Query(value = "update task set task_state = ?1 where id = ?2", nativeQuery = true)
+    @Modifying
+    @Transactional
     void updateRwztById(Integer rwzt, Integer id);
 
     /**
      * 根据案件id修改任务状态：注销
      */
     @Query(value = "update task set task_state = '8' where case_id = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
     void resetByAjid(Integer ajid);
 
     /**
@@ -93,6 +99,8 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
      *  财务人员确认已发放佣金，批量修改
      */
     @Query(value = "update task set task_state = '7' where id in ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
     void updateRwztByIdIn(List<Integer> ids);
 
 

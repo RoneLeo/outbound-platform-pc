@@ -151,7 +151,14 @@ public class CaseBaseMsgController {
     })
     public ApiResult<Object> findAllByCondition(String pcid, String ajmc,
                                                 Integer ajlx, Integer ajzt, Integer ajqy,
-                                                Date begin, Date end, int page, int pagesize) {
+                                                Date begin, Date end, int page, int pagesize, HttpSession session) {
+        // 判断权限，如果是区域管理员，则只能查询本区域
+        Integer id = (Integer) session.getAttribute("id");
+        UserEntity userEntity = userReposity.findById(id);
+        if (userEntity.getJs() == 3) {
+            // 区域管理员
+            ajqy = Integer.parseInt(userEntity.getSzxzqdm());
+        }
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
         Page<CasebasemessageEntity> list = icaseBaseService.findAllByCondition(pcid, ajmc, ajlx, ajzt, ajqy, begin, end, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());

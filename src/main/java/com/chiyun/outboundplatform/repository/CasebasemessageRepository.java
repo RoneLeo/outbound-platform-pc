@@ -26,6 +26,8 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
     List<CasebasemessageEntity> findAll();
 
     @Query(value = "update casebasemessage set case_state = ?1 where id = ?2", nativeQuery = true)
+    @Modifying
+    @Transactional
     void updateAjztById(Integer ajzt, Integer id);
 
     /**
@@ -38,7 +40,9 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
     /**
      * 修改状态
      */
-    @Query(value = "update casebasemessage set show_state = 1 where id = ?1", nativeQuery = true)
+    @Query(value = "update casebasemessage set show_state = 2 where id = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
     void updateXszt(Integer id);
 
     /**

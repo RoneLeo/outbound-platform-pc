@@ -158,8 +158,11 @@
                         <el-table-column prop="rwms" label="任务描述"></el-table-column>
                         <el-table-column label="操作" width="150">
                             <template slot-scope="scope">
+                                <el-button size="mini" type="text" @click="handleEdit(scope.$index, scope.row)">
+                                    编辑
+                                </el-button>
                                 <el-button size="mini" type="text" @click="handleTask(scope.$index, scope.row)">
-                                    任务指派
+                                    指派
                                 </el-button>
                                 <el-button size="mini" type="text" @click="handleTaskRecord(scope.$index, scope.row)">
                                     反馈记录
@@ -185,13 +188,57 @@
 
 
         <!--任务记录-->
-        <el-dialog :title="taskTitle" :visible.sync="recordModelVisible" width="50%">
+        <el-dialog :title="taskTitle" :visible.sync="recordModelVisible" width="60%">
             <div>
                 <el-steps :active="1">
                     <el-step title="记录1" description="任务记录详细信息"></el-step>
                     <el-step title="记录2" description="任务记录详细信息"></el-step>
                     <el-step title="记录3" description="任务记录详细信息"></el-step>
                 </el-steps>
+
+                <div>
+
+                </div>
+            </div>
+            <div class="clearfix feedback-content">
+                <div class="item">
+                    <span class="pre">反馈人员:</span>
+                    <span class="val">{{recordForm.fkrxm}}</span>
+                </div>
+                <div class="item">
+                    <span class="pre">反馈状态:</span>
+                    <span class="val">{{recordForm.fkzt}}</span>
+                </div>
+                <div class="item">
+                    <span class="pre">反馈时间:</span>
+                    <span class="val">{{recordForm.fksj}}</span>
+                </div>
+                <p class="item item-all">
+                    <span class="pre">反馈内容:</span>
+                    <span class="val">{{recordForm.fknr}}</span>
+                </p>
+                <div class="item item-all">
+                    <div class="pre">反馈附件:</div>
+                    <div class="record-file">
+                        <template v-for="item in recordFile.photo">
+                            <img :src="baseUrl + item" alt="">
+                        </template>
+
+
+                    </div>
+                    <div class="record-file">
+                        <template v-for="item2 in recordFile.audio">
+                            <audio controls="controls" :src="baseUrl + item2">
+                                您的浏览器不支持 audio 标签。
+                            </audio>
+                        </template>
+                    </div>
+                    <div class="record-file">
+                        <template v-for="item3 in recordFile.video">
+                            <video width="200" :src="baseUrl + item3" controls="controls"></video>
+                        </template>
+                    </div>
+                </div>
             </div>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="recordModelVisible = false">关 闭</el-button>
@@ -301,6 +348,7 @@
         name: 'caseInfo',
         data() {
             return {
+                baseUrl: '',
                 taskPersonId: '',
                 ywyArr: [], //业务员
                 rwfsArr: [], //任务方式
@@ -308,6 +356,8 @@
                 caseInfo: {},
                 caseForm: {},
                 taskForm: {},
+                recordForm: {},
+                recordFile: {},
                 caseTitle: '',
                 taskTitle: '任务一的记录信息',
                 recordModelVisible: false,
@@ -329,6 +379,7 @@
             this.getDictData();
             this.getTaskData();
             this.getPerson();
+            this.baseUrl = this.$baseURL;
         },
 
         methods: {
@@ -391,16 +442,20 @@
                     this.getTaskData();
                 })
             },
+            handleEdit(index, row){
+                this.taskModelVisible = true;
+                this.taskForm = Object.assign({}, row);
+            },
             handleTask(index, row) {
                 this.taskId = row.id;
                 this.assignedModelVisible = true;
-
             },
             handleTaskRecord(index, row) {
-                console.log(row);
                 let rwid = row.id;
-                this.$axios.post('feedback/findAllByRwid', {rwid:rwid,page: 1, pagesize: 10000}).then(res => {
+                this.$axios.post('feedback/findAllByRwid?rwid=21').then(res => {
                     console.log('任务记录:', res);
+                    this.recordForm = res.data;
+                    this.recordFile = res.data.fkfj;
                     this.recordModelVisible = true;
                 })
             },
@@ -414,8 +469,12 @@
             },
             saveTask(){
                 let param = this.taskForm;
+                let url = 'task/add';
                 param.ajid = this.caseInfo.id;
-                this.$axios.post('task/add', param).then(res => {
+                if(param.id){
+                    url = 'task/update';
+                }
+                this.$axios.post(url, param).then(res => {
                     this.taskModelVisible = false;
                     this.getTaskData();
                 })
@@ -425,21 +484,7 @@
             },
             rwfsFormatter(row) {
                 return util.dictParse(row.rwfs, this.rwfsArr);
-            },
-
-
-
-            //************
-            // 保存编辑
-            saveEdit() {
-            },
-            // 确定删除
-            deleteRow(){
-                this.tableData.splice(this.idx, 1);
-                this.$message.success('删除成功');
-                this.delVisible = false;
-            },
-
+            }
         }
     }
 
@@ -513,6 +558,23 @@
                 width: 33%;
                 display: inline-block;
 
+            }
+        }
+    }
+
+    .feedback-content{
+        .item{
+            width:33%;
+            float: left;
+        }
+        .item-all{
+            width:100%;
+        }
+        .record-file{
+            img{
+                max-height:200px;
+                width:200px;
+                display: inline-block;
             }
         }
     }

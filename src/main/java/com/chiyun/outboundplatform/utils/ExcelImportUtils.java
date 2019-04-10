@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.chiyun.outboundplatform.common.ApiResult;
 import com.chiyun.outboundplatform.entity.*;
 import com.chiyun.outboundplatform.service.IbatchService;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -220,10 +222,10 @@ public class ExcelImportUtils {
                     Cell cell = datarow.getCell(i);
                     if (cell == null)
                         continue;
-
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     String str = listMap.get(i);//目标字段名称
-                    String datastr = cell.getStringCellValue();//数据内容
+                    String datastr = updateSjlx(cell);
+//                    String datastr = cell.getStringCellValue();//数据内容
                     EntityDataSet.basedataset(datastr, str, baseentity);
                 }
                 break;
@@ -235,7 +237,8 @@ public class ExcelImportUtils {
                         continue;
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     String str = listMap.get(i);//目标字段名称
-                    String datastr = cell.getStringCellValue();//数据内容
+                    String datastr = updateSjlx(cell);
+//                    String datastr = cell.getStringCellValue();//数据内容
                     EntityDataSet.carddataset(datastr, str, card);
                 }
                 if (!StringUtil.checkObjAllFieldsIsNull(card))
@@ -247,9 +250,10 @@ public class ExcelImportUtils {
                     Cell cell = datarow.getCell(i);
                     if (cell == null)
                         continue;
+                    String datastr = updateSjlx(cell);
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     String str = listMap.get(i);//目标字段名称
-                    String datastr = cell.getStringCellValue();//数据内容
+//                    String datastr = cell.getStringCellValue();//数据内容
                     EntityDataSet.empdataset(datastr, str, entity);
                 }
                 if (!StringUtil.checkObjAllFieldsIsNull(entity))
@@ -262,19 +266,18 @@ public class ExcelImportUtils {
                     Cell cell = datarow.getCell(i);
                     if (cell == null)
                         continue;
-                    String datastr = "";
-                    if (cell.getCellType() == 0) {
-                        if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                            datastr = sdf1.format(cell.getDateCellValue());
-                            System.out.println("value:" + datastr);
-                            continue;
-                        }
-                    } else {
-                        datastr = cell.getStringCellValue();//数据内容
-                    }
+
+                    String datastr = updateSjlx(cell);
+//                    if (cell.getCellType() == 0) {
+//                        if (HSSFDateUtil.isCellDateFormatted(cell)) {
+//                            datastr = sdf1.format(cell.getDateCellValue());
+//                        }
+//                    } else {
+//                        datastr = cell.getStringCellValue();//数据内容
+//                    }
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     String str = listMap.get(i);//目标字段名称
-//                    String
+//                    String datastr = cell.getStringCellValue();
                     EntityDataSet.loandataset(datastr, str, entity);
                 }
                 if (!StringUtil.checkObjAllFieldsIsNull(entity))
@@ -289,7 +292,8 @@ public class ExcelImportUtils {
                         continue;
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     String str = listMap.get(i);//目标字段名称
-                    String datastr = cell.getStringCellValue();//数据内容
+                    String datastr = updateSjlx(cell);
+//                    String datastr = cell.getStringCellValue();//数据内容
                     EntityDataSet.userdataset(datastr, str, entity);
                 }
                 if (!StringUtil.checkObjAllFieldsIsNull(entity))
@@ -304,7 +308,8 @@ public class ExcelImportUtils {
                         continue;
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     String str = listMap.get(i);//目标字段名称
-                    String datastr = cell.getStringCellValue();//数据内容
+                    String datastr = updateSjlx(cell);
+//                    String datastr = cell.getStringCellValue();//数据内容
                     EntityDataSet.outbdataset(datastr, str, entity);
                 }
                 if (!StringUtil.checkObjAllFieldsIsNull(entity))
@@ -319,7 +324,8 @@ public class ExcelImportUtils {
                         continue;
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     String str = listMap.get(i);//目标字段名称
-                    String datastr = cell.getStringCellValue();//数据内容
+                    String datastr = updateSjlx(cell);
+//                    String datastr = cell.getStringCellValue();//数据内容
                     EntityDataSet.casepdataset(datastr, str, entity);
                 }
                 if (!StringUtil.checkObjAllFieldsIsNull(entity))
@@ -334,7 +340,8 @@ public class ExcelImportUtils {
                         continue;
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     String str = listMap.get(i);//目标字段名称
-                    String datastr = cell.getStringCellValue();//数据内容
+                    String datastr = updateSjlx(cell);
+//                    String datastr = cell.getStringCellValue();//数据内容
                     EntityDataSet.linkdataset(datastr, str, entity);
                 }
                 if (!StringUtil.checkObjAllFieldsIsNull(entity))
@@ -349,7 +356,8 @@ public class ExcelImportUtils {
                         continue;
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     String str = listMap.get(i);//目标字段名称
-                    String datastr = cell.getStringCellValue();//数据内容
+                    String datastr = updateSjlx(cell);
+//                    String datastr = cell.getStringCellValue();//数据内容
                     EntityDataSet.otherdataset(datastr, str, entity);
                 }
                 if (!StringUtil.checkObjAllFieldsIsNull(entity))
@@ -364,7 +372,9 @@ public class ExcelImportUtils {
                         continue;
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     String str = listMap.get(i);//目标字段名称
-                    String datastr = cell.getStringCellValue();//数据内容
+                    String datastr = updateSjlx(cell);
+//                    String datastr = cell.getStringCellValue();//数据内容
+//                    datastr = updateSjlx(cell, datastr);
                     EntityDataSet.remarkdataset(datastr, str, entity);
                 }
                 if (!StringUtil.checkObjAllFieldsIsNull(entity))
@@ -372,5 +382,46 @@ public class ExcelImportUtils {
                 break;
             }
         }
+    }
+
+
+    public static String updateSjlx(Cell cell) {
+        String cellValue = "";
+        if (null != cell) {
+            // 以下是判断数据的类型
+            switch (cell.getCellType()) {
+                case HSSFCell.CELL_TYPE_NUMERIC: // 数字
+                    if (0 == cell.getCellType()) {//判断单元格的类型是否则NUMERIC类型
+                        if (HSSFDateUtil.isCellDateFormatted(cell)) {// 判断是否为日期类型
+                            Date date = cell.getDateCellValue();
+                            DateFormat formater = new SimpleDateFormat(
+                                    "yyyy-MM-dd");
+                            cellValue = formater.format(date);
+                        } else {
+                            cellValue = cell.getNumericCellValue() + "";
+                        }
+                    }
+                    break;
+                case HSSFCell.CELL_TYPE_STRING: // 字符串
+                    cellValue = cell.getStringCellValue();
+                    break;
+                case HSSFCell.CELL_TYPE_BOOLEAN: // Boolean
+                    cellValue = cell.getBooleanCellValue() + "";
+                    break;
+                case HSSFCell.CELL_TYPE_FORMULA: // 公式
+                    cellValue = cell.getCellFormula() + "";
+                    break;
+                case HSSFCell.CELL_TYPE_BLANK: // 空值
+                    cellValue = "";
+                    break;
+                case HSSFCell.CELL_TYPE_ERROR: // 故障
+                    cellValue = "非法字符";
+                    break;
+                default:
+                    cellValue = "未知类型";
+                    break;
+            }
+        }
+        return cellValue;
     }
 }

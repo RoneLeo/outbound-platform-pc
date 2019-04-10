@@ -75,6 +75,7 @@ public class BatchController {
             entity.setJczdid(fieldcasebaseEntity.getId());
             entity.setSort(i + 1);
             entity.setPcid(String.valueOf(now));
+            System.out.println("i:" + zdidslist.get(i));
             try {
                 batchRecordRepository.save(entity);
             } catch (Exception e) {
@@ -219,7 +220,6 @@ public class BatchController {
     @RequestMapping("/importExcel")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pcid", value = "批次id", dataType = "String", paramType = "query"),
-//            @ApiImplicitParam(name = "file", value = "上传文件", dataType = "MultipartFile", paramType = "query"),
             @ApiImplicitParam(name = "ajqy", value = "案件区域id", dataType = "Integer", paramType = "query"),
             @ApiImplicitParam(name = "ajlx", value = "案件类型id", dataType = "Integer", paramType = "query")
     })

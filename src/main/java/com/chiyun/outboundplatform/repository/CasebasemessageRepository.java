@@ -25,6 +25,11 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
      */
     List<CasebasemessageEntity> findAll();
 
+    @Query(value = "update casebasemessage set case_state = ?1 where id = ?2", nativeQuery = true)
+    @Modifying
+    @Transactional
+    void updateAjztById(Integer ajzt, Integer id);
+
     /**
      * 保存
      */
@@ -35,13 +40,15 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
     /**
      * 修改状态
      */
-    @Query(value = "update casebasemessage set show_state = 1 where id = ?1", nativeQuery = true)
+    @Query(value = "update casebasemessage set show_state = 2 where id = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
     void updateXszt(Integer id);
 
     /**
      * 通过区域查询案件id
      */
-    @Query(value = "select * from casebasemessage where area_id in (select area_code from user where id = ?1) order by import_time", nativeQuery = true)
+    @Query(value = "select * from casebasemessage where area_id in (select area_code from user where id = ?1) order by import_time desc ", nativeQuery = true)
     Page<CasebasemessageEntity> findAllByYhid(Integer yhid, Pageable pageable);
 
     /**

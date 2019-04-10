@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -50,9 +51,9 @@ public class TaskController {
 
     @ApiOperation("区域管理员添加任务添加")
     @RequestMapping("/add")
-    @ApiImplicitParam(name = "ajid",value = "案件id",dataType = "int", paramType = "query")
-    public ApiResult<Object> add(TaskEntity entity, Integer ajid) {
-        if (ajid == null) {
+//    @ApiImplicitParam(name = "ajid",value = "案件id",dataType = "Integer", paramType = "query")
+    public ApiResult<Object> add(TaskEntity entity) {
+        if (entity.getAjid() == null) {
             return ApiResult.FAILURE("案件id不能为空");
         }
         // 判断时间
@@ -65,9 +66,9 @@ public class TaskController {
         entity.setGxsj(now);
         // 判断任务佣金是否超过案件佣金
         double ajyj = casebasemessageRepository.findById(entity.getAjid()).get().getAjyj();
-        if (taskRepository.findAllByAjid(ajid).size() > 0) {
+        if (taskRepository.findAllByAjid(entity.getAjid()).size() > 0) {
             // 任务总佣金
-            double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid());
+            double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid()) + entity.getRwyj();
             if (ajyj < rwzyj) {
                 return ApiResult.FAILURE("任务总佣金已超过案件佣金，添加失败");
             }
@@ -75,13 +76,24 @@ public class TaskController {
         }
         //
         if (entity.getRwzxr() != null) {
-            entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getYhm());
+            entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getMz());
             entity.setRwzt(2);
         }
+        // 将其他数据设置为null
+
         try {
             itaskService.save(entity);
         } catch (Exception e) {
             return ApiResult.FAILURE("添加任务失败");
+        }
+        CasebasemessageEntity entity1 = casebasemessageRepository.findById(entity.getAjid()).get();
+        if (entity1.getAjzt() != 2) {
+            entity1.setAjzt(2);
+            try {
+                casebasemessageRepository.save(entity1);
+            } catch (Exception e) {
+                return ApiResult.FAILURE("修改案件状态失败");
+            }
         }
         return ApiResult.SUCCESS("添加成功");
     }
@@ -101,14 +113,14 @@ public class TaskController {
         double ajyj = casebasemessageRepository.findById(entity.getAjid()).get().getAjyj();
         if (taskRepository.findAllByAjid(entity.getAjid()).size() > 0) {
             // 任务总佣金
-            double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid());
+            double rwzyj = taskRepository.sumAllRwyjByAjid(entity.getAjid()) + entity.getRwyj();
             if (ajyj < rwzyj) {
                 return ApiResult.FAILURE("任务总佣金已超过案件佣金，修改失败");
             }
             entity.setRwyj(StringUtil.getMoneyDouble(entity.getRwyj()));
         }
         if (entity.getRwzxr() != null) {
-            entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getYhm());
+            entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getMz());
         }
         entity.setGxsj(now);
         try {
@@ -243,7 +255,7 @@ public class TaskController {
         entity.setRwzt(3);
         entity.setRwzxr(ywyid);
         //
-        entity.setRwzxrmc(userReposity.findById(ywyid).getYhm());
+        entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getMz());
         //
         entity.setGxsj(new Date());
         try {
@@ -265,7 +277,7 @@ public class TaskController {
         return ApiResult.SUCCESS(map);
     }
 
-    @ApiOperation("区域管理员指派任务")
+    @ApiOperation("区域管理员指派或改派任务")
     @RequestMapping("/appoint")
     @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query")
     public ApiResult<Object> appoint(Integer ywyid, Integer id) {
@@ -273,20 +285,21 @@ public class TaskController {
             return ApiResult.FAILURE("id和业务员id不能为空");
         }
         TaskEntity entity = taskRepository.findById(id).get();
-        if (entity.getRwzt() != 1) {
-            return ApiResult.FAILURE("该任务非新建任务，不能指派");
+        if (entity.getRwzt() != 1 && entity.getRwzt() != 2) {
+            return ApiResult.FAILURE("该任务不能指派或改派");
         }
         entity.setRwzxr(ywyid);
         entity.setRwzt(2);
-        entity.setRwzxrmc(userReposity.findById(ywyid).getYhm());
+        entity.setRwzxrmc(userReposity.findById(entity.getRwzxr()).getMz());
         entity.setGxsj(new Date());
         try {
             taskRepository.save(entity);
         } catch (Exception e) {
-            return ApiResult.FAILURE("指派失败");
+            return ApiResult.FAILURE("操作失败");
         }
-        return ApiResult.SUCCESS("指派成功");
+        return ApiResult.SUCCESS("操作成功");
     }
+
 
     @ApiOperation("区域管理员审核并修改任务信息")
     @RequestMapping("/check")
@@ -295,7 +308,9 @@ public class TaskController {
             @ApiImplicitParam(name = "shbz", value = "审核备注", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "sjyj", value = "实际佣金", dataType = "Double", paramType = "query")
     })
-    public ApiResult<Object> check(Integer id, Integer rwzt, String shbz, Double sjyj) {
+    public ApiResult<Object> check(Integer id, Integer rwzt, String shbz, Double sjyj, HttpSession session) {
+        Integer userid = (Integer) session.getAttribute("id");
+
         if (id == null) {
             return ApiResult.FAILURE("id不能为空");
         }
@@ -314,6 +329,10 @@ public class TaskController {
             }
             entity.setSjyj(StringUtil.getMoneyDouble(sjyj));
         }
+        //
+        entity.setShrid(userid);
+        entity.setShrxm(userReposity.findById(userid).getMz());
+        //
         entity.setGxsj(new Date());
         try {
             itaskService.save(entity);

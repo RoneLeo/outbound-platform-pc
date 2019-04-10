@@ -7,9 +7,11 @@ import com.chiyun.outboundplatform.entity.FileEntity;
 import com.chiyun.outboundplatform.entity.TaskEntity;
 import com.chiyun.outboundplatform.repository.FeedbackRepository;
 import com.chiyun.outboundplatform.repository.FileRepository;
+import com.chiyun.outboundplatform.repository.TaskRepository;
 import com.chiyun.outboundplatform.repository.UserReposity;
 import com.chiyun.outboundplatform.service.ItaskService;
 import com.chiyun.outboundplatform.utils.FileUtil;
+import com.chiyun.outboundplatform.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +41,10 @@ public class FeedbackController {
     private FileRepository fileRepository;
     @Resource
     private FileController fileController;
+    @Resource
+    private UserReposity userReposity;
+    @Resource
+    private TaskRepository taskRepository;
 
     @ApiOperation("添加")
     @RequestMapping("/add")
@@ -53,6 +59,7 @@ public class FeedbackController {
         if (entity.getFkr() == null) {
             return ApiResult.FAILURE("反馈人不能为空");
         }
+        entity.setFkrxm(userReposity.findById(entity.getFkr()).getMz());
         entity.setFksj(new Date());
         entity.setFkzt(1);
         entity.setFkfj(fileRepository.findAllIdByRwid(entity.getRwid()));
@@ -72,7 +79,33 @@ public class FeedbackController {
         return ApiResult.SUCCESS(entity);
     }
 
-    @ApiOperation("批量删除")
+    @ApiOperation("业务员删除未审核的反馈")
+    @RequestMapping("/deleteByYwy")
+    public ApiResult<Object> deleteByYwy(Integer id) {
+        if (id == null) {
+            return ApiResult.FAILURE("id不能为空");
+        }
+        FeedbackEntity entity = feedbackRepository.findById(id).get();
+        if (entity.getFkzt() == 2) {
+            return ApiResult.FAILURE("该反馈已处理，业务员不能删除");
+        }
+        // 修改任务状态
+        try {
+            taskRepository.updateRwztById(3, entity.getRwid());
+        } catch (Exception e) {
+            return ApiResult.FAILURE("修改任务状态失败");
+        }
+
+        try {
+            feedbackRepository.deleteById(id);
+        } catch (Exception e) {
+            return ApiResult.FAILURE("删除失败");
+        }
+
+        return ApiResult.SUCCESS("删除成功");
+    }
+
+    @ApiOperation("管理员批量删除")
     @RequestMapping("/delete")
     public ApiResult<Object> delete(List<Integer> ids) {
         if (ids.size() < 1) {
@@ -134,7 +167,8 @@ public class FeedbackController {
         map2.putAll(map);
         for (String key : map.keySet()) {
             if (key.equals("fkfj")) {
-                Map<String, Object> map1 = fileController.get((String) map.get(key));
+                String value = (String) map.get(key);
+                Map<String, Object> map1 = fileController.get(value);
                 map2.put("fkfj", map1);
             }
         }

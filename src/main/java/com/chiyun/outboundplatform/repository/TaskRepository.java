@@ -4,7 +4,9 @@ import com.chiyun.outboundplatform.entity.TaskEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -27,9 +29,19 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     Page<TaskEntity> findAllByAjidOrderByRwcjsj(Integer ajid, Pageable pageable);
 
     /**
+     *  根据id修改任务状态
+     */
+    @Query(value = "update task set task_state = ?1 where id = ?2", nativeQuery = true)
+    @Modifying
+    @Transactional
+    void updateRwztById(Integer rwzt, Integer id);
+
+    /**
      * 根据案件id修改任务状态：注销
      */
     @Query(value = "update task set task_state = '8' where case_id = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
     void resetByAjid(Integer ajid);
 
     /**
@@ -57,29 +69,38 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     /**
      * 统计业务员 已接收、已处理案件数、应得佣金及实际佣金
      */
-    @Query(value = "select count(id) from task where task_people = ?1 and task_state = ?2", nativeQuery = true)
+    @Query(value = "select count(id) from task where task_peopleId = ?1 and task_state = ?2", nativeQuery = true)
     int countAllByRwzxrAndRwzt(Integer rwzxr, Integer rwzt);
 
-    @Query(value = "select sum(task_money) from task where task_people = ?1", nativeQuery = true)
+    @Query(value = "select sum(task_money) from task where task_peopleId = ?1", nativeQuery = true)
     Double sumAllRwyjByRwzxr(Integer rwzxr);
 
-    @Query(value = "select sum(actual_money) from task where task_people = ?1", nativeQuery = true)
+    @Query(value = "select sum(actual_money) from task where task_peopleId = ?1", nativeQuery = true)
     Double sumAllSjyjByRwzxr(Integer rwzxr);
 
     /**
      *  通过案件id、业务员id和任务状态统计业务员实际佣金
      */
-    @Query(value = "SELECT case_id as ajid, sum(actual_money) as ajsjyj from task WHERE task_state = '6' and task_people = ?1 GROUP BY case_id ORDER BY case_id", nativeQuery = true)
+    @Query(value = "SELECT case_id as ajid, sum(actual_money) as ajsjyj from task WHERE task_state = '6' and task_peopleId = ?1 GROUP BY case_id ORDER BY case_id", nativeQuery = true)
     List<Map<String, Double>> sumSjyjByAjid(Integer ywyid);
 
-    @Query(value = "SELECT case_id as ajid, task_people as rwzxr, sum(actual_money) as ajsjyj from task WHERE task_state = '6' GROUP BY task_people, case_id ORDER BY task_people, case_id", nativeQuery = true)
+    @Query(value = "SELECT case_id as ajid, task_people as rwzxr, sum(actual_money) as ajsjyj from task WHERE task_state = '6' GROUP BY task_peopleId, case_id ORDER BY task_peopleId, case_id", nativeQuery = true)
     List<Map<String, Double>> sumAllSjyjByAjid();
+
+
+    /**
+     *  通过案件id查询任务是否都已完成
+     */
+    @Query(value = "select distinct id from task where case_id = ?1 and task_state in (1, 2, 3)", nativeQuery = true)
+    List<Integer> findAllIdByAjidAndAjztIn(Integer ajid);
 
 
     /**
      *  财务人员确认已发放佣金，批量修改
      */
     @Query(value = "update task set task_state = '7' where id in ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
     void updateRwztByIdIn(List<Integer> ids);
 
 

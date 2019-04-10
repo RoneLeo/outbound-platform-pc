@@ -27,7 +27,7 @@ public interface BatchRecordRepository extends JpaRepository<BatchrecordEntity, 
     @Query(value = "select distinct fieldcasebase_id from batchrecord where  batch_id = ?1", nativeQuery = true)
     List<Integer> findZdidsByPcid(String pcid);
 
-    @Query(value = "SELECT type ,name , sl, group_concat(fieldcasebase_id) bhzd from(SELECT type,fieldcasebase_id,name ,count(*) sl FROM batchrecord,basetype,fieldcasebase WHERE batch_id =?1 AND fieldcasebase_id = fieldcasebase.id AND fieldcasebase.basetype = basetype.type GROUP BY fieldcasebase_id)b GROUP BY name, type,sl ORDER BY type ASC\n", nativeQuery = true)
+    @Query(value = "SELECT type ,name , sl, group_concat(fieldcasebase_id ORDER BY b.sort) bhzd from(SELECT type,fieldcasebase_id,name ,count(*) sl, sort FROM batchrecord,basetype,fieldcasebase WHERE batch_id =?1 AND fieldcasebase_id = fieldcasebase.id AND fieldcasebase.basetype = basetype.type GROUP BY fieldcasebase_id)b GROUP BY name, type,sl ORDER BY type ASC\n", nativeQuery = true)
     List<Map<String, Object>> getBatchMap(String pcid);
 
 

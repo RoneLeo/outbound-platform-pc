@@ -81,6 +81,36 @@ public class DateUtils {
         return calendar.getTime();
     }
 
+    public static Date getYearBegin(Date date) {
+        if (date == null)
+            return null;
+        calendar.setTime(date);
+        calendar.set(Calendar.MONTH, 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        System.out.print(calendar.getTime());
+        return calendar.getTime();
+    }
+
+    public static Date getYearEnd(Date date) {
+        if (date == null)
+            return null;
+        calendar.setTime(date);
+        calendar.set(Calendar.MONTH, 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.add(Calendar.YEAR, 1);
+        calendar.add(Calendar.SECOND, -1);
+        System.out.print(calendar.getTime());
+        return calendar.getTime();
+    }
+
     public static int getquarter(Date date) {
         if (date != null)
             calendar.setTime(date);

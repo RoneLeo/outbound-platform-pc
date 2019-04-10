@@ -28,9 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.*;
 
 @Api(description = "模板管理")
@@ -187,7 +189,7 @@ public class BatchController {
     @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/exportExcel")
     @ApiImplicitParam(name = "pcid", value = "模板id", dataType = "String", paramType = "query")
-    public ApiResult<Object> exportExcel(String pcid, HttpServletResponse response) throws IOException {
+    public ApiResult<Object> exportExcel(String pcid, HttpServletResponse response, HttpServletRequest request) throws IOException {
         if (StringUtil.isNull(pcid)) {
             return ApiResult.FAILURE("批次id不能为空");
         }
@@ -206,7 +208,18 @@ public class BatchController {
         String sheetname = batchRepository.findByPcid(pcid).getPcmc();
         HSSFWorkbook workbook = ExcelUtil.getHSSFWorkbook(sheetname, title, firstList, num, null);
         String fileName = sheetname + ".xls";
-        response.addHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("UTF-8"), "ISO8859-1"));
+        String userAgent = request.getHeader("USER-AGENT");
+        String newFilename = URLEncoder.encode(fileName, "UTF-8").replace("+", " ");
+        ;
+
+        if (userAgent != null) {
+            if (userAgent.contains("edge") || userAgent.contains("Edge") || userAgent.contains("Trident") || userAgent.contains("trident")) {
+                newFilename = URLEncoder.encode(fileName, "UTF-8").replace("+", " ");
+            } else {
+                newFilename = new String(fileName.getBytes("UTF-8"), "ISO8859-1");
+            }
+        }
+        response.addHeader("Content-Disposition", "attachment;filename=" + newFilename);
         response.setContentType("application/vnd.ms-excel");
         OutputStream toClient = response.getOutputStream();
         workbook.write(toClient);

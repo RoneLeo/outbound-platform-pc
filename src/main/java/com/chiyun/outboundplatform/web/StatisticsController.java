@@ -89,7 +89,7 @@ public class StatisticsController {
     }
 
     @ApiOperation("用户案件完成情况统计分析,月度")
-    @RequestMapping("/people/Analysis")
+    @RequestMapping("/user/Analysis")
     public ApiResult peoplecount(@RequestParam @ApiParam("页码") int page,
                                  @RequestParam @ApiParam("分页大小") int pagesize) {
         Pageable pageable = PageRequest.of(page - 1, pagesize);
@@ -105,7 +105,8 @@ public class StatisticsController {
 
     @ApiOperation("统计选定时间内案件的变化情况,按日统计")
     @RequestMapping("/case/count")
-    public ApiResult casecount(Date begin, Date end) {
+    public ApiResult casecount(@RequestParam(required = false) @ApiParam("开始日期") Date begin,
+                               @RequestParam(required = false) @ApiParam("结束日期") Date end) {
         String bdate = formatter.format(begin).concat(" 00:00:00");
         String edate = formatter.format(end).concat(" 23:59:59");
         try {
@@ -116,5 +117,85 @@ public class StatisticsController {
             return ApiResult.FAILURE("时间转换失败，请重试");
         }
         return ApiResult.SUCCESS(satisticsService.casecount(begin, end));
+    }
+
+    @ApiOperation("根据用户id以及时间段统计任务个状态数量")
+    @RequestMapping("/task/uidcount")
+    public ApiResult taskCountByUidAndDate(@RequestParam @ApiParam(value = "用户id", required = true) int uid,
+                                           @RequestParam(required = false) @ApiParam("查询日期，为空则查全部,格式：yyyy-MM-dd") Date date,
+                                           @RequestParam @ApiParam(value = "类型：1选定年,其他-选定月份,默认月份", required = true) Integer lx) {
+        if (uid == 0)
+            return ApiResult.FAILURE("错误的用户");
+        if (lx == null)
+            lx = 0;
+        Date begin = null, end = null;
+        if (date != null) {
+            if (lx != 1) {
+                begin = DateUtils.getMonthBegin(date);
+                end = DateUtils.getMonthEnd(date);
+            } else {
+                begin = DateUtils.getYearBegin(date);
+                end = DateUtils.getYearEnd(date);
+            }
+        }
+        return ApiResult.SUCCESS(satisticsService.taskUidCount(uid, begin, end));
+    }
+
+    @ApiOperation("用户活跃度统计排名")
+    @RequestMapping("/user/active")
+    public ApiResult userActive(@RequestParam(required = false) @ApiParam("查询日期，为空则查当前时间,格式：yyyy-MM-dd") Date date,
+                                @RequestParam(required = false) @ApiParam(value = "类型：1选定年,其他-选定月份,默认月份", required = false) Integer lx) {
+        if (lx == null)
+            lx = 0;
+        Date begin, end;
+        if (date == null)
+            date = new Date();
+        if (lx != 1) {
+            begin = DateUtils.getMonthBegin(date);
+            end = DateUtils.getMonthEnd(date);
+        } else {
+            begin = DateUtils.getYearBegin(date);
+            end = DateUtils.getYearEnd(date);
+        }
+        return ApiResult.SUCCESS(satisticsService.userActive(begin, end));
+    }
+
+    @ApiOperation("用户业绩统计排名")
+    @RequestMapping("/user/achieve")
+    public ApiResult userAchieve(@RequestParam(required = false) @ApiParam("查询日期，为空则查当前时间,格式：yyyy-MM-dd") Date date,
+                                 @RequestParam(required = false) @ApiParam(value = "类型：1选定年,其他-选定月份,默认月份", required = false) Integer lx) {
+        if (lx == null)
+            lx = 0;
+        Date begin, end;
+        if (date == null)
+            date = new Date();
+        if (lx != 1) {
+            begin = DateUtils.getMonthBegin(date);
+            end = DateUtils.getMonthEnd(date);
+        } else {
+            begin = DateUtils.getYearBegin(date);
+            end = DateUtils.getYearEnd(date);
+        }
+        return ApiResult.SUCCESS(satisticsService.userAchieve(begin, end));
+    }
+
+    @ApiOperation("指定用户业绩统计排名")
+    @RequestMapping("/user/achieveOne")
+    public ApiResult userAchieveOne(@RequestParam @ApiParam(value = "用户id", required = true) int uid,
+                                    @RequestParam(required = false) @ApiParam("查询日期，为空则查当前时间,格式：yyyy-MM-dd") Date date,
+                                    @RequestParam(required = false) @ApiParam(value = "类型：1选定年,其他-选定月份,默认月份", required = false) Integer lx) {
+        if (lx == null)
+            lx = 0;
+        Date begin, end;
+        if (date == null)
+            date = new Date();
+        if (lx != 1) {
+            begin = DateUtils.getMonthBegin(date);
+            end = DateUtils.getMonthEnd(date);
+        } else {
+            begin = DateUtils.getYearBegin(date);
+            end = DateUtils.getYearEnd(date);
+        }
+        return ApiResult.SUCCESS(satisticsService.userAchieve(uid, begin, end));
     }
 }

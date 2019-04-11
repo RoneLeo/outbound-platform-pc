@@ -41,9 +41,4 @@ public interface IcaseBaseService {
      */
     Page<CasebasemessageEntity> findAllByCondition(String pcid, String ajmc, Integer ajlx, Integer ajzt, Integer ajqy, Date begin, Date end, Pageable pageable);
 
-    /**
-     *  删除
-     */
-    @Transactional
-    boolean reset(Integer id);
 }

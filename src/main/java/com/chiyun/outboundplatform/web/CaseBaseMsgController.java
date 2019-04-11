@@ -41,10 +41,6 @@ public class CaseBaseMsgController {
     @Resource
     private CasebasemessageRepository casebasemessageRepository;
     @Resource
-    private BatchRepository batchRepository;
-    @Resource
-    private IdictionaryListService idictionaryListService;
-    @Resource
     private TaskRepository taskRepository;
     @Resource
     private UserReposity userReposity;
@@ -75,14 +71,34 @@ public class CaseBaseMsgController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
-    @ApiOperation("通过案件id查询任务")
-    @RequestMapping("/findAllTaskByAjid")
-    public ApiResult<Object> findAllByAjidOrderByRwcjsj(Integer ajid, int page, int pagesize) {
+//    @ApiOperation("通过案件id查询任务")
+//    @RequestMapping("/findAllTaskByAjid")
+//    public ApiResult<Object> findAllByAjidOrderByRwcjsj(Integer ajid, int page, int pagesize) {
+//        if (ajid == null) {
+//            return ApiResult.FAILURE("案件id不能为空");
+//        }
+//        Pageable pageable = PageRequest.of(page - 1, pagesize);
+//        Page<TaskEntity> list = taskRepository.findAllByAjidOrderByRwcjsj(ajid, pageable);
+//        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+//    }
+
+    @ApiOperation("通过案件id和任务状态查询任务")
+    @RequestMapping("/findAllTaskByAjidAndRwzt")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ajid", value = "案件id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "rwzt", value = "任务状态", dataType = "Integer", paramType = "query"),
+    })
+    public ApiResult<Object> findAllByAjidOrderByRwcjsj(Integer ajid, Integer rwzt, int page, int pagesize) {
         if (ajid == null) {
             return ApiResult.FAILURE("案件id不能为空");
         }
         Pageable pageable = PageRequest.of(page - 1, pagesize);
-        Page<TaskEntity> list = taskRepository.findAllByAjidOrderByRwcjsj(ajid, pageable);
+        Page<TaskEntity> list = null;
+        if (rwzt == null) {
+            list = taskRepository.findAllByAjidOrderByRwcjsj(ajid, pageable);
+        } else {
+            list = taskRepository.findAllByAjidAndRwztOrderByRwcjsj(ajid, rwzt, pageable);
+        }
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
@@ -100,7 +116,7 @@ public class CaseBaseMsgController {
         return ApiResult.SUCCESS("修改成功");
     }
 
-    @ApiOperation("删除")
+    @ApiOperation("删除（注销）")
     @RequestMapping("/delete")
     public ApiResult<Object> delete(Integer id) {
         if (id == null) {
@@ -110,33 +126,30 @@ public class CaseBaseMsgController {
             return ApiResult.FAILURE("该数据不存在");
         }
         try {
-            icaseBaseService.reset(id);
+            casebasemessageRepository.updateXszt(2, id);
         } catch (Exception e) {
             return ApiResult.FAILURE("删除失败");
         }
         return ApiResult.SUCCESS("删除成功");
     }
 
+    @ApiOperation("撤销")
+    @RequestMapping("/undo")
+    public ApiResult<Object> undo(Integer id) {
+        if (id == null) {
+            return ApiResult.FAILURE("id不能为空");
+        }
+        if (!casebasemessageRepository.existsById(id)) {
+            return ApiResult.FAILURE("该数据不存在");
+        }
+        try {
+            casebasemessageRepository.updateXszt(1, id);
+        } catch (Exception e) {
+            return ApiResult.FAILURE("删除失败");
+        }
+        return ApiResult.SUCCESS("删除成功");
+    }
 
-//    @ApiOperation("修改案件状态")
-//    @RequestMapping("/updateAjzt")
-//    @ApiImplicitParam(name = "ajzt",value = "案件状态id",dataType = "Integer", paramType = "query")
-//    public ApiResult<Object> updateAjzt(Integer id, Integer ajzt) {
-//        if (id == null || ajzt == null) {
-//            return ApiResult.FAILURE("id和案件状态不能为空");
-//        }
-//        Optional<CasebasemessageEntity> optional = casebasemessageRepository.findById(id);
-//        if (!optional.isPresent()) {
-//            return ApiResult.FAILURE("该数据不存在");
-//        }
-//        optional.get().setAjzt(ajzt);
-//        try {
-//            casebasemessageRepository.save(optional.get());
-//        } catch (Exception e) {
-//            return ApiResult.FAILURE("修改失败");
-//        }
-//        return ApiResult.SUCCESS("修改成功");
-//    }
 
     @ApiOperation("多条件查询：批次id、案件名称、案件类型、案件状态、案件区域、导入时间")
     @RequestMapping("/findAllByCondition")
@@ -154,12 +167,19 @@ public class CaseBaseMsgController {
                                                 Date begin, Date end, int page, int pagesize, HttpSession session) {
         // 判断权限，如果是区域管理员，则只能查询本区域
         Integer id = (Integer) session.getAttribute("id");
+        Integer js=(Integer) session.getAttribute("js");//用户角色
         UserEntity userEntity = userReposity.findById(id);
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "import_time"));
         Page<CasebasemessageEntity> list = null;
         if (StringUtil.isNull(pcid) && StringUtil.isNull(ajmc) && ajlx == null &&
                 ajzt == null && ajqy == null && begin == null && end == null) {
-            list = casebasemessageRepository.findAllByYhid(id, pageable);
+            //管理员
+            if(js==1) {
+                list = casebasemessageRepository.findAllByYHid(pageable);
+            }
+            else{//其它成员
+                list = casebasemessageRepository.findAllByYhid(id, pageable);
+            }
         } else {
             if (userEntity.getJs() == 3) {
                 // 区域管理员

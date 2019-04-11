@@ -51,7 +51,6 @@ public class TaskController {
 
     @ApiOperation("区域管理员添加任务添加")
     @RequestMapping("/add")
-//    @ApiImplicitParam(name = "ajid",value = "案件id",dataType = "Integer", paramType = "query")
     public ApiResult<Object> add(TaskEntity entity) {
         if (entity.getAjid() == null) {
             return ApiResult.FAILURE("案件id不能为空");
@@ -200,7 +199,7 @@ public class TaskController {
         if (ywyid == null) {
             return ApiResult.FAILURE("业务员id不能为空");
         }
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "gxsj"));
+        Pageable pageable = PageRequest.of(page - 1, pagesize);
         Page<TaskEntity> list = taskRepository.findAllByRwzxrAndRwztOrderByGxsjDesc(ywyid, rwzt, pageable);
         // 查询案件的案人信息
         List<Map<String, Object>> mapList = new ArrayList<>();
@@ -301,28 +300,25 @@ public class TaskController {
     }
 
 
-    @ApiOperation("区域管理员审核并修改任务信息")
+    @ApiOperation("区域管理员审核并修改任务信息和反馈状态")
     @RequestMapping("/check")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "rwzt", value = "任务状态 5-审核未通过 6-审核通过", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "rwzt", value = "任务状态 5-审核未通过 6-审核通过", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "shbz", value = "审核备注", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "sjyj", value = "实际佣金", dataType = "Double", paramType = "query")
     })
     public ApiResult<Object> check(Integer id, Integer rwzt, String shbz, Double sjyj, HttpSession session) {
         Integer userid = (Integer) session.getAttribute("id");
-
         if (id == null) {
             return ApiResult.FAILURE("id不能为空");
         }
         TaskEntity entity = itaskService.findById(id);
-        if (entity.getRwzt() != 4) {
-            return ApiResult.FAILURE("该任务不是待审核任务，不能审核");
+        if (entity.getRwzt() != 4 && entity.getRwzt() != 5 && entity.getRwzt() != 6) {
+            return ApiResult.FAILURE("该状态的任务不能审核");
         }
-        entity.setRwzt(rwzt);
-        entity.setShbz(shbz);
         if (rwzt == 5) {
             entity.setSjyj(0.00);
-        } else {
+        } else if (rwzt == 6){
             // 判断实际佣金
             if (sjyj > entity.getRwyj()) {
                 return ApiResult.FAILURE("任务实际所得佣金不应大于任务佣金");
@@ -330,12 +326,15 @@ public class TaskController {
             entity.setSjyj(StringUtil.getMoneyDouble(sjyj));
         }
         //
+        entity.setRwzt(rwzt);
+        entity.setShbz(shbz);
+        //
         entity.setShrid(userid);
         entity.setShrxm(userReposity.findById(userid).getMz());
         //
         entity.setGxsj(new Date());
         try {
-            itaskService.save(entity);
+            itaskService.check(entity);
         } catch (Exception e) {
             return ApiResult.FAILURE("修改失败");
         }

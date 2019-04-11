@@ -40,16 +40,24 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
     /**
      * 修改状态
      */
-    @Query(value = "update casebasemessage set show_state = 2 where id = ?1", nativeQuery = true)
+    @Query(value = "update casebasemessage set show_state = ?1 where id = ?2", nativeQuery = true)
     @Modifying
     @Transactional
-    void updateXszt(Integer id);
+    void updateXszt(Integer xszt, Integer id);
 
     /**
      * 通过区域查询案件id
      */
     @Query(value = "select * from casebasemessage where area_id in (select area_code from user where id = ?1) order by import_time desc ", nativeQuery = true)
     Page<CasebasemessageEntity> findAllByYhid(Integer yhid, Pageable pageable);
+
+    /**
+     * 管理员查询案件
+     * @param pageable
+     * @return
+     */
+    @Query(value = "select * from casebasemessage   order by import_time desc ", nativeQuery = true)
+    Page<CasebasemessageEntity> findAllByYHid(Pageable pageable);
 
     /**
      * 获取最早和最晚的时间

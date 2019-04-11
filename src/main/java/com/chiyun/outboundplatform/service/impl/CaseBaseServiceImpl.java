@@ -84,32 +84,4 @@ public class CaseBaseServiceImpl implements IcaseBaseService {
         }
     }
 
-    @Override
-    @Transactional
-    public boolean reset(Integer id) {
-        // 先修改其他附表数据
-        // 卡号信息
-        cardMessageRepository.setXszt(id);
-        // 案人信息
-        casepeoplemessageRepository.setXszt(id);
-        // 催收员信息
-        empMessageRepository.setXszt(id);
-        // 联系人信息
-        linkmanMessageRepository.setXszt(id);
-        // 贷款信息
-        loanMessageRepository.setXszt(id);
-        // 其他信息
-        otherMessageRepository.setXszt(id);
-        // 外访信息
-        outboundMessageRepository.setXszt(id);
-        // 备注信息
-        remarkMsgRepository.setXszt(id);
-        // 对象信息
-        userMessageRepository.setXszt(id);
-        // 注销任务
-        taskRepository.resetByAjid(id);
-        // 将案件显示状态修改：不显示
-        casebasemessageRepository.updateXszt(id);
-        return true;
-    }
 }

@@ -29,7 +29,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     Page<TaskEntity> findAllByAjidOrderByRwcjsj(Integer ajid, Pageable pageable);
 
     /**
-     *  根据id修改任务状态
+     * 根据id修改任务状态
      */
     @Query(value = "update task set task_state = ?1 where id = ?2", nativeQuery = true)
     @Modifying
@@ -79,7 +79,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     Double sumAllSjyjByRwzxr(Integer rwzxr);
 
     /**
-     *  通过案件id、业务员id和任务状态统计业务员实际佣金
+     * 通过案件id、业务员id和任务状态统计业务员实际佣金
      */
     @Query(value = "SELECT case_id as ajid, sum(actual_money) as ajsjyj from task WHERE task_state = '6' and task_peopleId = ?1 GROUP BY case_id ORDER BY case_id", nativeQuery = true)
     List<Map<String, Double>> sumSjyjByAjid(Integer ywyid);
@@ -89,14 +89,14 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
 
     /**
-     *  通过案件id查询任务是否都已完成
+     * 通过案件id查询任务是否都已完成
      */
     @Query(value = "select distinct id from task where case_id = ?1 and task_state in (1, 2, 3)", nativeQuery = true)
     List<Integer> findAllIdByAjidAndAjztIn(Integer ajid);
 
 
     /**
-     *  财务人员确认已发放佣金，批量修改
+     * 财务人员确认已发放佣金，批量修改
      */
     @Query(value = "update task set task_state = '7' where id in ?1", nativeQuery = true)
     @Modifying
@@ -152,4 +152,29 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
             "                             SELECT uid,zt,sum(sl) sl FROM ( SELECT uid,entrycode zt,CASE WHEN zt = entrycode THEN sl ELSE 0 END  sl FROM (SELECT task_people uid ,task_state zt,count(*) sl FROM task WHERE exists(SELECT 1 FROM user WHERE task_people = user.id) and exists(SELECT 1 FROM casebasemessage WHERE case_id = casebasemessage.id AND show_state =1) GROUP BY  task_people ,task_state)a ,dictionarylist WHERE dictid=9)udg GROUP BY uid,zt\n" +
             "                                         )se ON id = uid ORDER BY id ASC ,zt ASC)be GROUP BY id,name", nativeQuery = true, countQuery = "SELECT count(*) FROM user")
     Page<Map<String, Object>> peoplecount(Pageable pageable);
+
+    /**
+     * @param uid
+     * @param begin
+     * @param end
+     * @Desc: 根据用户id以及时间段统计任务个状态数量
+     */
+    @Query(value = "SELECT task_state zt,count(*) sl FROM task WHERE task_peopleId = ?1 AND if(?2 IS NULL ,1=1,update_time >=?2)AND if(?3 IS NULL ,1=1,update_time <=?3) AND exists(SELECT 1 FROM casebasemessage WHERE case_id = casebasemessage.id AND show_state =1)GROUP BY task_peopleId,task_state", nativeQuery = true)
+    List<Map<String, Object>> taskCountByUidAndDate(int uid, Date begin, Date end);
+
+    /**
+     * @param begin
+     * @param end
+     * @Desc: 查询时间段内佣金获取排名
+     */
+    @Query(value = "SELECT sjyj,rwl,uid,@rownum:=@rownum+1 px FROM (SELECT sum(actual_money) sjyj,count(*) rwl,task_peopleId uid ,@rownum:=0  FROM task WHERE if(?1 IS NULL ,1=1,update_time >=?1)AND if(?2 IS NULL ,1=1,update_time <=?2) AND exists(SELECT 1 FROM casebasemessage WHERE show_state =1 AND case_id = casebasemessage.id) AND exists(SELECT 1 FROM user WHERE task_peopleId = user.id AND type = 1 AND role_id >=3 AND role_id<=4) GROUP BY task_peopleId ORDER BY sjyj DESC)se", nativeQuery = true)
+    List<Map<String, Object>> taskCountAchieveByDate(Date begin, Date end);
+
+    /**
+     * @param begin
+     * @param end
+     * @Desc: 查询时间段内某个业务员佣金获取排名
+     */
+    @Query(value = "SELECT * FROM (SELECT sjyj,rwl,uid,@rownum/*'*/:=/*'*/@rownum+1 px FROM (SELECT sum(actual_money) sjyj,count(*) rwl,task_peopleId uid ,@rownum/*'*/:=/*'*/0  FROM task WHERE if(?2 IS NULL ,1=1,update_time >=?2)AND if(?3 IS NULL ,1=1,update_time <=?3) AND exists(SELECT 1 FROM casebasemessage WHERE show_state =1 AND case_id = casebasemessage.id) AND exists(SELECT 1 FROM user WHERE task_peopleId = user.id AND type = 1 AND role_id >=3 AND role_id<=4) GROUP BY task_peopleId ORDER BY sjyj DESC)se)bes WHERE uid = ?1", nativeQuery = true)
+    Map<String, Object> taskCountAchieveByUidAndDate(int uid, Date begin, Date end);
 }

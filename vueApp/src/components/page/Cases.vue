@@ -310,8 +310,7 @@
                 this.is_search = true;
             },
             add(){
-                this.form = {
-                };
+                this.form = {};
                 this.modelVisible = true;
             },
             handleOrder(index, row) {

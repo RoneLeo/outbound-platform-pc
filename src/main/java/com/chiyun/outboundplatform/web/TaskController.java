@@ -103,6 +103,11 @@ public class TaskController {
         if (entity.getAjid() == null || entity.getRwfs() == null) {
             return ApiResult.FAILURE("案件id和任务方式不能为空");
         }
+        // 已接单就不可以修改
+        int rwzt = taskRepository.findById(entity.getId()).get().getRwzt();
+        if (rwzt != 1 || rwzt != 2) {
+            return ApiResult.FAILURE("已接单后的任务不可以修改");
+        }
         // 判断时间
         Date now = new Date();
         if (now.after(entity.getRwjzsj())) {
@@ -171,7 +176,7 @@ public class TaskController {
     public ApiResult<Object> findAllByCondition(String rwmc, Date beginJzsj, Date endJzsj,
                                                 Integer rwfs, Integer rwzt, String rwzxrmc,
                                                 Date beginWcsj, Date endWcsj, Date beginCjsj, Date endCjsj, int page, int pagesize) {
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "create_time"));
         Page<TaskEntity> list = itaskService.findAllByCondition(rwmc, beginJzsj, endJzsj, rwfs,
                 rwzt, rwzxrmc, beginWcsj, endWcsj, beginCjsj, endCjsj, pageable);
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());

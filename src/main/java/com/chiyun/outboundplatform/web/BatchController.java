@@ -210,8 +210,6 @@ public class BatchController {
         String fileName = sheetname + ".xls";
         String userAgent = request.getHeader("USER-AGENT");
         String newFilename = URLEncoder.encode(fileName, "UTF-8").replace("+", " ");
-        ;
-
         if (userAgent != null) {
             if (userAgent.contains("edge") || userAgent.contains("Edge") || userAgent.contains("Trident") || userAgent.contains("trident")) {
                 newFilename = URLEncoder.encode(fileName, "UTF-8").replace("+", " ");

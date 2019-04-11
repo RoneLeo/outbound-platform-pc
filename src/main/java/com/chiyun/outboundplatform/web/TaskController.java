@@ -280,7 +280,7 @@ public class TaskController {
     @RequestMapping("/appoint")
     @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query")
     public ApiResult<Object> appoint(Integer ywyid, Integer id) {
-        if (id == null || ywyid == null) {
+        if (id == null && ywyid == null) {
             return ApiResult.FAILURE("id和业务员id不能为空");
         }
         TaskEntity entity = taskRepository.findById(id).get();

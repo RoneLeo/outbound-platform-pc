@@ -300,16 +300,15 @@ public class TaskController {
     }
 
 
-    @ApiOperation("区域管理员审核并修改任务信息")
+    @ApiOperation("区域管理员审核并修改任务信息和反馈状态")
     @RequestMapping("/check")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "rwzt", value = "任务状态 5-审核未通过 6-审核通过", dataType = "Integer", paramType = "query"),
+//            @ApiImplicitParam(name = "rwzt", value = "任务状态  6-审核通过", dataType = "Integer", paramType = "query"),
             @ApiImplicitParam(name = "shbz", value = "审核备注", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "sjyj", value = "实际佣金", dataType = "Double", paramType = "query")
     })
-    public ApiResult<Object> check(Integer id, Integer rwzt, String shbz, Double sjyj, HttpSession session) {
+    public ApiResult<Object> check(Integer id, String shbz, Double sjyj, HttpSession session) {
         Integer userid = (Integer) session.getAttribute("id");
-
         if (id == null) {
             return ApiResult.FAILURE("id不能为空");
         }
@@ -317,17 +316,13 @@ public class TaskController {
         if (entity.getRwzt() != 4) {
             return ApiResult.FAILURE("该任务不是待审核任务，不能审核");
         }
-        entity.setRwzt(rwzt);
+        entity.setRwzt(6);
         entity.setShbz(shbz);
-        if (rwzt == 5) {
-            entity.setSjyj(0.00);
-        } else {
-            // 判断实际佣金
-            if (sjyj > entity.getRwyj()) {
-                return ApiResult.FAILURE("任务实际所得佣金不应大于任务佣金");
-            }
-            entity.setSjyj(StringUtil.getMoneyDouble(sjyj));
+        // 判断实际佣金
+        if (sjyj > entity.getRwyj()) {
+            return ApiResult.FAILURE("任务实际所得佣金不应大于任务佣金");
         }
+        entity.setSjyj(StringUtil.getMoneyDouble(sjyj));
         //
         entity.setShrid(userid);
         entity.setShrxm(userReposity.findById(userid).getMz());

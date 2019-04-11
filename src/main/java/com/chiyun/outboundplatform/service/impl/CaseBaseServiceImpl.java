@@ -106,8 +106,6 @@ public class CaseBaseServiceImpl implements IcaseBaseService {
         remarkMsgRepository.setXszt(id);
         // 对象信息
         userMessageRepository.setXszt(id);
-        // 注销任务
-        taskRepository.resetByAjid(id);
         // 将案件显示状态修改：不显示
         casebasemessageRepository.updateXszt(id);
         return true;

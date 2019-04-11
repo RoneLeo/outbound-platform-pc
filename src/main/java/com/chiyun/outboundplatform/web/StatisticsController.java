@@ -105,8 +105,8 @@ public class StatisticsController {
 
     @ApiOperation("统计选定时间内案件的变化情况,按日统计")
     @RequestMapping("/case/count")
-    public ApiResult casecount(@RequestParam(required = false) @ApiParam("开始日期") Date begin,
-                               @RequestParam(required = false) @ApiParam("结束日期") Date end) {
+    public ApiResult casecount(@RequestParam @ApiParam("开始日期") Date begin,
+                               @RequestParam @ApiParam("结束日期") Date end) {
         String bdate = formatter.format(begin).concat(" 00:00:00");
         String edate = formatter.format(end).concat(" 23:59:59");
         try {

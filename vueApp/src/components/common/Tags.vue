@@ -54,7 +54,7 @@
             closeOther(){
                 const curItem = this.tagsList.filter(item => {
                     return item.path === this.$route.fullPath;
-                })
+                });
                 this.tagsList = curItem;
             },
             // 设置标签
@@ -62,7 +62,7 @@
                 const isExist = this.tagsList.some(item => {
 //                    return item.path === route.fullPath;
                     return item.path === route.path;
-                })
+                });
                 if(!isExist){
                     if(this.tagsList.length >= 8){
                         this.tagsList.shift();
@@ -87,7 +87,14 @@
         },
         watch:{
             $route(newValue, oldValue){
+                //caseInfo页面在关闭的时候关掉tab标签
+                this.tagsList.forEach((curr,index) => {
+                    if(oldValue.path == '/caseInfo' && curr.path == '/caseInfo'){
+                        this.tagsList.splice(index,1);
+                    }
+                });
                 this.setTags(newValue);
+
             }
         },
         created(){
@@ -99,6 +106,8 @@
 
 
 <style>
+
+
     .tags {
         position: relative;
         height: 30px;
@@ -107,6 +116,7 @@
         padding-right: 120px;
         box-shadow: 0 5px 10px #ddd;
         z-index: 100;
+        box-sizing: ;
     }
 
     .tags ul {

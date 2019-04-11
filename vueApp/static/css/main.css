@@ -202,6 +202,6 @@ ul {
 }
 
 
-.el-date-editor.el-input,.el-select{
+.el-date-editor.el-input,.el-select.el-input-number{
     width:100%;
 }

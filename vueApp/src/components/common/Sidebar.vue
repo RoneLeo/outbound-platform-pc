@@ -49,12 +49,12 @@
                         title: '案件管理',
                         subs: [
                             {
-                                index: 'templates',
-                                title: '模板批次'
-                            },
-                            {
                                 index: 'cases',
                                 title: '案件信息'
+                            },
+                            {
+                                index: 'templates',
+                                title: '模板批次'
                             }
                         ]
                     },

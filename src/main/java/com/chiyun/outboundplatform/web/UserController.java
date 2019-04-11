@@ -310,14 +310,18 @@ public class UserController {
         return ApiResult.SUCCESS(oldUserEntity);
     }
 
-    @MustLogin(rolerequired = {3})
-    @ApiOperation(value = "区域主管通过所在行政区查询业务员等用户")
+    @MustLogin(rolerequired = {1, 3})
+    @ApiOperation(value = "通过所在行政区查询业务员等用户")
     @RequestMapping("/fingByAreacodeAndName")
     public ApiResult<Object> fingByAreacodeAndName(@RequestParam(required = false) @ApiParam(value = "用户真实名字") String mz) throws Exception {
         //判断是否登录
         HttpSession session = SessionHelper.getSession();
         ApiResult<Object> isLogin = SessionUtil.isLogin(session);
         if (isLogin.getResCode() < 200) return isLogin;
+        //如果是管理员返回空
+        if("1".equals(session.getAttribute("js").toString())){
+            return ApiResult.SUCCESS();
+        }
         /* 查询用户 */
        String areaCode = String.valueOf(session.getAttribute("szxzqdm"));
        String name = OtherUtils.nullReplace(mz);

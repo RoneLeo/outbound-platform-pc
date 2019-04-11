@@ -52,6 +52,14 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
     Page<CasebasemessageEntity> findAllByYhid(Integer yhid, Pageable pageable);
 
     /**
+     * 管理员查询案件
+     * @param pageable
+     * @return
+     */
+    @Query(value = "select * from casebasemessage   order by import_time desc ", nativeQuery = true)
+    Page<CasebasemessageEntity> findAllByYHid(Pageable pageable);
+
+    /**
      * 获取最早和最晚的时间
      */
     @Query(value = "select import_time from casebasemessage order by import_time asc limit 1", nativeQuery = true)

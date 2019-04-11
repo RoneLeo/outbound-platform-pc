@@ -1,10 +1,10 @@
 import axios from 'axios';
 export default {
-    dictParse(dictID,dict){
+    dictParse(dictID,dictArr){
         let dictName = '';
-        for (let i=0;i<dict.length;i++){
-            if(dict[i].ctdm == dictID){
-                dictName = dict[i].ctmc;
+        for (let i=0;i<dictArr.length;i++){
+            if(dictArr[i].ctdm == dictID){
+                dictName = dictArr[i].ctmc;
             }
         }
         return dictName;

@@ -106,7 +106,7 @@
 
         <!--案件导入弹框-->
         <el-dialog title="导入案件" :visible.sync="importModelVisible" width="50%"
-                   :close-on-click-modal="false" @closed="closeClear">
+                   :close-on-click-modal="false">
             <el-form class="clearfix" ref="importForm" :model="importForm" label-width="100px">
                 <el-form-item label="选择批次">
                     <el-select v-model="importForm.pcid" placeholder="请选择">
@@ -306,16 +306,13 @@
                 this.$refs.importForm.resetFields()
                 this.$refs.detailForm.resetFields()
             },
-
             search() {
                 this.is_search = true;
             },
             add(){
-                this.form = {
-                };
+                this.form = {};
                 this.modelVisible = true;
             },
-
             handleOrder(index, row) {
                 this.$router.push({name:'caseInfo', params: row});
             },

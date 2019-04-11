@@ -6,7 +6,7 @@
         <div class="container">
             <el-table :data="batchData">
                 <el-table-column type="index" width="40" fixed></el-table-column>
-                <el-table-column prop="pcmc" label="模板名称"></el-table-column>
+                <el-table-column prop="pcmc" label="批次名称"></el-table-column>
                 <el-table-column prop="pcid" label="批次ID"></el-table-column>
                 <el-table-column prop="cjsj" label="创建时间"></el-table-column>
                 <el-table-column label="操作" >
@@ -147,24 +147,28 @@
             handleEdit: function (index, row) {
                 this.dataForm = Object.assign({}, row);
                 this.fieldDialogTitle = row.pcmc + ' 编辑';
-                this.zdidArr = [];
                 let loading = this.$loading({text: '正在获取模板字段信息,请稍后...'});
+                this.zdidArr = this.zdidAddArr;
                 this.$axios.post('batch/findAllZdzh', {pcid: row.pcid}).then( (res) => {
                     loading.close();
                     let data = res.data;
                     for(let i=0;i<data.length;i++){
-                        let field = data[i].type;
-                        this.zdidArr[field] = data[i].bhzd;
-                        // let zdidArr2 = data[k];
-                        // if(zdidArr2.length){
-                        //     zdidArr2 = [zdidArr2[0]]; //防止多个相同字段不停叠加!
-                        // }
-                        // this.zdidArr[k] = zdidArr2;
+                        let type = data[i].type;
+                        let bhzhArr = data[i].bhzd.split(',');
+                        let bhzhArr2 = [];
+                        bhzhArr.forEach((current) => {
+                            //console.log('current:', current)
+                            bhzhArr2.push(Number(current));
+                        });
+                        this.zdidArr[type] = bhzhArr2;
+                        //联系人信息
+                        if(type == 7){
+                            this.lxrNum = data[i].sl;
+                        }
+                        else if(type == 9){
+                            this.bzNum = data[i].sl;
+                        }
                     }
-                    console.log(this.zdidArr);
-
-                    this.lxrNum = data.lxrNum;
-                    this.bzNum = data.bzNum;
                     this.addFormVisible = true;
                 });
             },
@@ -174,6 +178,7 @@
                 this.$refs.dataForm.validate((valid) => {
                     if (valid) {
                         console.log(this.zdidArr);
+
                         //console.log(this.dataForm, this.zdidArr,this.lxrNum,this.bzNum);
                         let zdids = [];
                         let lxrNum = this.lxrNum;

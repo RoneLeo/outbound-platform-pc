@@ -15,6 +15,8 @@ public class FeedbackEntity {
     private Integer rwid;
     @ApiModelProperty(value = "反馈人")
     private Integer fkr;
+    @ApiModelProperty(value = "反馈人姓名")
+    private String fkrxm;
     @ApiModelProperty(value = "反馈内容")
     private String fknr;
     @ApiModelProperty(value = "反馈时间")
@@ -53,6 +55,16 @@ public class FeedbackEntity {
 
     public void setFkr(Integer fkr) {
         this.fkr = fkr;
+    }
+
+    @Basic
+    @Column(name = "prople_name")
+    public String getFkrxm() {
+        return fkrxm;
+    }
+
+    public void setFkrxm(String fkrxm) {
+        this.fkrxm = fkrxm;
     }
 
     @Basic
@@ -99,18 +111,19 @@ public class FeedbackEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof FeedbackEntity)) return false;
-        FeedbackEntity that = (FeedbackEntity) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(rwid, that.rwid) &&
-                Objects.equals(fkr, that.fkr) &&
-                Objects.equals(fknr, that.fknr) &&
-                Objects.equals(fksj, that.fksj) &&
-                Objects.equals(fkfj, that.fkfj) &&
-                Objects.equals(fkzt, that.fkzt);
+        FeedbackEntity entity = (FeedbackEntity) o;
+        return Objects.equals(id, entity.id) &&
+                Objects.equals(rwid, entity.rwid) &&
+                Objects.equals(fkr, entity.fkr) &&
+                Objects.equals(fkrxm, entity.fkrxm) &&
+                Objects.equals(fknr, entity.fknr) &&
+                Objects.equals(fksj, entity.fksj) &&
+                Objects.equals(fkfj, entity.fkfj) &&
+                Objects.equals(fkzt, entity.fkzt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, rwid, fkr, fknr, fksj, fkfj, fkzt);
+        return Objects.hash(id, rwid, fkr, fkrxm, fknr, fksj, fkfj, fkzt);
     }
 }

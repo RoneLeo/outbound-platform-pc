@@ -33,6 +33,10 @@ public class TaskEntity {
     private Integer rwzxr;
     @ApiModelProperty(value = "任务执行人名称")
     private String rwzxrmc;
+    @ApiModelProperty(value = "审核人id")
+    private Integer shrid;
+    @ApiModelProperty(value = "审核人姓名")
+    private String shrxm;
     @ApiModelProperty(value = "任务完成时间")
     private Date rwwcsj;
     @ApiModelProperty(value = "任务创建时间")
@@ -162,6 +166,26 @@ public class TaskEntity {
     }
 
     @Basic
+    @Column(name = "check_people_id")
+    public Integer getShrid() {
+        return shrid;
+    }
+
+    public void setShrid(Integer shrid) {
+        this.shrid = shrid;
+    }
+
+    @Basic
+    @Column(name = "check_people_name")
+    public String getShrxm() {
+        return shrxm;
+    }
+
+    public void setShrxm(String shrxm) {
+        this.shrxm = shrxm;
+    }
+
+    @Basic
     @Column(name = "complate_time")
     public Date getRwwcsj() {
         return rwwcsj;
@@ -208,6 +232,8 @@ public class TaskEntity {
                 Objects.equals(sjyj, entity.sjyj) &&
                 Objects.equals(rwzxr, entity.rwzxr) &&
                 Objects.equals(rwzxrmc, entity.rwzxrmc) &&
+                Objects.equals(shrid, entity.shrid) &&
+                Objects.equals(shrxm, entity.shrxm) &&
                 Objects.equals(rwwcsj, entity.rwwcsj) &&
                 Objects.equals(rwcjsj, entity.rwcjsj) &&
                 Objects.equals(gxsj, entity.gxsj);
@@ -215,6 +241,6 @@ public class TaskEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, rwfs, rwzt, shbz, sjyj, rwzxr, rwzxrmc, rwwcsj, rwcjsj, gxsj);
+        return Objects.hash(id, ajid, rwmc, rwjzsj, rwyj, rwms, rwfs, rwzt, shbz, sjyj, rwzxr, rwzxrmc, shrid, shrxm, rwwcsj, rwcjsj, gxsj);
     }
 }

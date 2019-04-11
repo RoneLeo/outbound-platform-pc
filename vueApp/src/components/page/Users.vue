@@ -14,14 +14,13 @@
                                  :sortable="false" align="left"></el-table-column>
                 <el-table-column prop="mz" label="姓名" :show-overflow-tooltip="false"  fixed :sortable="false"
                                  align="left"></el-table-column>
-                <el-table-column prop="xb" label="性别" :show-overflow-tooltip="false"  :sortable="false"
-                                 align="left"></el-table-column>
-                <el-table-column prop="nl" label="年龄" :show-overflow-tooltip="false"  :sortable="false"
-                                 align="left"></el-table-column>
-                <el-table-column prop="lxdh" label="联系电话" :show-overflow-tooltip="false"
-                                 :sortable="false" align="left"></el-table-column>
+                <el-table-column prop="szxzqdm" label="区域" :show-overflow-tooltip="false" width="" :sortable="false"
+                                 align="left" :formatter="orgFormatter"></el-table-column>
                 <el-table-column prop="js" label="角色" :show-overflow-tooltip="false" width="" :sortable="false"
                                  align="left" :formatter="roleFormatter"></el-table-column>
+                <el-table-column prop="lxdh" label="联系电话" :show-overflow-tooltip="false"
+                                 :sortable="false" align="left"></el-table-column>
+
                 <el-table-column prop="cjsj" label="创建时间" :show-overflow-tooltip="false"
                                  :sortable="false" align="left"></el-table-column>
                 <el-table-column prop="sqm" label="微信授权码"></el-table-column>
@@ -57,12 +56,12 @@
             <el-dialog title="用户信息" width="60%" :visible.sync="addFormVisible" :close-on-click-modal="false">
 
                 <el-form class="userForm" :model="addForm" label-width="120px" ref="addForm">
+                    <el-form-item label="用户姓名" prop="mz">
+                        <el-input v-model="addForm.mz" placeholder="请输入中文姓名"></el-input>
+                    </el-form-item>
                     <el-form-item label="用户账号" prop="yhm"
                                   :rules="[{ required: true, message: '输入不能为空', trigger: 'blur' }]">
-                        <el-input v-model="addForm.yhm"></el-input>
-                    </el-form-item>
-                    <el-form-item label="用户姓名" prop="mz">
-                        <el-input v-model="addForm.mz"></el-input>
+                        <el-input v-model="addForm.yhm" placeholder="请输入英文或数字组合"></el-input>
                     </el-form-item>
                     <el-form-item label="所属区域" prop="szxzqdm"
                                   :rules="[{ required: true, message: '输入不能为空', trigger: 'blur' }]">
@@ -178,6 +177,9 @@
             },
             roleFormatter(row) {
                 return util.dictParse(row.js,this.roles);
+            },
+            orgFormatter(row) {
+                return util.dictParse(row.szxzqdm,this.caseArea);
             },
             getData() {
                 this.$axios.post('/user/findAll', {zt: this.userType, page: this.currentPage, pagesize: this.pageSize}).then((res) => {

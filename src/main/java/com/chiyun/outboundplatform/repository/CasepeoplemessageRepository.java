@@ -2,7 +2,9 @@ package com.chiyun.outboundplatform.repository;
 
 import com.chiyun.outboundplatform.entity.CasepeoplemessageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +14,9 @@ import java.util.Map;
  */
 public interface CasepeoplemessageRepository extends JpaRepository<CasepeoplemessageEntity, Integer> {
 
-    @Query(value = "update casepeoplemessage set show_state = 1 where case_id = ?1", nativeQuery = true)
+    @Query(value = "update casepeoplemessage set show_state = 2 where case_id = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
     void setXszt(Integer ajid);
 
     /**

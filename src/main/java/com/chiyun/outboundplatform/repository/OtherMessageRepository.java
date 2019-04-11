@@ -2,10 +2,14 @@ package com.chiyun.outboundplatform.repository;
 
 import com.chiyun.outboundplatform.entity.OthermessageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface OtherMessageRepository extends JpaRepository<OthermessageEntity, Integer> {
 
-    @Query(value = "update othermessage set show_state = 1 where case_id = ?1", nativeQuery = true)
+    @Query(value = "update othermessage set show_state = 2 where case_id = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
     void setXszt(Integer ajid);
 }

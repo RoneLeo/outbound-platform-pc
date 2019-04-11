@@ -41,10 +41,6 @@ public class CaseBaseMsgController {
     @Resource
     private CasebasemessageRepository casebasemessageRepository;
     @Resource
-    private BatchRepository batchRepository;
-    @Resource
-    private IdictionaryListService idictionaryListService;
-    @Resource
     private TaskRepository taskRepository;
     @Resource
     private UserReposity userReposity;
@@ -116,27 +112,6 @@ public class CaseBaseMsgController {
         }
         return ApiResult.SUCCESS("删除成功");
     }
-
-
-//    @ApiOperation("修改案件状态")
-//    @RequestMapping("/updateAjzt")
-//    @ApiImplicitParam(name = "ajzt",value = "案件状态id",dataType = "Integer", paramType = "query")
-//    public ApiResult<Object> updateAjzt(Integer id, Integer ajzt) {
-//        if (id == null || ajzt == null) {
-//            return ApiResult.FAILURE("id和案件状态不能为空");
-//        }
-//        Optional<CasebasemessageEntity> optional = casebasemessageRepository.findById(id);
-//        if (!optional.isPresent()) {
-//            return ApiResult.FAILURE("该数据不存在");
-//        }
-//        optional.get().setAjzt(ajzt);
-//        try {
-//            casebasemessageRepository.save(optional.get());
-//        } catch (Exception e) {
-//            return ApiResult.FAILURE("修改失败");
-//        }
-//        return ApiResult.SUCCESS("修改成功");
-//    }
 
     @ApiOperation("多条件查询：批次id、案件名称、案件类型、案件状态、案件区域、导入时间")
     @RequestMapping("/findAllByCondition")

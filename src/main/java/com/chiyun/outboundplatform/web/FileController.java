@@ -17,10 +17,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Api(description = "文件管理")
 @RequestMapping(value = "/file", method = {RequestMethod.POST, RequestMethod.GET})
@@ -80,21 +77,25 @@ public class FileController {
             String[] idss = ids.split(",");
             for (int i = 0; i < idss.length; i ++) {
                 Integer id = Integer.parseInt(idss[i]);
-                FileEntity entity = fileRepository.findById(id).get();
-                String wedz = entity.getWjdz();
-                // 获取后缀名
-                String hzm = wedz.substring(wedz.lastIndexOf(".") + 1).toUpperCase();
+                FileEntity entity = null;
+                Optional<FileEntity> optional = fileRepository.findById(id);
+                if (optional.isPresent()) {
+                    entity = optional.get();
+                    String wedz = entity.getWjdz();
+                    // 获取后缀名
+                    String hzm = wedz.substring(wedz.lastIndexOf(".") + 1).toUpperCase();
 
-                if (hzm.equals("BMP") | hzm.equals("JPG") | hzm.equals("JPEG") | hzm.equals("PNG") | hzm.equals("GIF")) {
-                    // 图片格式：BMP、JPG、JPEG、PNG、GIF
-                    listPhoto.add(wedz);
-                } else if (hzm.equals("AVI") | hzm.equals("MOV") | hzm.equals("RMVB") | hzm.equals("RM")
-                        | hzm.equals("FLV") | hzm.equals("MP4") | hzm.equals("3GP") | hzm.equals("WEBM")) {
-                    // 视频格式：AVI、mov、rmvb、rm、FLV、mp4、3GP
-                    listVideo.add(wedz);
-                } else if (hzm.equals("AAC") | hzm.equals("WAV") | hzm.equals("MIDI") | hzm.equals("CDA") | hzm.equals("MP3") | hzm.equals("WMA")) {
-                    // 音频格式：WAV 、MIDI、CDA、MP3、WMA、MP4
-                    listAudio.add(wedz);
+                    if (hzm.equals("BMP") | hzm.equals("JPG") | hzm.equals("JPEG") | hzm.equals("PNG") | hzm.equals("GIF")) {
+                        // 图片格式：BMP、JPG、JPEG、PNG、GIF
+                        listPhoto.add(wedz);
+                    } else if (hzm.equals("AVI") | hzm.equals("MOV") | hzm.equals("RMVB") | hzm.equals("RM")
+                            | hzm.equals("FLV") | hzm.equals("MP4") | hzm.equals("3GP") | hzm.equals("WEBM")) {
+                        // 视频格式：AVI、mov、rmvb、rm、FLV、mp4、3GP
+                        listVideo.add(wedz);
+                    } else if (hzm.equals("AAC") | hzm.equals("WAV") | hzm.equals("MIDI") | hzm.equals("CDA") | hzm.equals("MP3") | hzm.equals("WMA")) {
+                        // 音频格式：WAV 、MIDI、CDA、MP3、WMA、MP4
+                        listAudio.add(wedz);
+                    }
                 }
             }
 

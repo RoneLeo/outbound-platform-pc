@@ -57,7 +57,7 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
      * @return
      */
     @Query(value = "select * from casebasemessage   order by import_time desc ", nativeQuery = true)
-    Page<CasebasemessageEntity> findAllByYHid(Pageable pageable);
+    Page<CasebasemessageEntity> findAllByYHid();
 
     /**
      * 获取最早和最晚的时间

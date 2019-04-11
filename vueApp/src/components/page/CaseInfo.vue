@@ -170,7 +170,7 @@
                                     指派
                                 </el-button>
                                 <el-button v-if="scope.row.rwzt >= 3" size="mini" type="text" @click="handleTaskRecord(scope.$index, scope.row)">
-                                    反馈
+                                    反馈情况
                                 </el-button>
                             </template>
                         </el-table-column>
@@ -267,16 +267,16 @@
             </div>
         </el-dialog>
 
-        <!--任务记录-->
-        <el-dialog id="feedbackContent" :title="taskTitle+` - 反馈信息`" :visible.sync="recordModelVisible" width="60%">
+        <!--反馈记录-->
+        <el-dialog id="feedbackContent" :title="taskTitle+` - 反馈信息`" :visible.sync="recordModelVisible" width="70%">
             <div class="clearfix content">
                 <div class="item">
-                    <span class="pre">反馈人员:</span>
+                    <span class="pre">处理人员:</span>
                     <span class="val">{{recordForm.fkrxm}}</span>
                 </div>
                 <div class="item">
-                    <span class="pre">反馈状态:</span>
-                    <span class="val">{{recordForm.fkzt}}</span>
+                    <span class="pre">任务状态:</span>
+                    <span class="val">{{recordForm.rwzt}}</span>
                 </div>
                 <div class="item">
                     <span class="pre">反馈时间:</span>
@@ -314,6 +314,7 @@
                 </div>
             </div>
             <div slot="footer" class="dialog-footer">
+                <!--<el-button type="primary"  @click="recordModelVisible = false;">立即审核</el-button>-->
                 <el-button @click="recordModelVisible = false">关 闭</el-button>
             </div>
         </el-dialog>
@@ -362,9 +363,6 @@
                 <el-button @click="checkTask" type="primary">保存</el-button>
             </div>
         </el-dialog>
-
-
-
     </div>
 </template>
 
@@ -491,10 +489,13 @@
                 let rwzt = row.rwzt;
                 this.$axios.post('feedback/findAllByRwid?rwid='+rwid).then(res => {
                     console.log('任务记录:', res);
-                    this.recordForm = res.data;
-                    this.recordFile = res.data.fkfj;
-                    this.recordModelVisible = true;
-                })
+                    if(res.data.id){
+                        this.recordForm = res.data;
+                        this.recordFile = res.data.fkfj;
+                        this.recordForm.rwzt = util.dictParse(rwzt, this.rwztArr);
+                        this.recordModelVisible = true;
+                    }
+                });
             },
             //指派保存
             assignTask(){
@@ -545,7 +546,7 @@
 
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
     #caseInfoModule{
         .task-form{
             .el-form-item{
@@ -584,7 +585,7 @@
         }
         #caseInfo{
             .el-form{
-                min-height:400px;
+                max-height:700px;
                 /*overflow: auto;*/
                 .el-form-item{
                     margin:0;
@@ -611,13 +612,12 @@
                 .el-form-item{
                     width: 33%;
                     display: inline-block;
-
                 }
             }
         }
         #feedbackContent{
             .content{
-                max-height: 600px;
+                max-height: 500px;
                 overflow: auto;
                 clear: both;
             }

@@ -175,7 +175,7 @@ public class CaseBaseMsgController {
                 ajzt == null && ajqy == null && begin == null && end == null) {
             //管理员
             if(js==1) {
-                list = casebasemessageRepository.findAllByYHid(pageable);
+                list = casebasemessageRepository.findAllByYHid();
             }
             else{//其它成员
                 list = casebasemessageRepository.findAllByYhid(id, pageable);

@@ -193,7 +193,7 @@ public class TaskController {
     @RequestMapping("/findAllByYwyidYjd")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query"),
-            @ApiImplicitParam(name = "rwzt", value = "任务状态 3-已接单 4-已完成，待审核 5-审核通过 6-佣金发放", dataType = "Integer", paramType = "query")
+            @ApiImplicitParam(name = "rwzt", value = "任务状态 3-已接单 4-已完成，待审核 5-审核未通过 6-审核通过 7-佣金发放", dataType = "Integer", paramType = "query")
     })
     public ApiResult<Object> findAllByYwyidYjd(Integer ywyid, Integer rwzt, int page, int pagesize) {
         if (ywyid == null) {
@@ -303,10 +303,11 @@ public class TaskController {
     @ApiOperation("区域管理员审核并修改任务信息和反馈状态")
     @RequestMapping("/check")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "rwzt", value = "任务状态 5-审核未通过 6-审核通过", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "shbz", value = "审核备注", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "sjyj", value = "实际佣金", dataType = "Double", paramType = "query")
     })
-    public ApiResult<Object> check(Integer id, String shbz, Double sjyj, HttpSession session) {
+    public ApiResult<Object> check(Integer id, Integer rwzt, String shbz, Double sjyj, HttpSession session) {
         Integer userid = (Integer) session.getAttribute("id");
         if (id == null) {
             return ApiResult.FAILURE("id不能为空");
@@ -315,13 +316,18 @@ public class TaskController {
         if (entity.getRwzt() != 4) {
             return ApiResult.FAILURE("该任务不是待审核任务，不能审核");
         }
-        entity.setRwzt(5);
-        entity.setShbz(shbz);
-        // 判断实际佣金
-        if (sjyj > entity.getRwyj()) {
-            return ApiResult.FAILURE("任务实际所得佣金不应大于任务佣金");
+        if (rwzt == 5) {
+            entity.setSjyj(0.00);
+        } else if (rwzt == 6){
+            // 判断实际佣金
+            if (sjyj > entity.getRwyj()) {
+                return ApiResult.FAILURE("任务实际所得佣金不应大于任务佣金");
+            }
+            entity.setSjyj(StringUtil.getMoneyDouble(sjyj));
         }
-        entity.setSjyj(StringUtil.getMoneyDouble(sjyj));
+        //
+        entity.setRwzt(rwzt);
+        entity.setShbz(shbz);
         //
         entity.setShrid(userid);
         entity.setShrxm(userReposity.findById(userid).getMz());

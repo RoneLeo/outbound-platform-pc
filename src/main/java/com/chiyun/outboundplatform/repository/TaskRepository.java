@@ -96,7 +96,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     /**
      * 财务人员确认已发放佣金，批量修改
      */
-    @Query(value = "update task set task_state = '6' where id in ?1", nativeQuery = true)
+    @Query(value = "update task set task_state = '7' where id in ?1", nativeQuery = true)
     @Modifying
     @Transactional
     void updateRwztByIdIn(List<Integer> ids);

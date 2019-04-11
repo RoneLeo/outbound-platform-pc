@@ -116,7 +116,7 @@ public class CaseBaseMsgController {
         return ApiResult.SUCCESS("修改成功");
     }
 
-    @ApiOperation("删除")
+    @ApiOperation("删除（注销）")
     @RequestMapping("/delete")
     public ApiResult<Object> delete(Integer id) {
         if (id == null) {
@@ -126,12 +126,30 @@ public class CaseBaseMsgController {
             return ApiResult.FAILURE("该数据不存在");
         }
         try {
-            icaseBaseService.reset(id);
+            casebasemessageRepository.updateXszt(2, id);
         } catch (Exception e) {
             return ApiResult.FAILURE("删除失败");
         }
         return ApiResult.SUCCESS("删除成功");
     }
+
+    @ApiOperation("撤销")
+    @RequestMapping("/undo")
+    public ApiResult<Object> undo(Integer id) {
+        if (id == null) {
+            return ApiResult.FAILURE("id不能为空");
+        }
+        if (!casebasemessageRepository.existsById(id)) {
+            return ApiResult.FAILURE("该数据不存在");
+        }
+        try {
+            casebasemessageRepository.updateXszt(1, id);
+        } catch (Exception e) {
+            return ApiResult.FAILURE("删除失败");
+        }
+        return ApiResult.SUCCESS("删除成功");
+    }
+
 
     @ApiOperation("多条件查询：批次id、案件名称、案件类型、案件状态、案件区域、导入时间")
     @RequestMapping("/findAllByCondition")

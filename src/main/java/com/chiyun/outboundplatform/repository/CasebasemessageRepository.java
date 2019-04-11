@@ -40,10 +40,10 @@ public interface CasebasemessageRepository extends JpaRepository<Casebasemessage
     /**
      * 修改状态
      */
-    @Query(value = "update casebasemessage set show_state = 2 where id = ?1", nativeQuery = true)
+    @Query(value = "update casebasemessage set show_state = ?1 where id = ?2", nativeQuery = true)
     @Modifying
     @Transactional
-    void updateXszt(Integer id);
+    void updateXszt(Integer xszt, Integer id);
 
     /**
      * 通过区域查询案件id

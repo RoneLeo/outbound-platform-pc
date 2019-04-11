@@ -169,13 +169,13 @@ public class CaseBaseMsgController {
         Integer id = (Integer) session.getAttribute("id");
         Integer js=(Integer) session.getAttribute("js");//用户角色
         UserEntity userEntity = userReposity.findById(id);
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "import_time"));
         Page<CasebasemessageEntity> list = null;
         if (StringUtil.isNull(pcid) && StringUtil.isNull(ajmc) && ajlx == null &&
                 ajzt == null && ajqy == null && begin == null && end == null) {
             //管理员
             if(js==1) {
-                list = casebasemessageRepository.findAllByYHid();
+                list = casebasemessageRepository.findAllByYHid(pageable);
             }
             else{//其它成员
                 list = casebasemessageRepository.findAllByYhid(id, pageable);

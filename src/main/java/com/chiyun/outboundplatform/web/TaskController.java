@@ -313,8 +313,8 @@ public class TaskController {
             return ApiResult.FAILURE("id不能为空");
         }
         TaskEntity entity = itaskService.findById(id);
-        if (entity.getRwzt() != 4) {
-            return ApiResult.FAILURE("该任务不是待审核任务，不能审核");
+        if (entity.getRwzt() != 4 && entity.getRwzt() != 5 && entity.getRwzt() != 6) {
+            return ApiResult.FAILURE("该状态的任务不能审核");
         }
         if (rwzt == 5) {
             entity.setSjyj(0.00);

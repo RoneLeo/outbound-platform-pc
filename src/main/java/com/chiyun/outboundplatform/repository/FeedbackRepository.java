@@ -26,4 +26,9 @@ public interface FeedbackRepository extends JpaRepository<FeedbackEntity, Intege
     @Transactional
     void deleteAllByIdIn(List<Integer> ids);
 
+    @Query(value = "update feedback set feedback_state = '2' where task_id = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
+    void updateFkztByRwid(Integer rwid);
+
 }

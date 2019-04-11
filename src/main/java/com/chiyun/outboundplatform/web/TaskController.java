@@ -193,13 +193,13 @@ public class TaskController {
     @RequestMapping("/findAllByYwyidYjd")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query"),
-            @ApiImplicitParam(name = "rwzt", value = "任务状态 3-已接单 4-已完成，待审核 5-审核未通过 6-审核通过 7-佣金发放", dataType = "Integer", paramType = "query")
+            @ApiImplicitParam(name = "rwzt", value = "任务状态 3-已接单 4-已完成，待审核 5-审核通过 6-佣金发放", dataType = "Integer", paramType = "query")
     })
     public ApiResult<Object> findAllByYwyidYjd(Integer ywyid, Integer rwzt, int page, int pagesize) {
         if (ywyid == null) {
             return ApiResult.FAILURE("业务员id不能为空");
         }
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "gxsj"));
+        Pageable pageable = PageRequest.of(page - 1, pagesize);
         Page<TaskEntity> list = taskRepository.findAllByRwzxrAndRwztOrderByGxsjDesc(ywyid, rwzt, pageable);
         // 查询案件的案人信息
         List<Map<String, Object>> mapList = new ArrayList<>();
@@ -303,7 +303,6 @@ public class TaskController {
     @ApiOperation("区域管理员审核并修改任务信息和反馈状态")
     @RequestMapping("/check")
     @ApiImplicitParams({
-//            @ApiImplicitParam(name = "rwzt", value = "任务状态  6-审核通过", dataType = "Integer", paramType = "query"),
             @ApiImplicitParam(name = "shbz", value = "审核备注", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "sjyj", value = "实际佣金", dataType = "Double", paramType = "query")
     })
@@ -316,7 +315,7 @@ public class TaskController {
         if (entity.getRwzt() != 4) {
             return ApiResult.FAILURE("该任务不是待审核任务，不能审核");
         }
-        entity.setRwzt(6);
+        entity.setRwzt(5);
         entity.setShbz(shbz);
         // 判断实际佣金
         if (sjyj > entity.getRwyj()) {
@@ -329,7 +328,7 @@ public class TaskController {
         //
         entity.setGxsj(new Date());
         try {
-            itaskService.save(entity);
+            itaskService.check(entity);
         } catch (Exception e) {
             return ApiResult.FAILURE("修改失败");
         }

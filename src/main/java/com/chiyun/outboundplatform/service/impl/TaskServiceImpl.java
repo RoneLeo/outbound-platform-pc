@@ -2,6 +2,7 @@ package com.chiyun.outboundplatform.service.impl;
 
 import com.chiyun.outboundplatform.entity.TaskEntity;
 import com.chiyun.outboundplatform.repository.CasebasemessageRepository;
+import com.chiyun.outboundplatform.repository.FeedbackRepository;
 import com.chiyun.outboundplatform.repository.TaskRepository;
 import com.chiyun.outboundplatform.service.ItaskService;
 import com.chiyun.outboundplatform.utils.DateUtils;
@@ -9,6 +10,7 @@ import com.chiyun.outboundplatform.utils.StringUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -18,6 +20,8 @@ public class TaskServiceImpl implements ItaskService {
 
     @Resource
     private TaskRepository taskRepository;
+    @Resource
+    private FeedbackRepository feedbackRepository;
 
     @Override
     public TaskEntity findById(Integer id) {
@@ -95,6 +99,15 @@ public class TaskServiceImpl implements ItaskService {
         map.put("ydMoney", ydMoney);
         map.put("sjMoney", sjMoney);
         return map;
+    }
+
+    @Override
+    @Transactional
+    public void check(TaskEntity entity) {
+        // 修改反馈状态
+        feedbackRepository.updateFkztByRwid(entity.getId());
+        //
+        taskRepository.save(entity);
     }
 
 

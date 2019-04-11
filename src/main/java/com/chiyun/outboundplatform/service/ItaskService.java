@@ -3,6 +3,7 @@ package com.chiyun.outboundplatform.service;
 import com.chiyun.outboundplatform.entity.TaskEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Map;
@@ -40,6 +41,11 @@ public interface ItaskService {
     Map<String, Object> countYwyRwxx(Integer rwzxr);
 
 
+    /**
+     *  区域管理员审核
+     */
+    @Transactional
+    void check(TaskEntity entity);
 
 
 }

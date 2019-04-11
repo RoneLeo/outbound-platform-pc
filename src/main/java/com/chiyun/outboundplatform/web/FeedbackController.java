@@ -9,6 +9,7 @@ import com.chiyun.outboundplatform.repository.FeedbackRepository;
 import com.chiyun.outboundplatform.repository.FileRepository;
 import com.chiyun.outboundplatform.repository.TaskRepository;
 import com.chiyun.outboundplatform.repository.UserReposity;
+import com.chiyun.outboundplatform.service.IfeedbackService;
 import com.chiyun.outboundplatform.service.ItaskService;
 import com.chiyun.outboundplatform.utils.FileUtil;
 import com.chiyun.outboundplatform.utils.StringUtil;
@@ -44,7 +45,7 @@ public class FeedbackController {
     @Resource
     private UserReposity userReposity;
     @Resource
-    private TaskRepository taskRepository;
+    private IfeedbackService ifeedbackService;
 
     @ApiOperation("添加")
     @RequestMapping("/add")
@@ -89,19 +90,11 @@ public class FeedbackController {
         if (entity.getFkzt() == 2) {
             return ApiResult.FAILURE("该反馈已处理，业务员不能删除");
         }
-        // 修改任务状态
         try {
-            taskRepository.updateRwztById(3, entity.getRwid());
-        } catch (Exception e) {
-            return ApiResult.FAILURE("修改任务状态失败");
-        }
-
-        try {
-            feedbackRepository.deleteById(id);
+            ifeedbackService.deleteById(id);
         } catch (Exception e) {
             return ApiResult.FAILURE("删除失败");
         }
-
         return ApiResult.SUCCESS("删除成功");
     }
 

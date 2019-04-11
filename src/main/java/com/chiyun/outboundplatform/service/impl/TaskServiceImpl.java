@@ -18,8 +18,6 @@ public class TaskServiceImpl implements ItaskService {
 
     @Resource
     private TaskRepository taskRepository;
-    @Resource
-    private CasebasemessageRepository casebasemessageRepository;
 
     @Override
     public TaskEntity findById(Integer id) {

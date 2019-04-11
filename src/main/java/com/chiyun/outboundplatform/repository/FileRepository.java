@@ -13,4 +13,6 @@ public interface FileRepository extends JpaRepository<FileEntity, Integer> {
 
     List<FileEntity> findAllByRwid(Integer rwid);
 
+    void deleteAllByRwid(Integer rwid);
+
 }

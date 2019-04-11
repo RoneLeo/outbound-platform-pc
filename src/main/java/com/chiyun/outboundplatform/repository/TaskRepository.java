@@ -20,8 +20,14 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     TaskEntity save(TaskEntity entity);
 
     /**
+     * 通过案件id和任务状态查询
+     */
+    Page<TaskEntity> findAllByAjidAndRwztOrderByRwcjsj(Integer ajid, Integer rwzt, Pageable pageable);
+
+    /**
      * 通过任务状态分页查询
      */
+    @Query(value = "select * from task where task_state = ?1 and case_id in (select distinct id from casebasemessage where show_state = '1')", nativeQuery = true)
     Page<TaskEntity> findAllByRwzt(Integer rwzt, Pageable pageable);
 
     List<TaskEntity> findAllByAjid(Integer ajid);
@@ -35,14 +41,6 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     @Modifying
     @Transactional
     void updateRwztById(Integer rwzt, Integer id);
-
-    /**
-     * 根据案件id修改任务状态：注销
-     */
-    @Query(value = "update task set task_state = '8' where case_id = ?1", nativeQuery = true)
-    @Modifying
-    @Transactional
-    void resetByAjid(Integer ajid);
 
     /**
      * 获取最早的任务截止时间和任务完成时间
@@ -72,10 +70,10 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     @Query(value = "select count(id) from task where task_peopleId = ?1 and task_state = ?2", nativeQuery = true)
     int countAllByRwzxrAndRwzt(Integer rwzxr, Integer rwzt);
 
-    @Query(value = "select sum(task_money) from task where task_peopleId = ?1", nativeQuery = true)
+    @Query(value = "select sum(task_money) from task where task_peopleId = ?1 and task_state != '8'", nativeQuery = true)
     Double sumAllRwyjByRwzxr(Integer rwzxr);
 
-    @Query(value = "select sum(actual_money) from task where task_peopleId = ?1", nativeQuery = true)
+    @Query(value = "select sum(actual_money) from task where task_peopleId = ?1 and task_state != '8'", nativeQuery = true)
     Double sumAllSjyjByRwzxr(Integer rwzxr);
 
     /**
@@ -107,21 +105,22 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     /**
      * 通过案件id统计任务佣金
      */
-    @Query(value = "select sum(task_money) from task where case_id = ?1", nativeQuery = true)
+    @Query(value = "select sum(task_money) from task where case_id = ?1 and task_state != '8'", nativeQuery = true)
     Double sumAllRwyjByAjid(Integer ajid);
 
     /**
      * 通过任务执行人、任务状态查询
      */
+    @Query(value = "select * from task where task_peopleId = ?1 and task_state = ?2 and case_id in (select distinct id from casebasemessage where show_state = '1') order by update_time desc ", nativeQuery = true)
     Page<TaskEntity> findAllByRwzxrAndRwztOrderByGxsjDesc(Integer ywyid, Integer rwzt, Pageable pageable);
 
-    @Query(value = "select * from task where task_state in (1,2) and case_id in (select id from casebasemessage where area_id in (SELECT area_code from user where id = ?1)) order by task_state", nativeQuery = true)
+    @Query(value = "select * from task where task_state in (1,2) and case_id in (select id from casebasemessage where show_state = '1' and area_id in (SELECT area_code from user where id = ?1)) order by task_state", nativeQuery = true)
     Page<TaskEntity> findAllByRwzxrOrderByRwztDesc(Integer ywyid, Pageable pageable);
 
     /**
      * 业务员单框查询
      */
-    @Query(value = "SELECT * FROM task WHERE task_state in (1,2) and (CONCAT(task_name, task_time, task_money, task_description, task_way) LIKE ?1 or CONCAT(task_name, task_time, task_money, task_description, task_way) is null) and case_id in (SELECT id from casebasemessage where area_id in (SELECT area_code from user where id = ?2)) order by update_time desc ", nativeQuery = true)
+    @Query(value = "SELECT * FROM task WHERE task_state in (1,2) and (CONCAT(task_name, task_time, task_money, task_description, task_way) LIKE ?1 or CONCAT(task_name, task_time, task_money, task_description, task_way) is null) and case_id in (SELECT id from casebasemessage where show_state = '1' and area_id in (SELECT area_code from user where id = ?2)) order by update_time desc ", nativeQuery = true)
     Page<TaskEntity> findAllByCondition(String param, Integer ywyid, Pageable pageable);
 
     /**
@@ -132,7 +131,8 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
             "if(?4 is not null, task_way = ?4, 1 = 1) and " +
             "if(?5 is not null, task_state = ?5, 1 = 1) and " +
             "task_people like ?6 and " +
-            "create_time between ?7 and ?8", nativeQuery = true)
+            "create_time between ?7 and ?8 and " +
+            "case_id in (select distinct id from casebasemessage where show_state = '1')", nativeQuery = true)
     Page<TaskEntity> findAllByConditionAndRwjzsjBetweenAndRwcjsjBetween(String rwmc, Date beginJzsj, Date endJzsj,
                                                                         Integer rwfs, Integer rwzt, String rwzxrmc,
                                                                         Date beginCjsj, Date endCjsj, Pageable pageable);
@@ -143,7 +143,8 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
             "if(?4 is not null, task_way = ?4, 1 = 1) and " +
             "task_people like ?5 and  " +
             "complate_time between ?6 and ?7 and " +
-            "create_time between ?8 and ?9 and task_state = '4'", nativeQuery = true)
+            "create_time between ?8 and ?9 and task_state = '4' and " +
+            "case_id in (select distinct id from casebasemessage where show_state = '1'", nativeQuery = true)
     Page<TaskEntity> findAllByConditionAndRwjzsjBetweenAAndRwcjsjBetweenAndRwcjsjBetween(String rwmc, Date beginJzsj, Date endJzsj,
                                                                                          Integer rwfs, String rwzxrmc, Date beginWcsj, Date endWcsj,
                                                                                          Date beginCjsj, Date endCjsj, Pageable pageable);

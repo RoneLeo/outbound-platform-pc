@@ -71,14 +71,34 @@ public class CaseBaseMsgController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
-    @ApiOperation("通过案件id查询任务")
-    @RequestMapping("/findAllTaskByAjid")
-    public ApiResult<Object> findAllByAjidOrderByRwcjsj(Integer ajid, int page, int pagesize) {
+//    @ApiOperation("通过案件id查询任务")
+//    @RequestMapping("/findAllTaskByAjid")
+//    public ApiResult<Object> findAllByAjidOrderByRwcjsj(Integer ajid, int page, int pagesize) {
+//        if (ajid == null) {
+//            return ApiResult.FAILURE("案件id不能为空");
+//        }
+//        Pageable pageable = PageRequest.of(page - 1, pagesize);
+//        Page<TaskEntity> list = taskRepository.findAllByAjidOrderByRwcjsj(ajid, pageable);
+//        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+//    }
+
+    @ApiOperation("通过案件id和任务状态查询任务")
+    @RequestMapping("/findAllTaskByAjidAndRwzt")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ajid", value = "案件id", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "rwzt", value = "任务状态", dataType = "Integer", paramType = "query"),
+    })
+    public ApiResult<Object> findAllByAjidOrderByRwcjsj(Integer ajid, Integer rwzt, int page, int pagesize) {
         if (ajid == null) {
             return ApiResult.FAILURE("案件id不能为空");
         }
         Pageable pageable = PageRequest.of(page - 1, pagesize);
-        Page<TaskEntity> list = taskRepository.findAllByAjidOrderByRwcjsj(ajid, pageable);
+        Page<TaskEntity> list = null;
+        if (rwzt == null) {
+            list = taskRepository.findAllByAjidOrderByRwcjsj(ajid, pageable);
+        } else {
+            list = taskRepository.findAllByAjidAndRwztOrderByRwcjsj(ajid, rwzt, pageable);
+        }
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 

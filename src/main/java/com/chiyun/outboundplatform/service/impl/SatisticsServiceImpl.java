@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -106,10 +109,11 @@ public class SatisticsServiceImpl {
      * @param end
      * @Desc: 查询时间段内佣金获取排名
      */
-    public Object userAchieve(Date begin, Date end) {
-        String sql = "SELECT sjyj,rwl,uid,@rownum:=@rownum+1 px FROM (SELECT sum(actual_money) sjyj,count(*) rwl,task_peopleId uid ,@rownum:=0  FROM task WHERE if(? IS NULL ,1=1,update_time >=?)AND if(? IS NULL ,1=1,update_time <=?) AND exists(SELECT 1 FROM casebasemessage WHERE show_state =1 AND case_id = casebasemessage.id) AND exists(SELECT 1 FROM user WHERE task_peopleId = user.id AND type = 1 AND role_id >=3 AND role_id<=4) GROUP BY task_peopleId ORDER BY sjyj DESC)se";
-//        jdbcTemplate.query(sql,);
-        return taskRepository.taskCountAchieveByDate(begin, end);
+    public Object userAchieve(String begin, String end) {
+        String sql = "SELECT sjyj,rwl,uid,@rownum:=@rownum+1 px FROM (SELECT sum(actual_money) sjyj,count(*) rwl,task_peopleId uid ,@rownum:=0  FROM task WHERE update_time >='" + begin + "'AND update_time <='" + end + "' AND exists(SELECT 1 FROM casebasemessage WHERE show_state =1 AND case_id = casebasemessage.id) AND exists(SELECT 1 FROM user WHERE task_peopleId = user.id AND type = 1 AND role_id >=3 AND role_id<=4) GROUP BY task_peopleId ORDER BY sjyj DESC)se";
+        System.out.print("\n" + sql + "\n");
+        List<Map<String, Object>> ob = jdbcTemplate.queryForList(sql);
+        return ob;
     }
 
     /**
@@ -118,7 +122,10 @@ public class SatisticsServiceImpl {
      * @param end
      * @Desc: 查询时间段内某个业务员佣金获取排名
      */
-    public Object userAchieve(int uid, Date begin, Date end) {
-        return taskRepository.taskCountAchieveByUidAndDate(uid, begin, end);
+    public Object userAchieve(int uid, String begin, String end) {
+        String sql = "SELECT * FROM (SELECT sjyj,rwl,uid,@rownum:=@rownum+1 px FROM (SELECT sum(actual_money) sjyj,count(*) rwl,task_peopleId uid ,@rownum:=0  FROM task WHERE  update_time >='" + begin + "'AND update_time <='" + end + "' AND exists(SELECT 1 FROM casebasemessage WHERE show_state =1 AND case_id = casebasemessage.id) AND exists(SELECT 1 FROM user WHERE task_peopleId = user.id AND type = 1 AND role_id >=3 AND role_id<=4) GROUP BY task_peopleId ORDER BY sjyj DESC)se)bes WHERE uid = '" + uid + "'";
+        System.out.print("\n" + sql + "\n");
+        List<Map<String, Object>> ob = jdbcTemplate.queryForList(sql);
+        return ob;
     }
 }

@@ -162,19 +162,4 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     @Query(value = "SELECT task_state zt,count(*) sl FROM task WHERE task_peopleId = ?1 AND if(?2 IS NULL ,1=1,update_time >=?2)AND if(?3 IS NULL ,1=1,update_time <=?3) AND exists(SELECT 1 FROM casebasemessage WHERE case_id = casebasemessage.id AND show_state =1)GROUP BY task_peopleId,task_state", nativeQuery = true)
     List<Map<String, Object>> taskCountByUidAndDate(int uid, Date begin, Date end);
 
-    /**
-     * @param begin
-     * @param end
-     * @Desc: 查询时间段内佣金获取排名
-     */
-    @Query(value = "SELECT sjyj,rwl,uid,@rownum:=@rownum+1 px FROM (SELECT sum(actual_money) sjyj,count(*) rwl,task_peopleId uid ,@rownum:=0  FROM task WHERE if(?1 IS NULL ,1=1,update_time >=?1)AND if(?2 IS NULL ,1=1,update_time <=?2) AND exists(SELECT 1 FROM casebasemessage WHERE show_state =1 AND case_id = casebasemessage.id) AND exists(SELECT 1 FROM user WHERE task_peopleId = user.id AND type = 1 AND role_id >=3 AND role_id<=4) GROUP BY task_peopleId ORDER BY sjyj DESC)se", nativeQuery = true)
-    List<Map<String, Object>> taskCountAchieveByDate(Date begin, Date end);
-
-    /**
-     * @param begin
-     * @param end
-     * @Desc: 查询时间段内某个业务员佣金获取排名
-     */
-    @Query(value = "SELECT * FROM (SELECT sjyj,rwl,uid,@rownum/*'*/:=/*'*/@rownum+1 px FROM (SELECT sum(actual_money) sjyj,count(*) rwl,task_peopleId uid ,@rownum/*'*/:=/*'*/0  FROM task WHERE if(?2 IS NULL ,1=1,update_time >=?2)AND if(?3 IS NULL ,1=1,update_time <=?3) AND exists(SELECT 1 FROM casebasemessage WHERE show_state =1 AND case_id = casebasemessage.id) AND exists(SELECT 1 FROM user WHERE task_peopleId = user.id AND type = 1 AND role_id >=3 AND role_id<=4) GROUP BY task_peopleId ORDER BY sjyj DESC)se)bes WHERE uid = ?1", nativeQuery = true)
-    Map<String, Object> taskCountAchieveByUidAndDate(int uid, Date begin, Date end);
 }

@@ -163,7 +163,7 @@ public class StatisticsController {
     @ApiOperation("用户业绩统计排名")
     @RequestMapping("/user/achieve")
     public ApiResult userAchieve(@RequestParam(required = false) @ApiParam("查询日期，为空则查当前时间,格式：yyyy-MM-dd") Date date,
-                                 @RequestParam(required = false) @ApiParam(value = "类型：1选定年,其他-选定月份,默认月份", required = false) Integer lx) {
+                                 @RequestParam(required = false) @ApiParam(value = "类型：1选定年,其他-选定月份,默认月份") Integer lx) {
         if (lx == null)
             lx = 0;
         Date begin, end;
@@ -176,7 +176,7 @@ public class StatisticsController {
             begin = DateUtils.getYearBegin(date);
             end = DateUtils.getYearEnd(date);
         }
-        return ApiResult.SUCCESS(satisticsService.userAchieve(begin, end));
+        return ApiResult.SUCCESS(satisticsService.userAchieve(formatternew.format(begin), formatternew.format(end)));
     }
 
     @ApiOperation("指定用户业绩统计排名")
@@ -196,6 +196,6 @@ public class StatisticsController {
             begin = DateUtils.getYearBegin(date);
             end = DateUtils.getYearEnd(date);
         }
-        return ApiResult.SUCCESS(satisticsService.userAchieve(uid, begin, end));
+        return ApiResult.SUCCESS(satisticsService.userAchieve(uid, formatternew.format(begin), formatternew.format(end)));
     }
 }

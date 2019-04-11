@@ -129,12 +129,19 @@ public class CaseBaseMsgController {
                                                 Date begin, Date end, int page, int pagesize, HttpSession session) {
         // 判断权限，如果是区域管理员，则只能查询本区域
         Integer id = (Integer) session.getAttribute("id");
+        Integer js=(Integer) session.getAttribute("js");//用户角色
         UserEntity userEntity = userReposity.findById(id);
         Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "id"));
         Page<CasebasemessageEntity> list = null;
         if (StringUtil.isNull(pcid) && StringUtil.isNull(ajmc) && ajlx == null &&
                 ajzt == null && ajqy == null && begin == null && end == null) {
-            list = casebasemessageRepository.findAllByYhid(id, pageable);
+            //管理员
+            if(js==1) {
+                list = casebasemessageRepository.findAllByYHid(pageable);
+            }
+            else{//其它成员
+                list = casebasemessageRepository.findAllByYhid(id, pageable);
+            }
         } else {
             if (userEntity.getJs() == 3) {
                 // 区域管理员

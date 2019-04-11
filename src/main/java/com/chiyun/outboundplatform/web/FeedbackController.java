@@ -2,6 +2,7 @@ package com.chiyun.outboundplatform.web;
 
 import com.chiyun.outboundplatform.common.ApiPageResult;
 import com.chiyun.outboundplatform.common.ApiResult;
+import com.chiyun.outboundplatform.common.MustLogin;
 import com.chiyun.outboundplatform.entity.FeedbackEntity;
 import com.chiyun.outboundplatform.entity.FileEntity;
 import com.chiyun.outboundplatform.entity.TaskEntity;
@@ -47,6 +48,7 @@ public class FeedbackController {
     @Resource
     private IfeedbackService ifeedbackService;
 
+    @MustLogin(rolerequired = {4})
     @ApiOperation("添加")
     @RequestMapping("/add")
     public ApiResult<Object> add(FeedbackEntity entity) {
@@ -80,6 +82,7 @@ public class FeedbackController {
         return ApiResult.SUCCESS(entity);
     }
 
+    @MustLogin(rolerequired = {4})
     @ApiOperation("业务员删除未审核的反馈")
     @RequestMapping("/deleteByYwy")
     public ApiResult<Object> deleteByYwy(Integer id) {
@@ -98,6 +101,7 @@ public class FeedbackController {
         return ApiResult.SUCCESS("删除成功");
     }
 
+    @MustLogin(rolerequired = {1, 3})
     @ApiOperation("管理员批量删除")
     @RequestMapping("/delete")
     public ApiResult<Object> delete(List<Integer> ids) {
@@ -113,6 +117,7 @@ public class FeedbackController {
     }
 
 
+    @MustLogin(rolerequired = {1, 3})
     @ApiOperation("修改反馈状态")
     @RequestMapping("/updateFkzt")
     @ApiImplicitParam(name = "ids", value = "反馈id组合，以英文','分隔", dataType = "List", paramType = "query")
@@ -135,6 +140,7 @@ public class FeedbackController {
         return ApiResult.SUCCESS("修改成功");
     }
 
+    @MustLogin(rolerequired = {1, 3})
     @ApiOperation("根据反馈状态查询")
     @RequestMapping("/findAllByFkzt")
     @ApiImplicitParam(name = "fkzt", value = "反馈状态 1-未处理 2-已处理 不传查询未处理的", dataType = "Integer", paramType = "query")
@@ -149,6 +155,7 @@ public class FeedbackController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
+    @MustLogin(rolerequired = {1, 3, 4})
     @ApiOperation("根据任务id查询")
     @RequestMapping("/findAllByRwid")
     public ApiResult<Object> findAllByRwid(Integer rwid) {
@@ -169,6 +176,7 @@ public class FeedbackController {
     }
 
 
+    @MustLogin(rolerequired = {1, 3})
     @ApiOperation("查询所有")
     @RequestMapping("/findAll")
     public ApiResult<Object> findAll() {

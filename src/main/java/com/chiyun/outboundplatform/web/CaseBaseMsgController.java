@@ -2,6 +2,7 @@ package com.chiyun.outboundplatform.web;
 
 import com.chiyun.outboundplatform.common.ApiPageResult;
 import com.chiyun.outboundplatform.common.ApiResult;
+import com.chiyun.outboundplatform.common.MustLogin;
 import com.chiyun.outboundplatform.entity.CasebasemessageAllEntity;
 import com.chiyun.outboundplatform.entity.CasebasemessageEntity;
 import com.chiyun.outboundplatform.entity.TaskEntity;
@@ -45,6 +46,7 @@ public class CaseBaseMsgController {
     @Resource
     private UserReposity userReposity;
 
+    @MustLogin(rolerequired = {1, 2, 3, 4})
     @RequestMapping("/findAllInfoById")
     @ApiOperation("根据id获取案件关联信息")
     public ApiResult<Object> findAllInfoById(@RequestParam Integer id, HttpSession session) {
@@ -54,6 +56,7 @@ public class CaseBaseMsgController {
         return ApiResult.SUCCESS(entity);
     }
 
+    @MustLogin(rolerequired = {1, 2, 3, 4})
     @RequestMapping("/findInfoById")
     @ApiOperation("根据id获取案件基本信息")
     public ApiResult<Object> findInfoById(@RequestParam Integer id, HttpSession session) {
@@ -63,6 +66,7 @@ public class CaseBaseMsgController {
         return ApiResult.SUCCESS(entity);
     }
 
+    @MustLogin(rolerequired = {1, 2, 3, 4})
     @RequestMapping("/findAllByPage")
     @ApiOperation("分页获取案件信息")
     public ApiResult<Object> findAllByPage(@RequestParam @ApiParam("页数,需大于1") int page, @RequestParam int pagesize, HttpSession session) {
@@ -71,17 +75,8 @@ public class CaseBaseMsgController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
-//    @ApiOperation("通过案件id查询任务")
-//    @RequestMapping("/findAllTaskByAjid")
-//    public ApiResult<Object> findAllByAjidOrderByRwcjsj(Integer ajid, int page, int pagesize) {
-//        if (ajid == null) {
-//            return ApiResult.FAILURE("案件id不能为空");
-//        }
-//        Pageable pageable = PageRequest.of(page - 1, pagesize);
-//        Page<TaskEntity> list = taskRepository.findAllByAjidOrderByRwcjsj(ajid, pageable);
-//        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
-//    }
 
+    @MustLogin(rolerequired = {1, 2, 3})
     @ApiOperation("通过案件id和任务状态查询任务")
     @RequestMapping("/findAllTaskByAjidAndRwzt")
     @ApiImplicitParams({
@@ -102,6 +97,7 @@ public class CaseBaseMsgController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
+    @MustLogin(rolerequired = {1, 3})
     @ApiOperation("修改")
     @RequestMapping("/update")
     public ApiResult<Object> update(CasebasemessageEntity entity) {
@@ -116,6 +112,7 @@ public class CaseBaseMsgController {
         return ApiResult.SUCCESS("修改成功");
     }
 
+    @MustLogin(rolerequired = {1, 3})
     @ApiOperation("删除（注销）")
     @RequestMapping("/delete")
     public ApiResult<Object> delete(Integer id) {
@@ -133,6 +130,7 @@ public class CaseBaseMsgController {
         return ApiResult.SUCCESS("删除成功");
     }
 
+    @MustLogin(rolerequired = {1, 3})
     @ApiOperation("撤销")
     @RequestMapping("/undo")
     public ApiResult<Object> undo(Integer id) {
@@ -151,6 +149,7 @@ public class CaseBaseMsgController {
     }
 
 
+    @MustLogin(rolerequired = {1, 3, 4})
     @ApiOperation("多条件查询：批次id、案件名称、案件类型、案件状态、案件区域、导入时间")
     @RequestMapping("/findAllByCondition")
     @ApiImplicitParams({
@@ -169,7 +168,7 @@ public class CaseBaseMsgController {
         Integer id = (Integer) session.getAttribute("id");
         Integer js=(Integer) session.getAttribute("js");//用户角色
         UserEntity userEntity = userReposity.findById(id);
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "import_time"));
+        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "drsj"));
         Page<CasebasemessageEntity> list = null;
         if (StringUtil.isNull(pcid) && StringUtil.isNull(ajmc) && ajlx == null &&
                 ajzt == null && ajqy == null && begin == null && end == null) {
@@ -192,6 +191,7 @@ public class CaseBaseMsgController {
 
 
 
+    @MustLogin(rolerequired = {1, 3})
     @ApiOperation("登录用户查询本区域案件")
     @RequestMapping("/findAllByAjqy")
     public ApiResult<Object> findAllByAjqy(HttpSession session, int page, int pagesize) {
@@ -204,6 +204,7 @@ public class CaseBaseMsgController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
+    @MustLogin(rolerequired = {1, 3})
     @ApiOperation("管理员确认案件完成状态")
     @RequestMapping("/check")
     public ApiResult<Object> check(Integer id) {

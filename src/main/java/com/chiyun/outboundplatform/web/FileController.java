@@ -1,6 +1,7 @@
 package com.chiyun.outboundplatform.web;
 
 import com.chiyun.outboundplatform.common.ApiResult;
+import com.chiyun.outboundplatform.common.MustLogin;
 import com.chiyun.outboundplatform.entity.FileEntity;
 import com.chiyun.outboundplatform.repository.FileRepository;
 import com.chiyun.outboundplatform.utils.StringUtil;
@@ -27,6 +28,7 @@ public class FileController {
     @Resource
     private FileRepository fileRepository;
 
+    @MustLogin(rolerequired = {1, 3, 4})
     @ApiOperation("添加")
     @RequestMapping("/add")
     @ApiImplicitParam(name = "rwid", value = "任务id", dataType = "Integer", paramType = "query")
@@ -51,6 +53,7 @@ public class FileController {
         return fileEntity;
     }
 
+    @MustLogin(rolerequired = {1, 3, 4})
     @ApiOperation("通过任务id查询")
     @RequestMapping("/findAllByRwid")
     @ApiImplicitParam(name = "rwid", value = "任务id", dataType = "Integer", paramType = "query")

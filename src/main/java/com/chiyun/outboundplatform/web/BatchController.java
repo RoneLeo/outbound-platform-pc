@@ -50,7 +50,7 @@ public class BatchController {
     private BatchRecordRepository batchRecordRepository;
 
     @ApiOperation("添加")
-//    @MustLogin(rolerequired = {1, 2})
+    @MustLogin(rolerequired = {1, 2})
     @RequestMapping("/add")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pcmc", value = "模板名称", dataType = "String", paramType = "query"),
@@ -166,7 +166,7 @@ public class BatchController {
         return ApiResult.SUCCESS("删除成功");
     }
 
-    //    @MustLogin(rolerequired = {1, 2})
+    @MustLogin(rolerequired = {1, 2})
     @ApiOperation("通过模板id查询所有字段组合")
     @RequestMapping("/findAllZdzh")
     public ApiResult<Object> findAllZdzh(String pcid) {
@@ -176,7 +176,7 @@ public class BatchController {
         return ApiResult.SUCCESS(ibatchService.getBatchMap(pcid));
     }
 
-    //    @MustLogin(rolerequired = {1, 2})
+    @MustLogin(rolerequired = {1, 2})
     @ApiOperation("查询所有模板")
     @RequestMapping("/findAll")
     public ApiResult<Object> findAll(int page, int pagesize) {

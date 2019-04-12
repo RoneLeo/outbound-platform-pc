@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="caseInfoModule">
         <div class="container">
             <div class="case-desc clearfix">
                 <div class="left">
@@ -25,8 +25,10 @@
             </div>
         </div>
         <div class="case-info">
-            <el-button class="return-btn" type="success" @click="backToCaseList">返回案件列表</el-button>
-
+            <div class="return-btn">
+                <el-button  type="success" @click="backToCaseList">返回案件列表</el-button>
+                <el-button  type="success" @click="getTaskData();getCaseInfo();"><i class="el-icon-lx-refresh"></i> 刷新</el-button>
+            </div>
             <el-tabs type="border-card">
                 <el-tab-pane label="案件基本信息">
                     <div id="caseInfo">
@@ -158,14 +160,17 @@
                         <el-table-column prop="rwms" label="任务描述"></el-table-column>
                         <el-table-column label="操作" width="150">
                             <template slot-scope="scope">
-                                <el-button size="mini" type="text" @click="handleEdit(scope.$index, scope.row)">
+                                <el-button v-if="scope.row.rwzt >= 4"  size="mini" type="text" @click="handleCheck(scope.$index, scope.row)">
+                                    审核
+                                </el-button>
+                                <el-button v-if="scope.row.rwzt <= 3" size="mini" type="text" @click="handleEdit(scope.$index, scope.row)">
                                     编辑
                                 </el-button>
-                                <el-button size="mini" type="text" @click="handleTask(scope.$index, scope.row)">
+                                <el-button v-if="scope.row.rwzt <= 2"  size="mini" type="text" @click="handleTask(scope.$index, scope.row)">
                                     指派
                                 </el-button>
-                                <el-button size="mini" type="text" @click="handleTaskRecord(scope.$index, scope.row)">
-                                    反馈记录
+                                <el-button v-if="scope.row.rwzt >= 3" size="mini" type="text" @click="handleTaskRecord(scope.$index, scope.row)">
+                                    反馈情况
                                 </el-button>
                             </template>
                         </el-table-column>
@@ -185,29 +190,93 @@
                 </el-tab-pane>
             </el-tabs>
         </div>
+        <!--任务添加,编辑-->
+        <el-dialog  title="任务信息" :visible.sync="taskModelVisible" width="60%">
+            <el-form class="task-form clearfix" ref="taskForm" :model="taskForm" label-width="120px" >
+                <el-form-item label="任务名称" prop="rwmc"
+                              :rules="[{ required: true, message: '任务名称不能为空', trigger: 'blur' }]">
+                    <el-input v-model="taskForm.rwmc"></el-input>
+                </el-form-item>
+                <el-form-item label="任务佣金" prop="rwyj">
+                    <el-input v-model="taskForm.rwyj"></el-input>
+                </el-form-item>
 
+                <el-form-item label="任务方式">
+                    <el-select v-model="taskForm.rwfs" placeholder="请选择">
+                        <el-option
+                                v-for="item in rwfsArr"
+                                :key="item.ctdm"
+                                :label="item.ctmc"
+                                :value="item.ctdm">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="截止时间" prop="rwjzsj">
+                    <el-date-picker
+                            v-model="taskForm.rwjzsj"
+                            type="datetime">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="任务状态">
+                    <el-select v-model="taskForm.rwzt" placeholder="不可修改">
+                        <el-option
+                                disabled readonly
+                                v-for="item in rwztArr"
+                                :key="item.ctdm"
+                                :label="item.ctmc"
+                                :value="item.ctdm">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
 
-        <!--任务记录-->
-        <el-dialog :title="taskTitle" :visible.sync="recordModelVisible" width="60%">
-            <div>
-                <el-steps :active="1">
-                    <el-step title="记录1" description="任务记录详细信息"></el-step>
-                    <el-step title="记录2" description="任务记录详细信息"></el-step>
-                    <el-step title="记录3" description="任务记录详细信息"></el-step>
-                </el-steps>
-
-                <div>
-
+                <el-form-item label="完成时间" prop="rwjzsj">
+                    <el-input v-model="taskForm.rwwcsj" readonly disabled></el-input>
+                </el-form-item>
+                <div class="clearfix">
+                    <template v-if="!taskForm.id">
+                        <el-form-item label="任务接收人">
+                            <el-select v-model="taskForm.rwzxr" placeholder="请选择">
+                                <el-option
+                                        v-for="item in ywyArr"
+                                        :key="item.id"
+                                        :label="item.mz"
+                                        :value="item.id" >
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </template>
+                    <template v-else="">
+                        <el-form-item label="任务接收人">
+                            <el-input v-model="taskForm.rwzxrmc" readonly disabled></el-input>
+                        </el-form-item>
+                    </template>
+                    <el-form-item label="任务审核人">
+                        <el-input v-model="taskForm.shrxm" readonly disabled></el-input>
+                    </el-form-item>
                 </div>
+                <el-form-item class="el-form-item-1" label="任务描述">
+                    <el-input resize="none" type="textarea" v-model="taskForm.rwms"></el-input>
+                </el-form-item>
+                <el-form-item class="el-form-item-1" label="审核备注">
+                    <el-input resize="none" type="textarea" readonly v-model="taskForm.shbz"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="taskModelVisible = false">取 消</el-button>
+                <el-button @click="saveTask" type="primary">保 存</el-button>
             </div>
-            <div class="clearfix feedback-content">
+        </el-dialog>
+
+        <!--反馈记录-->
+        <el-dialog id="feedbackContent" :title="taskTitle+` - 反馈信息`" :visible.sync="recordModelVisible" width="70%">
+            <div class="clearfix content">
                 <div class="item">
-                    <span class="pre">反馈人员:</span>
+                    <span class="pre">处理人员:</span>
                     <span class="val">{{recordForm.fkrxm}}</span>
                 </div>
                 <div class="item">
-                    <span class="pre">反馈状态:</span>
-                    <span class="val">{{recordForm.fkzt}}</span>
+                    <span class="pre">任务状态:</span>
+                    <span class="val">{{recordForm.rwzt}}</span>
                 </div>
                 <div class="item">
                     <span class="pre">反馈时间:</span>
@@ -218,29 +287,34 @@
                     <span class="val">{{recordForm.fknr}}</span>
                 </p>
                 <div class="item item-all">
-                    <div class="pre">反馈附件:</div>
+                    <div class="pre">图像资料:</div>
                     <div class="record-file">
                         <template v-for="item in recordFile.photo">
                             <img :src="baseUrl + item" alt="">
                         </template>
-
-
                     </div>
+                </div>
+                <div class="item item-all">
+                    <div class="pre">音频资料:</div>
                     <div class="record-file">
                         <template v-for="item2 in recordFile.audio">
                             <audio controls="controls" :src="baseUrl + item2">
-                                您的浏览器不支持 audio 标签。
+                                您的浏览器不支持 audio。
                             </audio>
                         </template>
                     </div>
+                </div>
+                <div class="item item-all">
+                    <div class="pre">视频资料:</div>
                     <div class="record-file">
                         <template v-for="item3 in recordFile.video">
-                            <video width="200" :src="baseUrl + item3" controls="controls"></video>
+                            <video width="150" :src="baseUrl + item3" controls="controls"></video>
                         </template>
                     </div>
                 </div>
             </div>
             <div slot="footer" class="dialog-footer">
+                <!--<el-button type="primary"  @click="recordModelVisible = false;">立即审核</el-button>-->
                 <el-button @click="recordModelVisible = false">关 闭</el-button>
             </div>
         </el-dialog>
@@ -265,79 +339,30 @@
             </div>
         </el-dialog>
 
-        <!--任务添加,编辑-->
-        <el-dialog  title="任务信息" :visible.sync="taskModelVisible" width="60%">
-            <el-form class="task-form clearfix" ref="taskForm" :model="taskForm" label-width="120px" >
-                <el-form-item label="任务名称" prop="rwmc"
-                              :rules="[{ required: true, message: '任务名称不能为空', trigger: 'blur' }]">
-                    <el-input v-model="taskForm.rwmc"></el-input>
+        <!--任务审核-->
+        <el-dialog class="task-form"  title="审核任务" :visible.sync="checkModelVisible" width="40%">
+            <el-form  label-width="100px" >
+                <el-form-item class="el-form-item-1" label="审核状态">
+                    <el-radio-group v-model="checkForm.rwzt">
+                        <el-radio label="5">审核不通过</el-radio>
+                        <el-radio label="6">审核通过</el-radio>
+                    </el-radio-group>
                 </el-form-item>
-                <el-form-item label="任务佣金" prop="rwyj">
-                    <el-input v-model="taskForm.rwyj"></el-input>
-                </el-form-item>
-
-                <el-form-item label="任务方式">
-                    <el-select v-model="taskForm.rwfs" placeholder="请选择">
-                        <el-option
-                                v-for="item in rwfsArr"
-                                :key="item.ctdm"
-                                :label="item.ctmc"
-                                :value="item.ctdm">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="任务状态">
-                    <el-select v-model="taskForm.rwzt" placeholder="请选择">
-                        <el-option
-                                v-for="item in rwztArr"
-                                :key="item.ctdm"
-                                :label="item.ctmc"
-                                :value="item.ctdm">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="截止时间" prop="rwjzsj">
-                    <el-date-picker
-                            v-model="taskForm.rwjzsj"
-                            type="datetime">
-                    </el-date-picker>
-                </el-form-item>
-                <el-form-item label="完成时间" prop="rwjzsj">
-                    <el-input v-model="taskForm.rwwcsj" readonly></el-input>
-                </el-form-item>
-                <el-form-item class="el-form-item-1" label="任务描述">
-                    <el-input type="textarea" v-model="taskForm.rwms"></el-input>
-                </el-form-item>
-
-                <div class="clearfix">
-                    <el-form-item label="立即指派">
-                        <el-switch v-model="taskForm.isAssign"></el-switch>
-                    </el-form-item>
-                    <template v-if="taskForm.isAssign">
-                        <el-form-item label="任务接收人">
-                            <el-select v-model="taskForm.rwzxr" placeholder="请选择">
-                                <el-option
-                                        v-for="item in ywyArr"
-                                        :key="item.id"
-                                        :label="item.mz"
-                                        :value="item.id" >
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </template>
-
-                </div>
                 <el-form-item class="el-form-item-1" label="审核备注">
-                    <el-input type="textarea" readonly v-model="taskForm.shbz"></el-input>
+                    <el-input resize="none" type="textarea" v-model="checkForm.shbz"></el-input>
+                </el-form-item>
+                <el-form-item label="实际佣金">
+                    <el-input-number  v-model="checkForm.sjyj"></el-input-number>
+                </el-form-item>
+                <el-form-item label="任务佣金">
+                    <el-input readonly  v-model="checkForm.rwyj"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="taskModelVisible = false">取 消</el-button>
-                <el-button @click="saveTask" type="primary">保 存</el-button>
+                <el-button @click="checkModelVisible = false">取 消</el-button>
+                <el-button @click="checkTask" type="primary">保存</el-button>
             </div>
         </el-dialog>
-
-
     </div>
 </template>
 
@@ -356,13 +381,15 @@
                 caseInfo: {},
                 caseForm: {},
                 taskForm: {},
+                checkForm: {},
                 recordForm: {},
                 recordFile: {},
                 caseTitle: '',
-                taskTitle: '任务一的记录信息',
+                taskTitle: '',
                 recordModelVisible: false,
                 assignedModelVisible: false,
                 taskModelVisible: false,
+                checkModelVisible: false,
                 ajlxs: [],
                 ajzts:[],
                 ajqys: [],
@@ -403,7 +430,7 @@
 
             },
             getTaskData(){
-                this.$axios.post('casebase/findAllTaskByAjid', {ajid:this.caseInfo.id,page: this.currentPage, pagesize: this.pageSize}).then(res => {
+                this.$axios.post('casebase/findAllTaskByAjidAndRwzt', {ajid:this.caseInfo.id,page: this.currentPage, pagesize: this.pageSize}).then(res => {
                     this.tableData = res.data;
                     this.total = res.counts;
                 })
@@ -435,6 +462,42 @@
             backToCaseList(){
                 this.$router.push({name:'cases'});
             },
+
+            //审核
+            handleCheck(index, row){
+                console.log(row);
+                this.checkModelVisible = true;
+                this.checkForm = Object.assign({}, row);
+                this.checkForm.sjyj = this.checkForm.rwyj;
+                this.checkForm.rwzt = String(this.checkForm.rwzt);
+            },
+            handleEdit(index, row){
+                // console.log(row);
+                this.taskModelVisible = true;
+                this.taskForm = Object.assign({}, row);
+                this.taskForm.isAssign = true;
+
+            },
+            handleTask(index, row) {
+                this.taskId = row.id;
+                this.assignedModelVisible = true;
+            },
+            handleTaskRecord(index, row) {
+                console.log(row)
+                this.taskTitle = row.rwmc
+                let rwid = row.id;
+                let rwzt = row.rwzt;
+                this.$axios.post('feedback/findAllByRwid?rwid='+rwid).then(res => {
+                    console.log('任务记录:', res);
+                    if(res.data.id){
+                        this.recordForm = res.data;
+                        this.recordFile = res.data.fkfj;
+                        this.recordForm.rwzt = util.dictParse(rwzt, this.rwztArr);
+                        this.recordModelVisible = true;
+                    }
+                });
+            },
+            //指派保存
             assignTask(){
                 this.$axios.post('task/appoint', {id: this.taskId,ywyid:this.taskPersonId}).then(res => {
                     this.assignedModelVisible = false;
@@ -442,21 +505,14 @@
                     this.getTaskData();
                 })
             },
-            handleEdit(index, row){
-                this.taskModelVisible = true;
-                this.taskForm = Object.assign({}, row);
-            },
-            handleTask(index, row) {
-                this.taskId = row.id;
-                this.assignedModelVisible = true;
-            },
-            handleTaskRecord(index, row) {
-                let rwid = row.id;
-                this.$axios.post('feedback/findAllByRwid?rwid=21').then(res => {
-                    console.log('任务记录:', res);
-                    this.recordForm = res.data;
-                    this.recordFile = res.data.fkfj;
-                    this.recordModelVisible = true;
+            //审核保存
+            checkTask(){
+                this.$axios.post('task/check', this.checkForm).then(res => {
+                    if(res.resCode == 200){
+                        this.checkModelVisible = false;
+                        this.$message.success('审核完成!');
+                        this.getTaskData();
+                    }
                 })
             },
             handleSizeChange(val) {
@@ -491,91 +547,113 @@
 </script>
 
 <style scoped lang="scss">
-    .task-form{
-        .el-form-item{
-            float:left;
-            width: 50%;
-        }
-        .el-form-item-1{
-            width: 100%;
-        }
-    }
-    .case-desc{
-        padding: 5px 0;
-        .left{
-            margin-right: 15px;
-            color: #454545;
-            .val{
-                color: #00ab00;
-                font-weight: bold;
-            }
-        }
-    }
-    .assign-task{
-        .el-select{
-            width: 100%;
-            display: inline-block;
-        }
-    }
-
-    .case-info{
-        position: relative;
-        .return-btn{
-            position: absolute;
-            right:5px;
-            top:5px;
-            z-index: 1;
-        }
-    }
-
-    #caseInfo{
-        .el-form{
-            min-height:400px;
-            /*overflow: auto;*/
+    #caseInfoModule{
+        .task-form{
             .el-form-item{
-                margin:0;
+                float:left;
+                width: 50%;
+            }
+            .el-form-item-1{
+                width: 100% !important;
             }
         }
-        .case-detail-form{
-            .case-item{
-                background: #f7f7f7;
-                margin:0px 15px 4px 15px;
-                .case-title {
-                    color: #292929;
-                    font-weight:bold;
-                    border-left: 2px solid #0F639E;
-                    background: #e4e4e4;
-                    padding:5px;
-                    font-size: 16px;
+        .case-desc{
+            padding: 5px 0;
+            .left{
+                margin-right: 15px;
+                color: #454545;
+                .val{
+                    color: #00ab00;
+                    font-weight: bold;
+                }
+            }
+        }
+        .assign-task{
+            .el-select{
+                width: 100%;
+                display: inline-block;
+            }
+        }
+        .case-info{
+            position: relative;
+            .return-btn{
+                position: absolute;
+                right:5px;
+                top:5px;
+                z-index: 1;
+            }
+        }
+        #caseInfo{
+            .el-form{
+                max-height:700px;
+                /*overflow: auto;*/
+                .el-form-item{
                     margin:0;
                 }
-                .line{
-                    height: 1px;
-                    border-bottom: dotted 1px #e4e4e4;
+            }
+            .case-detail-form{
+                .case-item{
+                    background: #f7f7f7;
+                    margin:0px 15px 4px 15px;
+                    .case-title {
+                        color: #292929;
+                        font-weight:bold;
+                        border-left: 2px solid #0F639E;
+                        background: #e4e4e4;
+                        padding:5px;
+                        font-size: 16px;
+                        margin:0;
+                    }
+                    .line{
+                        height: 1px;
+                        border-bottom: dotted 1px #e4e4e4;
+                    }
+                }
+                .el-form-item{
+                    width: 33%;
+                    display: inline-block;
                 }
             }
-            .el-form-item{
-                width: 33%;
-                display: inline-block;
-
+        }
+        #feedbackContent{
+            .content{
+                max-height: 500px;
+                overflow: auto;
+                clear: both;
             }
+            .el-dialog{
+                .el-dialog__body{
+                    padding:0 20px!important;
+                }
+                .item{
+                    width:33%;
+                    float: left;
+                    margin-bottom: 10px;
+                    .pre{
+
+                    }
+                    .val{
+                        color: #292929;
+                    }
+                }
+                .item-all{
+                    width:100%;
+                }
+                .record-file{
+                    img{
+                        max-height:150px;
+                        width:150px;
+                        display: inline-block;
+                        margin:2px;
+                    }
+                    video{
+                        margin:2px;
+                    }
+                }
+            }
+
+
         }
     }
 
-    .feedback-content{
-        .item{
-            width:33%;
-            float: left;
-        }
-        .item-all{
-            width:100%;
-        }
-        .record-file{
-            img{
-                max-height:200px;
-                width:200px;
-                display: inline-block;
-            }
-        }
-    }
 </style>

@@ -48,6 +48,7 @@ axios.interceptors.response.use(
             let data = response.data;
             if(data.resCode == -1){
                 Message.error(data.resMsg);
+                return false;
             }
             else if(data.resCode == 100){
                 Message.error('未登录');
@@ -64,6 +65,7 @@ axios.interceptors.response.use(
             else{
                 return response.data;
             }
+
         }else{
             Message.error('服务器错误:' + status + ':' + statusText);
         }

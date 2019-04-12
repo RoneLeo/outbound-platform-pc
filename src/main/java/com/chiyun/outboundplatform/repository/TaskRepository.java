@@ -57,11 +57,11 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     @Query(value = "select complate_time from task order by complate_time desc limit 1", nativeQuery = true)
     Date getLatestRwwcsj();
 
-    @Query(value = "select create_time from task order by create_time desc limit 1", nativeQuery = true)
-    Date getLatestRwcjsj();
+    @Query(value = "select create_time from task order by create_time asc limit 1", nativeQuery = true)
+    Date getEarliestRwcjsj();
 
     @Query(value = "select create_time from task order by create_time desc limit 1", nativeQuery = true)
-    Date getEarliestRwcjsj();
+    Date getLatestRwcjsj();
 
 
     /**
@@ -144,7 +144,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
             "task_people like ?5 and  " +
             "complate_time between ?6 and ?7 and " +
             "create_time between ?8 and ?9 and task_state = '4' and " +
-            "case_id in (select distinct id from casebasemessage where show_state = '1'", nativeQuery = true)
+            "case_id in (select distinct id from casebasemessage where show_state = '1')", nativeQuery = true)
     Page<TaskEntity> findAllByConditionAndRwjzsjBetweenAAndRwcjsjBetweenAndRwcjsjBetween(String rwmc, Date beginJzsj, Date endJzsj,
                                                                                          Integer rwfs, String rwzxrmc, Date beginWcsj, Date endWcsj,
                                                                                          Date beginCjsj, Date endCjsj, Pageable pageable);

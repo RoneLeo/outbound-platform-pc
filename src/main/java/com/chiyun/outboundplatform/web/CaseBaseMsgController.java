@@ -168,7 +168,7 @@ public class CaseBaseMsgController {
         Integer id = (Integer) session.getAttribute("id");
         Integer js=(Integer) session.getAttribute("js");//用户角色
         UserEntity userEntity = userReposity.findById(id);
-        Pageable pageable = PageRequest.of(page - 1, pagesize, new Sort(Sort.Direction.DESC, "drsj"));
+        Pageable pageable = PageRequest.of(page - 1, pagesize);
         Page<CasebasemessageEntity> list = null;
         if (StringUtil.isNull(pcid) && StringUtil.isNull(ajmc) && ajlx == null &&
                 ajzt == null && ajqy == null && begin == null && end == null) {

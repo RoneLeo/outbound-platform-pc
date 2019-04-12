@@ -50,7 +50,7 @@ public class BatchController {
     private BatchRecordRepository batchRecordRepository;
 
     @ApiOperation("添加")
-    @MustLogin(rolerequired = {1, 2})
+    @MustLogin
     @RequestMapping("/add")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pcmc", value = "模板名称", dataType = "String", paramType = "query"),
@@ -97,7 +97,7 @@ public class BatchController {
     }
 
     @ApiOperation("修改")
-    @MustLogin(rolerequired = {1, 2})
+    @MustLogin
     @RequestMapping("/update")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pcmc", value = "模板名称", dataType = "String", paramType = "query"),
@@ -150,7 +150,7 @@ public class BatchController {
     }
 
     @ApiOperation("删除")
-    @MustLogin(rolerequired = {1, 2})
+    @MustLogin
     @RequestMapping("/delete")
     @ApiImplicitParam(name = "pcid", value = "模板id", dataType = "String", paramType = "query")
     public ApiResult<Object> delete(String pcid) {
@@ -166,7 +166,7 @@ public class BatchController {
         return ApiResult.SUCCESS("删除成功");
     }
 
-    @MustLogin(rolerequired = {1, 2})
+    @MustLogin
     @ApiOperation("通过模板id查询所有字段组合")
     @RequestMapping("/findAllZdzh")
     public ApiResult<Object> findAllZdzh(String pcid) {
@@ -176,7 +176,7 @@ public class BatchController {
         return ApiResult.SUCCESS(ibatchService.getBatchMap(pcid));
     }
 
-    @MustLogin(rolerequired = {1, 2})
+    @MustLogin
     @ApiOperation("查询所有模板")
     @RequestMapping("/findAll")
     public ApiResult<Object> findAll(int page, int pagesize) {
@@ -186,7 +186,7 @@ public class BatchController {
     }
 
     @ApiOperation("导出模板")
-    @MustLogin(rolerequired = {1, 2})
+    @MustLogin
     @RequestMapping("/exportExcel")
     @ApiImplicitParam(name = "pcid", value = "模板id", dataType = "String", paramType = "query")
     public ApiResult<Object> exportExcel(String pcid, HttpServletResponse response, HttpServletRequest request) throws IOException {
@@ -227,7 +227,7 @@ public class BatchController {
     }
 
     @ApiOperation("导入模板")
-    @MustLogin(rolerequired = {1, 2})
+    @MustLogin
     @RequestMapping("/importExcel")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pcid", value = "批次id", dataType = "String", paramType = "query"),

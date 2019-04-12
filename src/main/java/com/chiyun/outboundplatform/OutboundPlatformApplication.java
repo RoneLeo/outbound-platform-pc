@@ -55,7 +55,7 @@ public class OutboundPlatformApplication {
                 SecurityConstraint constraint = new SecurityConstraint();
                 constraint.setUserConstraint("CONFIDENTIAL");
                 SecurityCollection collection = new SecurityCollection();
-                collection.addPattern("*/");
+                collection.addPattern("/*");
                 constraint.addCollection(collection);
                 context.addConstraint(constraint);
             }

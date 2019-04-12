@@ -140,6 +140,7 @@ public class UserController {
                 SessionUtil.put(String.valueOf(result1.getId()), sessionId);
                 session.setAttribute("id", result1.getId());
                 session.setAttribute("mz", result1.getMz());
+                session.setAttribute("js", userEntity.getJs());
                 session.setAttribute("szxzqdm", result1.getSzxzqdm());
                 result.put("userEntity", result1);
             }

@@ -142,7 +142,7 @@ public class UserController {
                 session.setAttribute("mz", result1.getMz());
                 session.setAttribute("js", result1.getJs());
                 session.setAttribute("szxzqdm", result1.getSzxzqdm());
-                result.put("userEntity", result1);
+                result.put("userInfo", result1);
             }
         } else {
             if (userEntity.getZt() == 1) {

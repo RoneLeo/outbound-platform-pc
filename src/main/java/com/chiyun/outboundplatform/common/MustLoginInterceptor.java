@@ -1,6 +1,7 @@
 package com.chiyun.outboundplatform.common;
 
 import com.chiyun.outboundplatform.utils.MessageUtils;
+import com.chiyun.outboundplatform.utils.SessionUtil;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -25,6 +26,11 @@ public class MustLoginInterceptor extends HandlerInterceptorAdapter {
             int[] needs = annotation.rolerequired();
             for (int need : needs) {
                 if (need == 0 || (role != null && role == need)) {
+                    ApiResult<Object> isLogin = SessionUtil.isLogin(SessionHelper.getSession());
+                    if (isLogin.getResCode() < 200) {
+                        MessageUtils.resultMsg(response, isLogin);
+                        return false;
+                    }
                     return true;
                 }
             }

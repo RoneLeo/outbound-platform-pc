@@ -6,5 +6,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface MustLogin {
-    int[] rolerequired();//0：全部都可访问;其他则为选择角色可访问
+    int[] rolerequired() default {0};//0：全部都可访问;其他则为选择角色可访问
 }

@@ -15,16 +15,12 @@
                 </el-card>
                 <el-card shadow="hover" style="height:252px;">
                     <div slot="header" class="clearfix">
-                        <span>外访完成情况</span>
+                        <span>业务员活跃度排名情况</span>
                     </div>
-                    容易
-                    <el-progress :percentage="71.3" color="#42b983"></el-progress>
-                    中等
-                    <el-progress :percentage="24.1" color="#f1e05a"></el-progress>
-                    困难
-                    <el-progress :percentage="3.7"></el-progress>
-                    特别困难
-                    <el-progress :percentage="0.9" color="#f56c6c"></el-progress>
+                    <template v-for="item,index in userActiveData ">
+                        {{item.xm}}
+                        <el-progress :show-text="false" :percentage="item.sl" color="#42b983"></el-progress>
+                    </template>
                 </el-card>
             </el-col>
             <el-col :span="16">
@@ -112,6 +108,7 @@
         name: 'dashboard',
         data() {
             return {
+                userActiveData:[],
                 userInfo: {},
                 roleDict: [],
                 todoList: [
@@ -193,6 +190,7 @@
             this.handleListener();
             this.changeDate();
             this.getRoleDict();
+            this.getUserActive();
         },
         activated(){
             this.handleListener();
@@ -233,6 +231,12 @@
             renderChart(){
                this.$refs.bar.renderChart();
                this.$refs.line.renderChart();
+            },
+            getUserActive(){
+                this.$axios.post('statistics/user/active').then((res) => {
+                    this.userActiveData = res.data;
+                });
+
             }
         }
     }

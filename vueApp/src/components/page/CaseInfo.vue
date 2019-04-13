@@ -269,49 +269,52 @@
 
         <!--反馈记录-->
         <el-dialog id="feedbackContent" :title="taskTitle+` - 反馈信息`" :visible.sync="recordModelVisible" width="70%">
-            <div class="clearfix content">
-                <div class="item">
-                    <span class="pre">处理人员:</span>
-                    <span class="val">{{recordForm.fkrxm}}</span>
-                </div>
-                <div class="item">
-                    <span class="pre">任务状态:</span>
-                    <span class="val">{{recordForm.rwzt}}</span>
-                </div>
-                <div class="item">
-                    <span class="pre">反馈时间:</span>
-                    <span class="val">{{recordForm.fksj}}</span>
-                </div>
-                <p class="item item-all">
-                    <span class="pre">反馈内容:</span>
-                    <span class="val">{{recordForm.fknr}}</span>
-                </p>
-                <div class="item item-all">
-                    <div class="pre">图像资料:</div>
-                    <div class="record-file">
-                        <template v-for="item in recordFile.photo">
-                            <img :src="baseUrl + item" alt="">
-                        </template>
+            <div class="clearfix">
+                <div class="feedback-content">
+                    <div class="item">
+                        <span class="pre">处理人员:</span>
+                        <span class="val">{{recordForm.fkrxm}}</span>
+                    </div>
+                    <div class="item">
+                        <span class="pre">任务状态:</span>
+                        <span class="val">{{recordForm.rwzt}}</span>
+                    </div>
+                    <div class="item">
+                        <span class="pre">反馈时间:</span>
+                        <span class="val">{{recordForm.fksj}}</span>
+                    </div>
+                    <p class="item item-all">
+                        <span class="pre">反馈内容:</span>
+                        <span class="val">{{recordForm.fknr}}</span>
+                    </p>
+                    <div class="item item-all">
+                        <div class="pre">图像资料:</div>
+                        <div class="record-file">
+                            <template v-for="item in recordFile.photo">
+                                <img :src="baseUrl + item" alt="">
+                            </template>
+                        </div>
+                    </div>
+                    <div class="item item-all">
+                        <div class="pre">音频资料:</div>
+                        <div class="record-file">
+                            <template v-for="item2 in recordFile.audio">
+                                <audio controls="controls" :src="baseUrl + item2">
+                                    您的浏览器不支持 audio。
+                                </audio>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="item item-all">
+                        <div class="pre">视频资料:</div>
+                        <div class="record-file">
+                            <template v-for="item3 in recordFile.video">
+                                <video width="150" :src="baseUrl + item3" controls="controls"></video>
+                            </template>
+                        </div>
                     </div>
                 </div>
-                <div class="item item-all">
-                    <div class="pre">音频资料:</div>
-                    <div class="record-file">
-                        <template v-for="item2 in recordFile.audio">
-                            <audio controls="controls" :src="baseUrl + item2">
-                                您的浏览器不支持 audio。
-                            </audio>
-                        </template>
-                    </div>
-                </div>
-                <div class="item item-all">
-                    <div class="pre">视频资料:</div>
-                    <div class="record-file">
-                        <template v-for="item3 in recordFile.video">
-                            <video width="150" :src="baseUrl + item3" controls="controls"></video>
-                        </template>
-                    </div>
-                </div>
+
             </div>
             <div slot="footer" class="dialog-footer">
                 <!--<el-button type="primary"  @click="recordModelVisible = false;">立即审核</el-button>-->
@@ -616,10 +619,11 @@
             }
         }
         #feedbackContent{
-            .content{
-                max-height: 500px;
-                overflow: auto;
+            overflow: auto;
+            .feedback-content{
+                max-height: 450px;
                 clear: both;
+                overflow: auto;
             }
             .el-dialog{
                 .el-dialog__body{

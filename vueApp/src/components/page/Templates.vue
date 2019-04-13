@@ -30,7 +30,7 @@
                 </el-pagination>
             </div>
 
-            <el-dialog id="fieldDialog" :title="fieldDialogTitle" width="60%" :visible.sync="addFormVisible" :close-on-click-modal="false" @closed="dialogClose">
+            <el-dialog id="fieldDialog" :title="fieldDialogTitle" width="70%" :visible.sync="addFormVisible" :close-on-click-modal="false" @closed="dialogClose">
                 <el-form class="baseCaseForm" :model="dataForm" label-width="120px" ref="dataForm">
                     <el-form-item label="批次名称" prop="pcmc"
                                   :rules="[{ required: true, message: '输入不能为空', trigger: 'blur' }]">
@@ -268,7 +268,7 @@
         }
         .el-form{
             max-height: 600px;
-            overflow: auto;
+            overflow-y: auto;
         }
     }
 </style>

@@ -28,7 +28,7 @@ public class FileController {
     @Resource
     private FileRepository fileRepository;
 
-    @MustLogin(rolerequired = {1, 3, 4})
+    @MustLogin
     @ApiOperation("添加")
     @RequestMapping("/add")
     @ApiImplicitParam(name = "rwid", value = "任务id", dataType = "Integer", paramType = "query")
@@ -53,7 +53,7 @@ public class FileController {
         return fileEntity;
     }
 
-    @MustLogin(rolerequired = {1, 3, 4})
+    @MustLogin
     @ApiOperation("通过任务id查询")
     @RequestMapping("/findAllByRwid")
     @ApiImplicitParam(name = "rwid", value = "任务id", dataType = "Integer", paramType = "query")

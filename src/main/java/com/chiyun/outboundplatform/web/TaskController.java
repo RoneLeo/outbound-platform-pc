@@ -50,7 +50,7 @@ public class TaskController {
     private CasebasemessageRepository casebasemessageRepository;
 
 
-    @MustLogin(rolerequired = {1, 3})
+    @MustLogin
     @ApiOperation("区域管理员添加任务添加")
     @RequestMapping("/add")
     public ApiResult<Object> add(TaskEntity entity) {
@@ -99,7 +99,7 @@ public class TaskController {
         return ApiResult.SUCCESS("添加成功");
     }
 
-    @MustLogin(rolerequired = {1, 3})
+    @MustLogin
     @ApiOperation("修改")
     @RequestMapping("/update")
     public ApiResult<Object> update(TaskEntity entity) {
@@ -138,7 +138,7 @@ public class TaskController {
         return ApiResult.SUCCESS("修改任务成功");
     }
 
-    @MustLogin(rolerequired = {1, 3})
+    @MustLogin
     @ApiOperation("删除")
     @RequestMapping("/delete")
     public ApiResult<Object> delete(Integer id) {
@@ -153,7 +153,7 @@ public class TaskController {
         return ApiResult.SUCCESS("删除任务成功");
     }
 
-    @MustLogin(rolerequired = {1, 3, 4})
+    @MustLogin
     @ApiOperation("通过任务id查询")
     @RequestMapping("/findById")
     public ApiResult<Object> findById(Integer id) {
@@ -164,7 +164,7 @@ public class TaskController {
         return ApiResult.SUCCESS(entity);
     }
 
-    @MustLogin(rolerequired = {1, 3, 4})
+    @MustLogin
     @ApiOperation("多条件查询:任务名称、任务截止时间、任务方式、任务状态、任务执行人、任务完成时间")
     @RequestMapping("/findAllByCondition")
     @ApiImplicitParams({
@@ -188,7 +188,7 @@ public class TaskController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
-    @MustLogin(rolerequired = {4})
+    @MustLogin
     @ApiOperation("业务员登录查询本区域的任务:新建、指派")
     @RequestMapping("/findAllByYwyqy")
     @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query")
@@ -201,7 +201,7 @@ public class TaskController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
-    @MustLogin(rolerequired = {4})
+    @MustLogin
     @ApiOperation("业务员登录查询本区域已接的任务:接收等")
     @RequestMapping("/findAllByYwyidYjd")
     @ApiImplicitParams({
@@ -226,7 +226,7 @@ public class TaskController {
         return ApiPageResult.SUCCESS(mapList, page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
-    @MustLogin(rolerequired = {4})
+    @MustLogin
     @ApiOperation("业务员单框查询")
     @RequestMapping("/findAllByYwyqyAndCondition")
     @ApiImplicitParams({
@@ -247,7 +247,7 @@ public class TaskController {
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
-    @MustLogin(rolerequired = {4})
+    @MustLogin
     @ApiOperation("业务员接单")
     @RequestMapping("/order")
     @ApiImplicitParams({
@@ -280,7 +280,7 @@ public class TaskController {
         return ApiResult.SUCCESS("接单成功");
     }
 
-    @MustLogin(rolerequired = {1, 3, 4})
+    @MustLogin
     @ApiOperation("统计业务员 已接收、已处理案件数、应得佣金及实际佣金")
     @RequestMapping("/countYwyRwxx")
     @ApiImplicitParam(name = "rwzxr", value = "业务员id", dataType = "Integer", paramType = "query")
@@ -292,7 +292,7 @@ public class TaskController {
         return ApiResult.SUCCESS(map);
     }
 
-    @MustLogin(rolerequired = {1, 3})
+    @MustLogin
     @ApiOperation("区域管理员指派或改派任务")
     @RequestMapping("/appoint")
     @ApiImplicitParam(name = "ywyid", value = "业务员id", dataType = "Integer", paramType = "query")
@@ -316,7 +316,7 @@ public class TaskController {
         return ApiResult.SUCCESS("操作成功");
     }
 
-    @MustLogin(rolerequired = {1, 3})
+    @MustLogin
     @ApiOperation("区域管理员审核并修改任务信息和反馈状态")
     @RequestMapping("/check")
     @ApiImplicitParams({
@@ -358,7 +358,7 @@ public class TaskController {
         return ApiResult.SUCCESS("修改成功");
     }
 
-    @MustLogin(rolerequired = {2})
+    @MustLogin
     @ApiOperation("财务人员统计业务员实际总佣金")
     @RequestMapping("/countSjyj")
     public ApiResult<Object> countSjyj(Integer ywyid) {
@@ -371,7 +371,7 @@ public class TaskController {
         return ApiResult.SUCCESS(map);
     }
 
-    @MustLogin(rolerequired = {2})
+    @MustLogin
     @ApiOperation("财务人员确认已发放佣金")
     @RequestMapping("/checkFfyj")
     public ApiResult<Object> checkFfyj(List<Integer> ids) {
